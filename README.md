@@ -1,5 +1,5 @@
 # Requisiti
-- jdk 21
+- jdk 17
 
 # Come buildare
 - mvn clean install -> installa le librerie presenti nel pom.xml
