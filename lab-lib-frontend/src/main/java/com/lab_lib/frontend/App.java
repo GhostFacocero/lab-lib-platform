@@ -1,5 +1,7 @@
 package com.lab_lib.frontend;
 
+import java.io.IOException;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.lab_lib.frontend.DI.AppModule;
@@ -24,6 +26,11 @@ public class App extends Application
         BookListPage bookListPage = injector.getInstance(BookListPage.class);
         
         // Show the page
-        bookListPage.show(primaryStage);
+        try {
+            bookListPage.show(primaryStage);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

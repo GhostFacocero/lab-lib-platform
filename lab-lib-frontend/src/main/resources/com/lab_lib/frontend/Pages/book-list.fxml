@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-    <center>
-        <!-- Our custom table component will be injected here -->
-        <PaginatedTableView fx:id="paginatedTable" />
-    </center>
-    
-    <bottom>
-        <HBox alignment="CENTER" styleClass="toolbar">
-            <Button text="Refresh" onAction="#handleRefresh" />
-        </HBox>
-    </bottom>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:id="rootPane">
 </BorderPane>

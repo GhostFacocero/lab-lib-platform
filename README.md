@@ -8,7 +8,7 @@
 - Inserire il .env in `./lab-lib-restapi/src/main/resources`
 - Eseguire `App.java` dentro `./src/Main`:
   1. prima far partire il progetto **restapi**
-  2. poi il progetto **frontend**
+  2. poi il progetto **frontend** con **mvn clean javafx:run**
 
 # Consigli utili
 ### VS Code
