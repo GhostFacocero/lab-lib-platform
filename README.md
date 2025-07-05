@@ -1,14 +1,54 @@
 # Requisiti
 - JDK 17
-- Maven Apache
+- Apache Maven
 
 # Build del progetto
-- `mvn clean install` → installa le librerie presenti nel `pom.xml` (da eseguire in entrambi i progetti)
-### Per VS Code:
-- Se dopo `mvn install` il progetto dà problemi strani, provare a eseguire `Java: Clean the Java language server workspace` da `Ctrl+Shift+P`
+Eseguire il seguente comando in entrambi i progetti (`lab-lib-restapi` e `lab-lib-frontend`):
+
+```bash
+mvn clean install
+```
+
+Questo comando installerà le dipendenze specificate nel `pom.xml`.
+
+### Per Visual Studio Code
+Se dopo aver eseguito `mvn install` il progetto presenta problemi strani, provare a eseguire:
+
+> `Java: Clean the Java language server workspace`
+
+(digitare `Ctrl+Shift+P` per aprire la palette comandi)
+
+---
 
 # Avvio dell'app
-- Inserire il **.env per la restapi** in `./lab-lib-restapi/src/main/resources`
-- Inserire il **.env per il frontend** in `./lab-lib-frontend/src/main/resources`
-- far partire il progetto **restapi** eseguendo `App.java` dentro `./src/Main`
-- far partire il progetto **frontend** con il comando `mvn clean javafx:run` eseguito dentro `./lab-lib-frotnend`
+
+## 1. Variabili d'ambiente
+- Inserire il file **`.env` per la REST API** in:
+  ```
+  ./lab-lib-restapi/src/main/resources
+  ```
+
+- Inserire il file **`.env` per il frontend** in:
+  ```
+  ./lab-lib-frontend/src/main/resources
+  ```
+
+## 2. Avvio dei progetti
+
+### REST API
+Avviare il file `App.java` dentro la cartella:
+
+```
+./lab-lib-restapi/src/main/java/com/lab_lib/restapi
+```
+
+  dopo di che sarà visibile l'anteprima degli endpoint Swagger all'indirizzo:
+
+  [http://localhost:8080/swagger-ui/index.html#/](http://localhost:8080/swagger-ui/index.html#/)
+
+### Frontend JavaFX
+Da terminale, eseguire il seguente comando nella cartella `lab-lib-frontend`:
+
+```bash
+mvn clean javafx:run
+```

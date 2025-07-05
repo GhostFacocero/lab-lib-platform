@@ -1,9 +1,9 @@
 package com.lab_lib.restapi;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
 public class App 
