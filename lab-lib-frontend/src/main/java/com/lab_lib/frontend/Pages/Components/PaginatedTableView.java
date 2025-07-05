@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.lab_lib.frontend.Models.PaginatedResponse;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,6 +22,10 @@ public class PaginatedTableView<T> extends VBox {
     @FXML
     private Pagination pagination;
 
+    private final SimpleObjectProperty<ObservableList<T>> contentProperty = new SimpleObjectProperty<>(FXCollections.observableArrayList());
+    private final SimpleIntegerProperty totalPagesProperty = new SimpleIntegerProperty(1);
+    private final SimpleIntegerProperty currentPageIndexProperty = new SimpleIntegerProperty(0);
+
     private final Function<Integer, PaginatedResponse<T>> dataFetcher;
 
     public PaginatedTableView(Function<Integer, PaginatedResponse<T>> dataFetcher) {
@@ -30,6 +35,7 @@ public class PaginatedTableView<T> extends VBox {
             "/com/lab_lib/frontend/Pages/Components/paginated-table.fxml"));
         loader.setController(this);
         loader.setRoot(this);
+
         try {
             loader.load();
             initialize();
@@ -37,8 +43,15 @@ public class PaginatedTableView<T> extends VBox {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load table FXML", e);
         }
-    }
 
+        tableView.itemsProperty().bind(contentProperty);
+        pagination.pageCountProperty().bind(totalPagesProperty);
+        pagination.currentPageIndexProperty().bindBidirectional(currentPageIndexProperty);
+
+        pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) -> {
+            loadPage(newVal.intValue());
+        });
+    }
 
     private void initialize() {
         pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) -> {
@@ -49,11 +62,11 @@ public class PaginatedTableView<T> extends VBox {
     private void loadPage(int page) {
         try {
             PaginatedResponse<T> response = dataFetcher.apply(page);
-            ObservableList<T> items = FXCollections.observableArrayList(response.getContent());
-            tableView.setItems(items);
 
-            pagination.setPageCount(response.getTotalPages());
-            pagination.setCurrentPageIndex(response.getNumber());
+            // update reactive properties
+            contentProperty.set(FXCollections.observableArrayList(response.getContent()));
+            totalPagesProperty.set(response.getTotalPages());
+            currentPageIndexProperty.set(response.getNumber());
         } catch (Exception e) {
             System.err.println("Error loading page: " + e.getMessage());
         }
@@ -67,9 +80,8 @@ public class PaginatedTableView<T> extends VBox {
         return column;
     }
 
-
     // Refresh the current page
     public void refresh() {
-        loadPage(pagination.getCurrentPageIndex());
+        loadPage(currentPageIndexProperty.get());
     }
 }
