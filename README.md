@@ -52,3 +52,32 @@ Da terminale, eseguire il seguente comando nella cartella `lab-lib-frontend`:
 ```bash
 mvn clean javafx:run
 ```
+# Architettura e Design Pattern
+
+### Backend (`lab-lib-restapi`)
+
+Al momento il backend adotta una struttura semplice e diretta senza un layer di service dedicato. La divisione è organizzata per entità, con:
+
+- Un **Controller** specifico per ogni entità (es. `BookController`) che espone gli endpoint REST.
+- Un corrispondente **Repository** (es. `BookRepository`) che gestisce l’accesso al database e le operazioni CRUD.
+- Una **classe modello** (es. `Book`) che rappresenta l’entità stessa.
+
+Questa struttura mantiene il codice chiaro e facile da seguire, anche se in futuro si potrà introdurre un layer di service per separare meglio la logica di business.
+
+---
+
+### Frontend (`lab-lib-frontend`)
+
+Il frontend utilizza un approccio basato su dependency injection (DI) tramite la libreria di Google (Guice):
+
+- I **controller JavaFX** associati a ogni pagina o componente non interagiscono direttamente con i dati, ma tramite **servizi iniettati** che implementano interfacce.
+- Il modulo `Utils` contiene classi concrete senza astrazioni, utilizzate come implementazioni dirette da iniettare nei servizi.
+- Nel modulo `DI` si trova la classe `AppModule`, dove vengono configurate le iniezioni, associando interfacce alle loro implementazioni o direttamente classi a istanze concrete, ad esempio:
+  ```java
+  // Collegamento implementazione a interfaccia
+  bind(IBookService.class).to(BookService.class);
+        
+  // Collegamento a implementazioni concrete
+  bind(HttpUtil.class).toInstance(new HttpUtil());
+  ```
+Questa architettura permette di mantenere il codice modulare, testabile e facilmente estendibile, separando chiaramente responsabilità e facilitando la sostituzione o estensione di componenti.
