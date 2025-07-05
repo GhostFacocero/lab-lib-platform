@@ -2,6 +2,9 @@ package com.lab_lib.frontend.Models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaginatedResponse<T> {
     private List<T> content;
     private int totalPages;

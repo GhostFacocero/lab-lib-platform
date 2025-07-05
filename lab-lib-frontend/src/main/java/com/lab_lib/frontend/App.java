@@ -29,8 +29,9 @@ public class App extends Application
         try {
             bookListPage.show(primaryStage);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // Log the exception (replace with your preferred logging framework)
+            System.err.println("Error loading page: " + e.getMessage());
+            // Handle error
         }
     }
 }

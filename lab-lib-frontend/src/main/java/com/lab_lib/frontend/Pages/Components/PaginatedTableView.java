@@ -1,5 +1,9 @@
 package com.lab_lib.frontend.Pages.Components;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,9 +13,6 @@ import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Function;
 
 public class PaginatedTableView<T> extends VBox {
     @FXML
@@ -28,8 +29,7 @@ public class PaginatedTableView<T> extends VBox {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
             "/com/lab_lib/frontend/Pages/Components/paginated-table.fxml"));
         loader.setController(this);
-        loader.setRoot(this);  // This is now safe because we're not extending the FXML root
-
+        loader.setRoot(this);  
         try {
             loader.load();
             initialize();
@@ -54,7 +54,8 @@ public class PaginatedTableView<T> extends VBox {
             pagination.setPageCount(response.getTotalPages());
             pagination.setCurrentPageIndex(response.getPageNumber());
         } catch (Exception e) {
-            e.printStackTrace();
+            // Log the exception (replace with your preferred logging framework)
+            System.err.println("Error loading page: " + e.getMessage());
             // Handle error
         }
     }

@@ -9,6 +9,10 @@ public class Category {
         this.name = name;
     }
 
+    public Category() {
+        // Default constructor for deserialization
+    }
+
     public Integer getId() {
         return id;
     }

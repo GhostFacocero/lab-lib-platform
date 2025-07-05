@@ -36,6 +36,10 @@ public class Book {
         this.categories = categories;
     }
 
+    public Book() {
+        // Default constructor for deserialization
+    }
+
     public Integer getId() {
         return id;
     }

@@ -9,6 +9,10 @@ public class Author {
         this.name = name;
     }
 
+    public Author() {
+        // Default constructor for deserialization
+    }
+
     public Integer getId() {
         return id;
     }

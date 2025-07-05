@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
+    @Override
     @EntityGraph(attributePaths = {"publisher"})
     Page<Book> findAll(Pageable pageable);
 

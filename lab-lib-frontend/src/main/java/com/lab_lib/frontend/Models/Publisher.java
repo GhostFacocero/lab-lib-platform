@@ -9,6 +9,10 @@ public class Publisher {
         this.name = name;
     }
 
+    public Publisher() {
+        // Default constructor for deserialization
+    }
+
     public Integer getId() {
         return id;
     }

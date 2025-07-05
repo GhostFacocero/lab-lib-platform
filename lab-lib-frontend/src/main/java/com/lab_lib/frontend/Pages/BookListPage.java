@@ -1,20 +1,21 @@
 package com.lab_lib.frontend.Pages;
 
+import java.io.IOException;
+import java.util.stream.Collectors;
+
 import com.google.inject.Inject;
 import com.lab_lib.frontend.Interfaces.IBookService;
 import com.lab_lib.frontend.Models.Author;
 import com.lab_lib.frontend.Models.Book;
 import com.lab_lib.frontend.Models.PaginatedResponse;
 import com.lab_lib.frontend.Pages.Components.PaginatedTableView;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.util.stream.Collectors;
 
 public class BookListPage {
     private final IBookService bookService;
@@ -46,10 +47,6 @@ public class BookListPage {
     private void initializeTable() {
         PaginatedTableView<Book> table = new PaginatedTableView<>(page -> {
             PaginatedResponse<Book> response = bookService.getBooks(page, 20);
-            
-            for (Book book : response.getContent()) {
-                System.out.println("Book: " + book.getTitle());
-            }
 
             return new PaginatedTableView.PaginatedData<>(
                 response.getContent(),
