@@ -1,27 +1,31 @@
-/* base styles */
+/* Base styles */
 .root {
   -fx-font-family: "Segoe UI", sans-serif;
-  -fx-background-color: #FAFBFC;
+  -fx-background-color: #191B1C;
   -fx-padding: 20;
+  -fx-color: white;
 }
 
-/* Tag your TableView with a custom style-class in code or FXML: */
-.table-view.my-table {
-  -fx-background-color: white;
+/* TableView */
+.table-view {
+  -fx-background-color: #252728;
   -fx-border-radius: 8;
   -fx-background-radius: 8;
-  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 2);
 }
 
 /* Header */
-.table-view.my-table .column-header-background {
-  -fx-background-color: #F0F3F7;
-  -fx-border-color: transparent;
+.table-view .column-header-background {
+  -fx-background-color: #2F3132;
 }
 
-.table-view.my-table .column-header .label {
+.table-view .column-header {
+  -fx-background-color: #2F3132;
+}
+
+.table-view .column-header .label {
   -fx-font-weight: 600;
-  -fx-text-fill: #333;
+  -fx-text-fill: #DDDDDD;
   -fx-padding: 6 12;
 }
 
@@ -30,21 +34,47 @@
   -fx-background-color: transparent;
   -fx-padding: 6 12;
   -fx-pref-height: 36;
-  -fx-transition: -fx-background-color 0.15s ease;
 }
 
 .table-row-cell:filled:hover {
-  -fx-background-color: #EEF3FB;
+  -fx-background-color: #2C2F30;
 }
 
 .table-row-cell:filled:selected {
-  -fx-background-color: #D0E2FD;
+  -fx-background-color: #3D4A5C;
 }
 
 /* Cells */
 .table-cell {
-  -fx-text-fill: #333;
+  -fx-text-fill: #DDDDDD;
   -fx-wrap-text: true;
+}
+
+/* Scrollbar styling */
+.scroll-bar:vertical, .scroll-bar:horizontal {
+  -fx-background-color: #1F1F1F;
+}
+
+.scroll-bar .thumb {
+  -fx-background-color: #444;
+  -fx-background-insets: 2;
+  -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+  -fx-background-color: #666;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+  -fx-background-color: transparent;
+  -fx-padding: 4;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+  -fx-shape: "M0,0 L4,4 L8,0 Z";
+  -fx-background-color: #999;
 }
 
 /* Pagination */
@@ -63,27 +93,33 @@
   -fx-background-radius: 4;
   -fx-padding: 4 10;
   -fx-cursor: hand;
-  -fx-transition: -fx-background-color 0.2s ease;
+  -fx-background-color: #2C2F30;
+  -fx-text-fill: #CCCCCC;
+  -fx-border-color: #444;
+  -fx-border-width: 1;
 }
 
-.pagination .arrow-button {
-  -fx-background-color: #E6E6E6;
-}
-
-.pagination .arrow-button:hover {
-  -fx-background-color: #CCCCCC;
-}
-
-.pagination .number-button {
-  -fx-background-color: #FFFFFF;
-  -fx-border-color: #CCC;
-}
-
+.pagination .arrow-button:hover,
 .pagination .number-button:hover {
-  -fx-background-color: #E6F0FC;
+  -fx-background-color: #3A3F45;
+  -fx-text-fill: white;
 }
 
 .pagination .number-button:selected {
-  -fx-background-color: #4A90E2;
+  -fx-background-color: #3D4A5C;
   -fx-text-fill: white;
+}
+
+/* Pagination text */
+.pagination .label,
+.pagination .text {
+  -fx-text-fill: #FFFFFF;
+}
+
+/* Linea di separazione per il resize delle colonne */
+.table-view .column-resize-line,
+.tree-table-view .column-resize-line {
+    -fx-background: #888;
+    -fx-background-color: #888;
+    -fx-padding: 0.0em 0.0416667em 0.0em 0.0416667em; /* 0 0.571429 0 0.571429 */
 }

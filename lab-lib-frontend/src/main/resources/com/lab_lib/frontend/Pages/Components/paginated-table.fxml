@@ -4,6 +4,6 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root type="VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" spacing="10">
-    <TableView fx:id="tableView" />
-    <Pagination fx:id="pagination" />
+    <TableView fx:id="tableView"  styleClass="table-view" />
+    <Pagination fx:id="pagination" styleClass="pagination" />
 </fx:root>
