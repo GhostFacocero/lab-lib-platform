@@ -11,6 +11,38 @@ mvn clean install
 
 Questo comando installerà le dipendenze specificate nel `pom.xml`.
 
+# Librerie utilizzate:
+
+### Backend
+
+| Libreria                              | Versione | Scopo                 | Descrizione                                                           |
+| ------------------------------------- | -------- | --------------------- | --------------------------------------------------------------------- |
+| `junit:junit`                         | 3.8.1    | `test`                | Framework per i test unitari.                                         |
+| `spring-boot-starter-web`             | 3.2.0    | -                     | Starter Spring Boot per applicazioni web e REST API.                  |
+| `spring-boot-starter-data-jpa`        | 3.2.0    | -                     | Starter per Spring Data JPA (accesso e gestione DB relazionali).      |
+| `org.postgresql:postgresql`           | 42.7.1   | `runtime`             | Driver JDBC per PostgreSQL.                                           |
+| `spring-boot-devtools`                | 3.2.0    | `runtime` (opzionale) | Strumenti per hot-reload e sviluppo rapido con Spring Boot.           |
+| `org.projectlombok:lombok`            | 1.18.28  | `provided`            | Libreria per ridurre il boilerplate in Java (getter, setter, ecc.).   |
+| `io.github.cdimascio:dotenv-java`     | 3.0.0    | -                     | Caricatore di file `.env` in Java.                                    |
+| `springdoc-openapi-starter-webmvc-ui` | 2.3.0    | -                     | Generatore di documentazione Swagger/OpenAPI per progetti Spring MVC. |
+
+### Frontend
+
+| Libreria                                      | Versione | Scopo  | Descrizione                                                            |
+| --------------------------------------------- | -------- | ------ | ---------------------------------------------------------------------- |
+| `junit:junit`                                 | 3.8.1    | `test` | Framework di test unitario per Java.                                   |
+| `org.openjfx:javafx-controls`                 | 20       | -      | Componenti UI di JavaFX come bottoni, liste, layout, ecc.              |
+| `org.openjfx:javafx-fxml`                     | 20       | -      | Supporto per la definizione dell'interfaccia utente tramite file FXML. |
+| `com.fasterxml.jackson.core:jackson-databind` | 2.15.2   | -      | Parser/mapper JSON per Java, parte di Jackson.                         |
+| `io.github.cdimascio:dotenv-java`             | 3.0.0    | -      | Lettura di file `.env` per caricare variabili ambiente.                |
+| `com.google.inject:guice`                     | 5.1.0    | -      | Dependency injection framework sviluppato da Google.                   |
+
+| Plugin                            | Versione | Descrizione                                             |
+| --------------------------------- | -------- | ------------------------------------------------------- |
+| `org.openjfx:javafx-maven-plugin` | 0.0.8    | Permette di eseguire applicazioni JavaFX tramite Maven. |
+
+
+
 ### Per Visual Studio Code
 Se dopo aver eseguito `mvn install` il progetto presenta problemi strani, provare a eseguire:
 
@@ -80,6 +112,17 @@ Il frontend utilizza un approccio basato su dependency injection (DI) tramite la
   // Collegamento a implementazioni concrete
   bind(HttpUtil.class).toInstance(new HttpUtil());
   ```
+
+- e in seguito per utilizzare l'implementazione in qualsiasi classe basterà scrive qualcosa di simile:
+  ```java
+  private final IBookService bookService;
+
+  @Inject
+  public BookListPage(IBookService bookService) {
+      this.bookService = bookService;
+  }
+  ```
+
 Questa architettura permette di mantenere il codice modulare, testabile e facilmente estendibile, separando chiaramente responsabilità e facilitando la sostituzione o estensione di componenti.
 
 ## Linee guida per i commit e la gestione dei branch
