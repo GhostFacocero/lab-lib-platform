@@ -11,6 +11,13 @@ mvn clean install
 
 Questo comando installerà le dipendenze specificate nel `pom.xml`.
 
+### Per Visual Studio Code
+Se dopo aver eseguito `mvn install` il progetto presenta problemi strani, provare a eseguire:
+
+> `Java: Clean the Java language server workspace`
+
+(digitare `Ctrl+Shift+P` per aprire la palette comandi)
+
 # Librerie utilizzate:
 
 ### Backend
@@ -40,15 +47,6 @@ Questo comando installerà le dipendenze specificate nel `pom.xml`.
 | Plugin                            | Versione | Descrizione                                             |
 | --------------------------------- | -------- | ------------------------------------------------------- |
 | `org.openjfx:javafx-maven-plugin` | 0.0.8    | Permette di eseguire applicazioni JavaFX tramite Maven. |
-
-
-
-### Per Visual Studio Code
-Se dopo aver eseguito `mvn install` il progetto presenta problemi strani, provare a eseguire:
-
-> `Java: Clean the Java language server workspace`
-
-(digitare `Ctrl+Shift+P` per aprire la palette comandi)
 
 ---
 
