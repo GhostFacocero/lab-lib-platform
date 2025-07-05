@@ -1,10 +1,14 @@
 # Requisiti
-- jdk 17
+- JDK 17
+- Maven Apache
 
-# Come buildare
-- mvn clean install -> installa le librerie presenti nel pom.xml
-- far partire App.java in ./src/Main
+# Build del progetto
+- `mvn clean install` → installa le librerie presenti nel `pom.xml` (da eseguire in entrambi i progetti)
+### Per VS Code:
+- Se dopo `mvn install` il progetto dà problemi strani, provare a eseguire `Java: Clean the Java language server workspace` da `Ctrl+Shift+P`
 
-# Consigli utili
-## VS Code
-- se il progetto sembra infangato dopo un mvn install provare a eseguire **Java: Clean the Java language server workspace** nel **ctrl+shift+p**
+# Avvio dell'app
+- Inserire il **.env per la restapi** in `./lab-lib-restapi/src/main/resources`
+- Inserire il **.env per il frontend** in `./lab-lib-frontend/src/main/resources`
+- far partire il progetto **restapi** eseguendo `App.java` dentro `./src/Main`
+- far partire il progetto **frontend** con il comando `mvn clean javafx:run` eseguito dentro `./lab-lib-frotnend`
