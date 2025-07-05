@@ -1,0 +1,89 @@
+/* base styles */
+.root {
+  -fx-font-family: "Segoe UI", sans-serif;
+  -fx-background-color: #FAFBFC;
+  -fx-padding: 20;
+}
+
+/* Tag your TableView with a custom style-class in code or FXML: */
+.table-view.my-table {
+  -fx-background-color: white;
+  -fx-border-radius: 8;
+  -fx-background-radius: 8;
+  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
+}
+
+/* Header */
+.table-view.my-table .column-header-background {
+  -fx-background-color: #F0F3F7;
+  -fx-border-color: transparent;
+}
+
+.table-view.my-table .column-header .label {
+  -fx-font-weight: 600;
+  -fx-text-fill: #333;
+  -fx-padding: 6 12;
+}
+
+/* Rows */
+.table-row-cell {
+  -fx-background-color: transparent;
+  -fx-padding: 6 12;
+  -fx-pref-height: 36;
+  -fx-transition: -fx-background-color 0.15s ease;
+}
+
+.table-row-cell:filled:hover {
+  -fx-background-color: #EEF3FB;
+}
+
+.table-row-cell:filled:selected {
+  -fx-background-color: #D0E2FD;
+}
+
+/* Cells */
+.table-cell {
+  -fx-text-fill: #333;
+  -fx-wrap-text: true;
+}
+
+/* Pagination */
+.pagination {
+  -fx-background-color: transparent;
+  -fx-alignment: center;
+  -fx-padding: 10 0 0 0;
+}
+
+.pagination .control-box {
+  -fx-spacing: 8;
+}
+
+.pagination .arrow-button,
+.pagination .number-button {
+  -fx-background-radius: 4;
+  -fx-padding: 4 10;
+  -fx-cursor: hand;
+  -fx-transition: -fx-background-color 0.2s ease;
+}
+
+.pagination .arrow-button {
+  -fx-background-color: #E6E6E6;
+}
+
+.pagination .arrow-button:hover {
+  -fx-background-color: #CCCCCC;
+}
+
+.pagination .number-button {
+  -fx-background-color: #FFFFFF;
+  -fx-border-color: #CCC;
+}
+
+.pagination .number-button:hover {
+  -fx-background-color: #E6F0FC;
+}
+
+.pagination .number-button:selected {
+  -fx-background-color: #4A90E2;
+  -fx-text-fill: white;
+}

@@ -1,8 +1,9 @@
 package com.lab_lib.frontend.Pages.Components;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.Function;
+
+import com.lab_lib.frontend.Models.PaginatedResponse;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -20,16 +21,15 @@ public class PaginatedTableView<T> extends VBox {
     @FXML
     private Pagination pagination;
 
-    private final Function<Integer, PaginatedData<T>> dataFetcher;
+    private final Function<Integer, PaginatedResponse<T>> dataFetcher;
 
-    public PaginatedTableView(Function<Integer, PaginatedData<T>> dataFetcher) {
+    public PaginatedTableView(Function<Integer, PaginatedResponse<T>> dataFetcher) {
         this.dataFetcher = dataFetcher;
         
-        // Load FXML
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
             "/com/lab_lib/frontend/Pages/Components/paginated-table.fxml"));
         loader.setController(this);
-        loader.setRoot(this);  
+        loader.setRoot(this);
         try {
             loader.load();
             initialize();
@@ -39,6 +39,7 @@ public class PaginatedTableView<T> extends VBox {
         }
     }
 
+
     private void initialize() {
         pagination.currentPageIndexProperty().addListener((obs, oldVal, newVal) -> {
             loadPage(newVal.intValue());
@@ -47,52 +48,28 @@ public class PaginatedTableView<T> extends VBox {
 
     private void loadPage(int page) {
         try {
-            PaginatedData<T> response = dataFetcher.apply(page);
+            PaginatedResponse<T> response = dataFetcher.apply(page);
             ObservableList<T> items = FXCollections.observableArrayList(response.getContent());
             tableView.setItems(items);
-            
+
             pagination.setPageCount(response.getTotalPages());
-            pagination.setCurrentPageIndex(response.getPageNumber());
+            pagination.setCurrentPageIndex(response.getNumber());
         } catch (Exception e) {
-            // Log the exception (replace with your preferred logging framework)
             System.err.println("Error loading page: " + e.getMessage());
-            // Handle error
         }
     }
 
-    public <R> void addColumn(String columnName, Function<T, R> property) {
+    public <R> TableColumn<T, R> addColumn(String columnName, Function<T, R> property) {
         TableColumn<T, R> column = new TableColumn<>(columnName);
         column.setCellValueFactory(cellData -> 
             new SimpleObjectProperty<>(property.apply(cellData.getValue())));
         tableView.getColumns().add(column);
+        return column;
     }
+
 
     // Refresh the current page
     public void refresh() {
         loadPage(pagination.getCurrentPageIndex());
-    }
-
-    public static class PaginatedData<T> {
-        private final List<T> content;
-        private final int totalPages;
-        private final int pageNumber;
-
-        public PaginatedData(List<T> content, int totalPages, int pageNumber) {
-            this.content = content;
-            this.totalPages = totalPages;
-            this.pageNumber = pageNumber;
-        }
-
-        public List<T> getContent() {
-            return content;
-        }
-
-        public int getTotalPages() {
-            return totalPages;
-        }
-
-        public int getPageNumber() {
-            return pageNumber;
-        }
     }
 }
