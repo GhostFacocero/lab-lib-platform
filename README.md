@@ -81,3 +81,54 @@ Il frontend utilizza un approccio basato su dependency injection (DI) tramite la
   bind(HttpUtil.class).toInstance(new HttpUtil());
   ```
 Questa architettura permette di mantenere il codice modulare, testabile e facilmente estendibile, separando chiaramente responsabilità e facilitando la sostituzione o estensione di componenti.
+
+## Linee guida per i commit e la gestione dei branch
+
+### Convenzioni per i messaggi di commit
+
+Per mantenere il repository ordinato e leggibile, si seguono queste regole per scrivere i messaggi di commit:
+
+- Il messaggio deve iniziare con uno di questi prefissi standard:
+  - `feat:` per una nuova funzionalità
+  - `fix:` per una correzione di bug
+  - `docs:` per modifiche alla documentazione
+  - `style:` per modifiche di formattazione o stile senza impatto sul codice
+  - `refactor:` per ristrutturazioni del codice senza cambiamenti funzionali
+  - `test:` per aggiunta o modifica di test
+  - `chore:` per altre attività di manutenzione (es. aggiornamento dipendenze)
+
+- Dopo il prefisso si può scrivere liberamente il messaggio di commit, in **qualsiasi lingua**.
+
+---
+### Creazione di branch
+
+- Per creare un nuovo branch, usare sempre il formato:
+
+`<tipo>/<descrizione-breve-in-minuscolo-e-trattini>`
+
+dove `<tipo>` può essere `feat`, `fix`, `docs`, `chore`, ecc., coerente con i prefissi dei commit.
+
+La descrizione dovrebbe sintetizzare chiaramente la modifica o la feature su cui si lavora, ad esempio:
+
+  feat/aggiunta-paginazione-tabella <br />
+  fix/correzione-colore-bottoni <br />
+  docs/aggiornamento-readme <br />
+
+È consigliato scrivere la descrizione del branch in inglese per uniformità, ma non è obbligatorio: va bene anche un’altra lingua se più comoda.
+
+
+### Branch principali
+
+- Il repository deve sempre contenere due branch principali, **`main`** e **`development`**:
+  - `main` è il ramo stabile con le versioni di produzione
+  - `development` è il ramo dove si integrano le nuove feature e correzioni prima di andare in `main`
+
+- **Entrambi i branch devono essere sempre presenti** e non vanno mai eliminati, nemmeno dopo merge o pulizie.
+
+---
+
+### Merge e descrizioni
+
+- Ogni merge verso `development` o `main` deve essere accompagnato da un titolo chiaro e una descrizione esaustiva, scritti **in italiano**.
+- Questa descrizione sarà la prima cosa che verrà letta e analizzata, quindi deve spiegare chiaramente cosa è stato fatto, perché e come.
+- Scrivere sempre in modo completo e comprensibile per facilitare la revisione e la tracciabilità delle modifiche.
