@@ -86,13 +86,47 @@ mvn clean javafx:run
 
 ### Backend (`lab-lib-restapi`)
 
-Al momento il backend adotta una struttura semplice e diretta senza un layer di service dedicato. La divisione è organizzata per entità, con:
+## Struttura del Backend
+
+Al momento il backend adotta una struttura semplice e diretta, organizzata per entità:
 
 - Un **Controller** specifico per ogni entità (es. `BookController`) che espone gli endpoint REST.
 - Un corrispondente **Repository** (es. `BookRepository`) che gestisce l’accesso al database e le operazioni CRUD.
 - Una **classe modello** (es. `Book`) che rappresenta l’entità stessa.
 
-Questa struttura mantiene il codice chiaro e facile da seguire, anche se in futuro si potrà introdurre un layer di service per separare meglio la logica di business.
+Questa struttura mantiene il codice chiaro e facile da seguire, ma può essere estesa facilmente in caso di necessità.
+
+### Dependency Injection e Layer di Service
+
+Spring Boot fornisce **nativamente il supporto per la Dependency Injection (DI)**. Basta utilizzare l’annotazione `@Service` per definire una classe come componente del livello di servizio.
+
+Nel caso in cui i metodi di base forniti dalle `Repository` non fossero sufficienti (es. per logiche di business più complesse, aggregazioni, validazioni ecc.), è consigliato:
+
+1. Creare una classe `Service` annotata con `@Service`, ad esempio `UserService`.
+2. In questa classe, iniettare la relativa repository (`UserRepository`) tramite variabile `final` e costruttore.
+3. Esporre i metodi necessari nel service.
+4. Iniettare il service nel `Controller`, sempre tramite variabile `final` nel costruttore.
+
+In questo modo si mantiene una buona separazione delle responsabilità (SRP), facilitando manutenzione, testabilità e riusabilità del codice.
+
+### Esempio di struttura con Service
+
+```java
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    public BookService(UserRepository userRepository) {
+        this.userRepository = bookRepository;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // altri metodi personalizzati...
+}
+```
 
 ---
 
