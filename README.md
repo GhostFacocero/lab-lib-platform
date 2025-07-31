@@ -74,7 +74,7 @@ Avviare il file `App.java` dentro la cartella:
 
   dopo di che sarà visibile l'anteprima degli endpoint Swagger all'indirizzo:
 
-  [http://localhost:8080/swagger-ui/index.html#/](http://localhost:8080/swagger-ui/index.html#/)
+  [http://localhost:8080/lib/swagger-ui/index.html#/](http://localhost:8080/lib/swagger-ui/index.html#/)
 
 ### Frontend JavaFX
 Da terminale, eseguire il seguente comando nella cartella `lab-lib-frontend`:

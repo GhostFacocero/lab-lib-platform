@@ -29,12 +29,12 @@ public class UserService {
 
     @Transactional // abbellitore che rollbacka automaticamente in caso di eccezioni
     public UUID registerUser(RegisterRequest newUser) {
-        // ✅ Email format check
+        // Email format check
         if (!EMAIL_REGEX.matcher(newUser.getEmail()).matches()) {
             throw new IllegalArgumentException("Invalid email format.");
         }
 
-        // ✅ Basic password length check
+        // Basic password length check
         if (newUser.getPassword() == null || newUser.getPassword().length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters.");
         }

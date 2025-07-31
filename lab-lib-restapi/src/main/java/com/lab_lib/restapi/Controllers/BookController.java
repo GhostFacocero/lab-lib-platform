@@ -31,6 +31,4 @@ public class BookController {
         
         return bookRepository.findAll(PageRequest.of(page, size));
     }
-
-
 }
