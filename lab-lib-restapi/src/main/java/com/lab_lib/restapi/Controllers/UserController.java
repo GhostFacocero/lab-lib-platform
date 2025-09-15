@@ -1,6 +1,7 @@
 package com.lab_lib.restapi.Controllers;
 
 import com.lab_lib.restapi.DTO.AppUser.RegisterRequest;
+import com.lab_lib.restapi.DTO.AppUser.LoginRequest;
 import com.lab_lib.restapi.Models.AppUser;
 import com.lab_lib.restapi.Services.UserService;
 
@@ -25,6 +26,16 @@ public class UserController {
         try {
             UUID token = userService.registerUser(req);
             return ResponseEntity.status(201).body(Map.of("token", token));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
+        try {
+            UUID token = userService.loginUser(req);
+            return ResponseEntity.ok().body(Map.of("token", token));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

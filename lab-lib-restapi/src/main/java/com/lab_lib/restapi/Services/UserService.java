@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.lab_lib.restapi.DTO.AppUser.RegisterRequest;
+import com.lab_lib.restapi.DTO.AppUser.LoginRequest;
 import com.lab_lib.restapi.Models.AppUser;
 import com.lab_lib.restapi.Repositories.UserRepository;
 
@@ -72,5 +73,23 @@ public class UserService {
             cause = cause.getCause();
         }
         return cause.getMessage();
+    }
+
+    @Transactional
+    public UUID loginUser(LoginRequest User) {
+        // Always check user input
+        if(User.getPassword() == null || User.getPassword().length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters.");
+        }  
+        try {
+            AppUser existingUser = userRepository.findByNickname(User.getNickname());
+            if(existingUser == null || !existingUser.getPassword().equals(User.getPassword())) {
+                throw new IllegalArgumentException("Invalid nickname or password.");
+            } else {
+                return existingUser.getToken();
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Login failed: " + extractRootCauseMessage(e));
+        }
     }
 }
