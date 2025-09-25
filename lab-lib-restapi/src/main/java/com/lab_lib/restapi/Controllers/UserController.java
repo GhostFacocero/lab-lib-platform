@@ -3,11 +3,15 @@ package com.lab_lib.restapi.Controllers;
 import com.lab_lib.restapi.DTO.AppUser.RegisterRequest;
 import com.lab_lib.restapi.DTO.AppUser.LoginRequest;
 import com.lab_lib.restapi.Models.AppUser;
+import com.lab_lib.restapi.Models.PersonalLibrary;
 import com.lab_lib.restapi.Services.UserService;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,4 +44,5 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
 }

@@ -6,8 +6,7 @@ import java.util.regex.Pattern;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.lab_lib.restapi.DTO.AppUser.RegisterRequest;
-import com.lab_lib.restapi.DTO.AppUser.LoginRequest;
+import com.lab_lib.restapi.DTO.AppUser.*;
 import com.lab_lib.restapi.Models.AppUser;
 import com.lab_lib.restapi.Repositories.UserRepository;
 
@@ -63,16 +62,8 @@ public class UserService {
             return saved.getToken();
         } catch (DataIntegrityViolationException e) {
             // Es. cf troppo corto, email troppo lunga, vincoli DB violati
-            throw new IllegalArgumentException("Registration failed: " + extractRootCauseMessage(e));
+            throw new IllegalArgumentException("Registration failed: " + Common.extractRootCauseMessage(e));
         }
-    }
-
-    private String extractRootCauseMessage(Throwable e) {
-        Throwable cause = e;
-        while (cause.getCause() != null) {
-            cause = cause.getCause();
-        }
-        return cause.getMessage();
     }
 
     @Transactional
@@ -89,7 +80,12 @@ public class UserService {
                 return existingUser.getToken();
             }
         } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Login failed: " + extractRootCauseMessage(e));
+            throw new IllegalArgumentException("Login failed: " + Common.extractRootCauseMessage(e));
         }
     }
+
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
 }
