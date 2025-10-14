@@ -33,24 +33,24 @@ public class PersonalLibraryService {
     }
 
     @Transactional
-    public UUID AddLibrary(AddLibraryRequest newLibrary, Long userId) {
+    public synchronized PersonalLibrary addLibrary(AddLibraryRequest newLibrary) {
+
+        String name = newLibrary.getName();
+        Long userId = newLibrary.getUserId();
 
         //check per vedere se esiste già una libreria con lo stesso nome associata allo stesso utente
-        if(personalLibraryRepository.existsByNameAndUserId(newLibrary.getName(), userId)) {
+        if(personalLibraryRepository.existsByNameAndUserId(name, userId)) {
             throw new IllegalArgumentException("Personal library with the same name already exists");
         }
 
         PersonalLibrary library = new PersonalLibrary();
-        library.setId(userId);
-        library.setName(newLibrary.getName());
+        library.setUserId(userId);
+        library.setName(name);
 
-        try {
-            PersonalLibrary saved = personalLibraryRepository.save(library);
-            entityManager.refresh(saved);
-            return saved.getToken();
-        } catch(DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Personal library creation failed: " + Common.extractRootCauseMessage(e));
-        }
+        System.out.println("User id: " + userId + ";\nName: " + name);
+
+        PersonalLibrary saved = personalLibraryRepository.save(library);
+        return saved;
 
     }
 

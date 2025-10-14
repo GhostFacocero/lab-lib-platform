@@ -22,8 +22,8 @@ public class PersonalLibrary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, updatable = false, insertable = false)
-    private UUID token;
+    @Column(nullable = false)
+    private Long userId;
 
     @Column(name = "name", nullable = false)
     private String name;

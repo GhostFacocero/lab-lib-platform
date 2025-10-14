@@ -41,14 +41,13 @@ public class PersonalLibraryController {
         return personalLibraryService.findAllByUserId(userId);
     }
 
+
+    //Trovare un valore con cui sostituire ? tra le parentesi angolari
+
     @PostMapping("/add_library")
-    public ResponseEntity<?> addLibrary(@RequestParam Long id, @RequestBody AddLibraryRequest req) {
-        try {
-            UUID token = personalLibraryService.AddLibrary(req, id);
-            return ResponseEntity.status(201).body(Map.of("token", token));
-        } catch(IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<?> addLibrary(@RequestBody AddLibraryRequest req) {
+        personalLibraryService.addLibrary(req);
+        return ResponseEntity.status(201).body("Success");            
     }
 
 }

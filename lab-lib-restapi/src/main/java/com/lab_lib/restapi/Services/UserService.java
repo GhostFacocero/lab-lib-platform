@@ -55,15 +55,11 @@ public class UserService {
         user.setEmail(newUser.getEmail());
         user.setPassword(newUser.getPassword()); // hash later
 
-        try {
-            AppUser saved = userRepository.save(user);
-            entityManager.refresh(saved); // forza un SELECT sul database per aggiornare i campi
 
-            return saved.getToken();
-        } catch (DataIntegrityViolationException e) {
-            // Es. cf troppo corto, email troppo lunga, vincoli DB violati
-            throw new IllegalArgumentException("Registration failed: " + Common.extractRootCauseMessage(e));
-        }
+        AppUser saved = userRepository.save(user);
+        entityManager.refresh(saved); // forza un SELECT sul database per aggiornare i campi
+
+        return saved.getToken();
     }
 
     @Transactional
@@ -72,15 +68,11 @@ public class UserService {
         if(User.getPassword() == null || User.getPassword().length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters.");
         }  
-        try {
-            AppUser existingUser = userRepository.findByNickname(User.getNickname());
-            if(existingUser == null || !existingUser.getPassword().equals(User.getPassword())) {
-                throw new IllegalArgumentException("Invalid nickname or password.");
-            } else {
-                return existingUser.getToken();
-            }
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Login failed: " + Common.extractRootCauseMessage(e));
+        AppUser existingUser = userRepository.findByNickname(User.getNickname());
+        if(existingUser == null || !existingUser.getPassword().equals(User.getPassword())) {
+            throw new IllegalArgumentException("Invalid nickname or password.");
+        } else {
+            return existingUser.getToken();
         }
     }
 

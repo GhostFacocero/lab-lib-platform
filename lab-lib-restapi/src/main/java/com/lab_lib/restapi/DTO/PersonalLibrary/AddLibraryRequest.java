@@ -6,4 +6,5 @@ import lombok.Data;
 
 public class AddLibraryRequest {
     private String name;
+    private Long userId;
 }

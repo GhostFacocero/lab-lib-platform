@@ -23,7 +23,7 @@ public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
     @Column(unique = true, updatable = false, insertable = false)
     private UUID token;
