@@ -66,6 +66,12 @@ public class UserService {
         }
     }
 
+    public Long getUserIdByToken(String token) {
+        if(!userRepository.existsByToken(token))
+            throw new IllegalArgumentException("Authentication failed: token does not exist");
+        return userRepository.findByToken(token);
+    }
+
     private String extractRootCauseMessage(Throwable e) {
         Throwable cause = e;
         while (cause.getCause() != null) {
