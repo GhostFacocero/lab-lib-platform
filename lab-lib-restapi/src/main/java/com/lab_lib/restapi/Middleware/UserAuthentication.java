@@ -1,6 +1,7 @@
 package com.lab_lib.restapi.Middleware;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,7 +26,7 @@ public class UserAuthentication extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = extractToken(request);
+        UUID token = extractToken(request);
 
 
         if(token != null) {
@@ -43,12 +44,12 @@ public class UserAuthentication extends OncePerRequestFilter{
 
     }
 
-    private String extractToken(HttpServletRequest req) {
+    private UUID extractToken(HttpServletRequest req) {
         String authHeader = req.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
+            return UUID.fromString(authHeader.substring(7));
         }
-        return req.getParameter("token"); // fallback: token in query param
+        return UUID.fromString(req.getParameter("token")); // fallback: token in query param
     }
     
 }

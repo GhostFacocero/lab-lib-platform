@@ -66,7 +66,7 @@ public class UserService {
         }
     }
 
-    public Long getUserIdByToken(String token) {
+    public Long getUserIdByToken(UUID token) {
         if(!userRepository.existsByToken(token))
             throw new IllegalArgumentException("Authentication failed: token does not exist");
         return userRepository.findByToken(token);
