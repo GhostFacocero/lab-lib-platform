@@ -1,9 +1,10 @@
 package com.lab_lib.restapi.Models;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.UUID;
 
 @Entity
 @Table(
@@ -27,5 +28,14 @@ public class PersonalLibrary {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+        name = "book_pl",
+        joinColumns = @JoinColumn(name = "id_pl"),
+        inverseJoinColumns = @JoinColumn(name = "id_book")
+    )
+
+    private Set<Book> books = new HashSet<>();
 
 }

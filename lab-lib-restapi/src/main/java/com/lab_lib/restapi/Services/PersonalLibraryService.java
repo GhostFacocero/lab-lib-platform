@@ -1,19 +1,20 @@
 package com.lab_lib.restapi.Services;
 
 import com.lab_lib.restapi.DTO.PersonalLibrary.*;
+import com.lab_lib.restapi.Repositories.BookRepository;
 import com.lab_lib.restapi.Repositories.PersonalLibraryRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
+import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.PersonalLibrary;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class PersonalLibraryService {
@@ -22,9 +23,12 @@ public class PersonalLibraryService {
     private EntityManager entityManager;
 
     private final PersonalLibraryRepository personalLibraryRepository;
+    private final BookRepository bookRepository;
 
-    public PersonalLibraryService(PersonalLibraryRepository personalLibraryRepository) {
+    public PersonalLibraryService(PersonalLibraryRepository personalLibraryRepository, 
+    BookRepository bookRepository) {
         this.personalLibraryRepository = personalLibraryRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Transactional
@@ -47,11 +51,33 @@ public class PersonalLibraryService {
         library.setUserId(userId);
         library.setName(name);
 
-        System.out.println("User id: " + userId + ";\nName: " + name);
-
         PersonalLibrary saved = personalLibraryRepository.save(library);
         return saved;
 
+    }
+
+    public synchronized void addBookToLibrary(AddBookToLibraryRequest req) {
+        Long plId = req.getPlId();
+        Long bookId = req.getBookId();
+
+        if(personalLibraryRepository.existsByIdPlAndIdBook(plId, bookId)) {
+            throw new IllegalArgumentException("Selected book is already in this library");
+        }
+
+        PersonalLibrary library = personalLibraryRepository.findById(plId)
+        .orElseThrow(() -> new RuntimeException("Personal library not found"));
+
+        Book book = bookRepository.findById(bookId)
+        .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        library.getBooks().add(book);
+        personalLibraryRepository.save(library);
+
+    }
+
+    public List<Book> getLibraryBooks(GetLibraryBooksRequest libId) {
+        Long id = libId.getLibId();
+        return personalLibraryRepository.findBooksById(id);
     }
 
 }

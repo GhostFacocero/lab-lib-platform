@@ -1,6 +1,7 @@
 package com.lab_lib.restapi.Controllers;
 
-import com.lab_lib.restapi.DTO.PersonalLibrary.AddLibraryRequest;
+import com.lab_lib.restapi.DTO.PersonalLibrary.*;
+import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.PersonalLibrary;
 import com.lab_lib.restapi.Services.PersonalLibraryService;
 import com.lab_lib.restapi.Repositories.UserRepository;
@@ -41,13 +42,19 @@ public class PersonalLibraryController {
         return personalLibraryService.findAllByUserId(userId);
     }
 
-
-    //Trovare un valore con cui sostituire ? tra le parentesi angolari
-
     @PostMapping("/add_library")
-    public ResponseEntity<?> addLibrary(@RequestBody AddLibraryRequest req) {
+    public ResponseEntity<String> addLibrary(@RequestBody AddLibraryRequest req) {
         personalLibraryService.addLibrary(req);
         return ResponseEntity.status(201).body("Success");            
+    }
+
+    @GetMapping("/get_library_books")
+    public List<Book> getLibraryBooks(@RequestBody GetLibraryBooksRequest libId) {return null;}
+
+    @PostMapping("/add_book_to_library")
+    public ResponseEntity<String> addBookToLibrary(@RequestBody AddBookToLibraryRequest req) {
+        personalLibraryService.addBookToLibrary(req);
+        return ResponseEntity.status(201).body("Success");
     }
 
 }

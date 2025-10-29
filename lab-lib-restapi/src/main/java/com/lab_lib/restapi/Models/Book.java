@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
@@ -52,4 +53,7 @@ public class Book {
     )
     @BatchSize(size = 50)
     private Set<Category> categories;
+    @ManyToMany(mappedBy = "books")
+
+    private Set<PersonalLibrary> personalLibraries = new HashSet<>();
 }
