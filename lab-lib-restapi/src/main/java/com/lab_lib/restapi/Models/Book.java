@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "book")
 @Data
@@ -53,7 +55,24 @@ public class Book {
     )
     @BatchSize(size = 50)
     private Set<Category> categories;
-    @ManyToMany(mappedBy = "books")
 
+    @ManyToMany(mappedBy = "books")
+    @JsonIgnore
     private Set<PersonalLibrary> personalLibraries = new HashSet<>();
+
+    public void addPersonalLibrary(PersonalLibrary personalLibrary) {
+        personalLibraries.add(personalLibrary);
+        personalLibrary.getBooks().add(this);
+    }
+
+    public void removePersonalLibrary(PersonalLibrary personalLibrary) {
+        personalLibraries.remove(personalLibrary);
+        personalLibrary.getBooks().remove(this);
+    }
+
+
+    public boolean hasPersonalLibrary(PersonalLibrary personalLibrary) {
+        return personalLibraries.contains(personalLibrary);
+    }
+
 }

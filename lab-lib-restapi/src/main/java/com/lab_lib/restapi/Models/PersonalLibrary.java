@@ -38,4 +38,18 @@ public class PersonalLibrary {
 
     private Set<Book> books = new HashSet<>();
 
+    public void addBook(Book book) {
+        books.add(book);
+        book.getPersonalLibraries().add(this);
+    }
+
+    public void removeBook(Book book) {
+        books.remove(book);
+        book.getPersonalLibraries().remove(this);
+    }
+
+    public boolean hasBook(Book book) {
+        return books.contains(book);
+    }
+
 }

@@ -14,6 +14,8 @@ import com.lab_lib.restapi.Models.PersonalLibrary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -60,7 +62,7 @@ public class PersonalLibraryService {
         Long plId = req.getPlId();
         Long bookId = req.getBookId();
 
-        if(personalLibraryRepository.existsByIdPlAndIdBook(plId, bookId)) {
+        if(personalLibraryRepository.existsByIdAndBooksId(plId, bookId)) {
             throw new IllegalArgumentException("Selected book is already in this library");
         }
 
@@ -75,9 +77,15 @@ public class PersonalLibraryService {
 
     }
 
-    public List<Book> getLibraryBooks(GetLibraryBooksRequest libId) {
-        Long id = libId.getLibId();
-        return personalLibraryRepository.findBooksById(id);
+    public List<Book> getLibraryBooks(Long libId) {
+
+        Set<Book> bookSet = personalLibraryRepository.findById(libId)
+        .orElseThrow(() -> new RuntimeException("Personal library not found"))
+        .getBooks();
+        System.out.println("Libri trovati: " + bookSet.size());
+        List<Book> books = new ArrayList<>(bookSet);
+        System.out.println("Libri in lista: " + books.size());
+        return books;
     }
 
 }

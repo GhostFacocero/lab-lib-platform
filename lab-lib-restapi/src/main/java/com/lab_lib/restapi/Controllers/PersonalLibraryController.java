@@ -49,7 +49,9 @@ public class PersonalLibraryController {
     }
 
     @GetMapping("/get_library_books")
-    public List<Book> getLibraryBooks(@RequestBody GetLibraryBooksRequest libId) {return null;}
+    public List<Book> getLibraryBooks(@RequestParam Long libId) {
+        return personalLibraryService.getLibraryBooks(libId);
+    }
 
     @PostMapping("/add_book_to_library")
     public ResponseEntity<String> addBookToLibrary(@RequestBody AddBookToLibraryRequest req) {
