@@ -58,6 +58,8 @@ public class PersonalLibraryService {
 
     }
 
+
+    @Transactional
     public synchronized void addBookToLibrary(AddBookToLibraryRequest req) {
         Long plId = req.getPlId();
         Long bookId = req.getBookId();
@@ -72,11 +74,13 @@ public class PersonalLibraryService {
         Book book = bookRepository.findById(bookId)
         .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        library.getBooks().add(book);
+        library.addBook(book);
         personalLibraryRepository.save(library);
 
     }
 
+    
+    @Transactional
     public List<Book> getLibraryBooks(Long libId) {
 
         Set<Book> bookSet = personalLibraryRepository.findById(libId)

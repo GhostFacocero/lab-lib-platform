@@ -13,7 +13,8 @@ import lombok.*;
         @UniqueConstraint(columnNames = {"ID"})
     }
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -35,6 +36,8 @@ public class PersonalLibrary {
         joinColumns = @JoinColumn(name = "id_pl"),
         inverseJoinColumns = @JoinColumn(name = "id_book")
     )
+
+    @Builder.Default
 
     private Set<Book> books = new HashSet<>();
 
