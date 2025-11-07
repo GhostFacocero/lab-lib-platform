@@ -71,7 +71,6 @@ public class Book {
         personalLibrary.getBooks().remove(this);
     }
 
-
     public boolean hasPersonalLibrary(PersonalLibrary personalLibrary) {
         return personalLibraries.contains(personalLibrary);
     }

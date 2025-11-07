@@ -1,6 +1,7 @@
 package com.lab_lib.restapi.Services;
 
 import com.lab_lib.restapi.DTO.PersonalLibrary.*;
+import com.lab_lib.restapi.DTO.Book.*;
 import com.lab_lib.restapi.Repositories.BookRepository;
 import com.lab_lib.restapi.Repositories.PersonalLibraryRepository;
 
@@ -81,14 +82,10 @@ public class PersonalLibraryService {
 
     
     @Transactional
-    public List<Book> getLibraryBooks(Long libId) {
-
-        Set<Book> bookSet = personalLibraryRepository.findById(libId)
+    public List<BookDTO> getLibraryBooks(Long libId) {
+        List<BookDTO> books = personalLibraryRepository.findById(libId)
         .orElseThrow(() -> new RuntimeException("Personal library not found"))
-        .getBooks();
-        System.out.println("Libri trovati: " + bookSet.size());
-        List<Book> books = new ArrayList<>(bookSet);
-        System.out.println("Libri in lista: " + books.size());
+        .getBooks().stream().map(b -> new BookDTO(b)).toList();
         return books;
     }
 

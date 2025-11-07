@@ -1,5 +1,6 @@
 package com.lab_lib.restapi.Controllers;
 
+import com.lab_lib.restapi.DTO.Book.BookDTO;
 import com.lab_lib.restapi.DTO.PersonalLibrary.*;
 import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.PersonalLibrary;
@@ -49,7 +50,7 @@ public class PersonalLibraryController {
     }
 
     @GetMapping("/get_library_books")
-    public List<Book> getLibraryBooks(@RequestParam Long libId) {
+    public List<BookDTO> getLibraryBooks(@RequestParam Long libId) {
         return personalLibraryService.getLibraryBooks(libId);
     }
 
