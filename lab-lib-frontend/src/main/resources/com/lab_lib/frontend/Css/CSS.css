@@ -1,0 +1,207 @@
+/* ============================================================
+   Tema Scuro Elegante e Minimalista
+   (Stile ispirato a interfacce moderne tipo ChatGPT)
+   ============================================================ */
+
+/* --- Sfondo generale molto scuro --- */
+.root {
+    -fx-background-color: #111111; /* nero grafite */
+    -fx-text-fill: #f2f2f2;        /* testo bianco tenue */
+}
+
+/* --- Contenitori principali con contrasto leggero --- */
+.anchor-pane, .vbox, .hbox, .border-pane, .stack-pane {
+    -fx-background-color: #1a1a1a; /* grigio molto scuro */
+    -fx-background-radius: 6;       /* leggermente arrotondato, moderno */
+    -fx-padding: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18, 0, 0, 4);
+}
+
+/* --- Pannelli secondari (contenuti interni) --- */
+.panel {
+    -fx-background-color: #1f1f1f;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+    -fx-border-color: #2e2e2e;      /* bordo molto leggero */
+    -fx-border-radius: 6;
+}
+
+/* ============================================================
+   Pulsanti – Stile professionale, scuri e senza trasparenze
+   ============================================================ */
+
+.button {
+    -fx-background-color: #2b2b2b;  /* grigio scuro solido */
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 18;
+    -fx-background-radius: 6;       /* quasi rettangolare */
+    -fx-border-radius: 6;
+    -fx-border-color: #3a3a3a;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 2);
+}
+
+/* --- Hover: più chiaro --- */
+.button:hover {
+    -fx-background-color: #3a3a3a;
+}
+
+/* --- Pressed: più scuro --- */
+.button:pressed {
+    -fx-background-color: #222222;
+}
+
+/* ============================================================
+   Campi di testo – Puliti e ben leggibili
+   ============================================================ */
+
+.text-field {
+    -fx-background-color: #202020;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-border-color: #333333;
+    -fx-border-width: 1;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6 10;
+    -fx-prompt-text-fill: #808080; /* placeholder grigio */
+}
+
+/* Focus */
+.text-field:focused {
+    -fx-border-color: #5aa0ff; /* blu elegante */
+    -fx-background-color: #262626;
+}
+
+/* ============================================================
+   ChoiceBox – Stile minimal, scuro e pulito
+   ============================================================ */
+
+.choice-box {
+    -fx-background-color: #202020;
+    -fx-border-color: #333333;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-text-fill: white;
+    -fx-padding: 6 10;
+}
+
+.choice-box:hover {
+    -fx-background-color: #2c2c2c;
+}
+
+/* Menu mostrato */
+.choice-box .context-menu {
+    -fx-background-color: #1e1e1e;
+    -fx-background-radius: 6;
+    -fx-border-color: #333333;
+}
+
+.choice-box .menu-item .label {
+    -fx-text-fill: white;
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: #2d2d2d;
+}
+
+/* ============================================================
+   TableView – Stile elegante e professionale
+   ============================================================ */
+
+.table-view {
+    -fx-background-color: #1e1e1e;
+    -fx-background-radius: 6;
+    -fx-border-color: #333333;
+    -fx-border-radius: 6;
+    -fx-padding: 6;
+}
+
+/* Intestazione */
+.table-view .column-header {
+    -fx-background-color: #2a2a2a;
+    -fx-border-color: #333333;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #dddddd;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* Celle */
+.table-view .cell {
+    -fx-text-fill: #eeeeee;
+    -fx-background-color: transparent;
+    -fx-font-size: 13px;
+}
+
+/* Righe alternate */
+.table-row-cell:odd {
+    -fx-background-color: #1a1a1a;
+}
+.table-row-cell:even {
+    -fx-background-color: #161616;
+}
+
+/* Hover */
+.table-row-cell:hover {
+    -fx-background-color: #2c2c2c;
+}
+
+/* Riga selezionata */
+.table-row-cell:selected {
+    -fx-background-color: #3e3e3e;
+    -fx-text-fill: white;
+}
+
+/* ============================================================
+   Icone
+   ============================================================ */
+
+.font-icon {
+    -fx-fill: white;
+}
+
+
+/* ============================================================
+   TESTO GLOBALE — Tutto il testo in bianco elegante
+   ============================================================ */
+
+/* Tutte le Label */
+.label {
+    -fx-text-fill: #f2f2f2;
+}
+
+/* Testo dentro dei pulsanti */
+.button .text {
+    -fx-fill: #f2f2f2;
+}
+
+/* Testo dei titoli */
+.title, .header, .heading, .subtitle {
+    -fx-text-fill: #f2f2f2;
+}
+
+/* Testo nei pannelli laterali (menu) */
+.list-cell, .menu-item .label {
+    -fx-text-fill: #f2f2f2;
+}
+
+/* Testo dentro ChoiceBox */
+.choice-box .label {
+    -fx-text-fill: #f2f2f2;
+}
+
+/* Testo della TableView */
+.table-view .cell {
+    -fx-text-fill: #e6e6e6;
+}
+
+/* Testo dell’intestazione della tabella */
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
