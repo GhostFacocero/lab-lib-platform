@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -37,7 +38,19 @@ public class MainBookStoreControllers {
     private AnchorPane ArchorPaneLibriMain;
 
     @FXML
+    private Button Btm_Gruppi;
+
+    @FXML
+    private ListView<?> ListaGruppi;
+
+    @FXML
     private Button Btm_libreriaMain;
+
+    @FXML
+    private VBox GruppiPanel;
+    
+    @FXML
+    private TableView<Book> tableLibriLibreria;
 
     @FXML
     private Button Btm_libriMain;
@@ -60,11 +73,7 @@ public class MainBookStoreControllers {
     @FXML
     private HBox HBoxVotoFinaleGeneralReviesStarts;
 
-    @FXML
-    private TableColumn<Book, String> LibreriaTableTitleCollumn;
 
-    @FXML
-    private TableColumn<Book, String> LibreriaTableaAuthorCollumn;
 
     @FXML
     private StackPane StackPaneForLibreriaLogatta;
@@ -83,9 +92,6 @@ public class MainBookStoreControllers {
 
     @FXML
     private VBox sideBar;
-
-    @FXML
-    private TableView<Book> tableLibriLibreria;
 
     @FXML
     void ToLibrerii(ActionEvent event) {}
@@ -122,15 +128,6 @@ public class MainBookStoreControllers {
         ArchorPaneLibreriaMain.setVisible(false);
         PanelDataLibroGeneralReviews.setVisible(false);
 
-        // Configura le colonne della tabella libri associandole alle proprietà della classe Book
-        LibreriaTableTitleCollumn.setCellValueFactory(new PropertyValueFactory<>("titolo"));
-        LibreriaTableaAuthorCollumn.setCellValueFactory(new PropertyValueFactory<>("autore"));
-
-        // Assegna la lista di libri alla tabella
-        tableLibriLibreria.setItems(libriData);
-
-        // Esempio: aggiunge un libro iniziale alla lista
-        libriData.add(new Book("Esempio", "Esempio"));
 
         // Listener per selezione libro in tabella
         tableLibriLibreria.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -138,23 +135,33 @@ public class MainBookStoreControllers {
                 // Quando un libro viene selezionato, mostra il pannello dei dettagli e nasconde libreria
                 ArchorPaneLibreriaMain.setVisible(false);
                 PanelDataLibroGeneralReviews.setVisible(true);
-
+                GruppiPanel.setVisible(false);
                 // Qui puoi aggiungere codice per aggiornare il pannello con i dati del libro selezionato
             }
         });
 
         // Bottoni per passare tra schermate libri e libreria
-        Btm_libriMain.setOnAction(e -> {
+        Btm_Gruppi.setOnAction(e -> {
+            ArchorPaneLibriMain.setVisible(false);
+            ArchorPaneLibreriaMain.setVisible(false);
+            PanelDataLibroGeneralReviews.setVisible(false);
+            GruppiPanel.setVisible(true);
+        });
+
+          Btm_libriMain.setOnAction(e -> {
             ArchorPaneLibriMain.setVisible(true);
             ArchorPaneLibreriaMain.setVisible(false);
             PanelDataLibroGeneralReviews.setVisible(false);
+            GruppiPanel.setVisible(false);
             tableLibriLibreria.getSelectionModel().clearSelection();
         });
+
 
         Btm_libreriaMain.setOnAction(e -> {
             ArchorPaneLibriMain.setVisible(false);
             ArchorPaneLibreriaMain.setVisible(true);
             PanelDataLibroGeneralReviews.setVisible(false);
+            GruppiPanel.setVisible(false);
             tableLibriLibreria.getSelectionModel().clearSelection();
         });
 
@@ -213,9 +220,9 @@ public class MainBookStoreControllers {
      */
     private void toggleMenuSize() {
         if (isMenuCollapsed) {
-            VboxMenuOptions.setPrefWidth(162);
-            VboxMenuOptions.setMinWidth(162);
-            VboxMenuOptions.setMaxWidth(162);
+            VboxMenuOptions.setPrefWidth(142);
+            VboxMenuOptions.setMinWidth(142);
+            VboxMenuOptions.setMaxWidth(142);
             ItemsMenu.setVisible(true);
             menuLabel.setVisible(true);
         } else {
@@ -250,6 +257,7 @@ public class MainBookStoreControllers {
             System.out.println("Impossibile aprire LogRegMainPanel.fxml");
         }
     }
+    
 
     /**
      * Metodo pubblico per aggiungere un libro dinamicamente alla lista e aggiornarla.

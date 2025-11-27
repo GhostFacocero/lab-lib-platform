@@ -205,3 +205,65 @@
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
 }
+
+/* ============================ */
+/*      LISTVIEW MODERNO        */
+/*   (oscuro, minimal, elegante)*/
+/* ============================ */
+
+.list-view {
+    -fx-background-color: transparent; /* Sin bloque gris feo */
+    -fx-control-inner-background: #1E1E1E; /* Fondo oscuro elegante */
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-color: #3C3C3C; /* Borde muy sutil */
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+/* Celdas individuales */
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 8 10;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+}
+
+/* Alternancia más elegante */
+.list-cell:odd {
+    -fx-background-color: rgba(255, 255, 255, 0.03);
+}
+.list-cell:even {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Hover */
+.list-cell:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
+}
+
+/* Celda seleccionada */
+.list-cell:selected {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+    -fx-text-fill: white;
+}
+
+/* Barra de scroll oscura */
+.list-view .scroll-bar:vertical,
+.list-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.list-view .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+    -fx-background-radius: 2;
+}
+
+.list-view .track {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
