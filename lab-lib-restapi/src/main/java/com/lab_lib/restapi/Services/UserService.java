@@ -82,6 +82,10 @@ public class UserService {
         return userRepository.findByToken(token);
     }
 
+    public boolean existsByToken(UUID token) {
+        return userRepository.existsByToken(token);
+    }
+
     public boolean existsById(Long id) {
         return userRepository.existsById(id);
     }

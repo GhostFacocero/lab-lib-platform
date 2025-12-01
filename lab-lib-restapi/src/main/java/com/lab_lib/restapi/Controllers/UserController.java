@@ -1,9 +1,10 @@
 package com.lab_lib.restapi.Controllers;
 
 import com.lab_lib.restapi.DTO.AppUser.RegisterRequest;
+import com.lab_lib.restapi.DTO.AppUser.AuthResponse;
 import com.lab_lib.restapi.DTO.AppUser.LoginRequest;
+import com.lab_lib.restapi.DTO.AppUser.AuthResponse;
 import com.lab_lib.restapi.Models.AppUser;
-import com.lab_lib.restapi.Models.PersonalLibrary;
 import com.lab_lib.restapi.Services.UserService;
 
 import java.util.Map;
@@ -25,24 +26,18 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
-        try {
-            UUID token = userService.registerUser(req);
-            return ResponseEntity.status(201).body(Map.of("token", token));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    @PostMapping("/public/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest req) {
+        UUID token = userService.registerUser(req);
+        //usa un DTO come response per pulizia di codice e per inviare il dato come JSON
+        //in forma "token:" + token
+        return ResponseEntity.status(201).body(new AuthResponse(token));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        try {
-            UUID token = userService.loginUser(req);
-            return ResponseEntity.ok().body(Map.of("token", token));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    @PostMapping("/public/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
+        UUID token = userService.loginUser(req);
+        return ResponseEntity.ok().body(new AuthResponse(token));
     }
 
 }

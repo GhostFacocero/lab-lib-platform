@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
-        String message = "Parametro '" + ex.getName() + "' non valido: atteso tipo " + ex.getRequiredType().getSimpleName();
+        String message = "Parameter '" + ex.getName() + "' not valid: expected type " + ex.getRequiredType().getSimpleName();
         return buildResponse(HttpStatus.BAD_REQUEST, message, null, request);
     }
 
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
 
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Si è verificato un errore interno. Riprova più tardi.",
+                "An internal error occured. Try again later.",
                 null,
                 request);
     }
