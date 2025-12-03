@@ -13,7 +13,10 @@ import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.PersonalLibrary;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 import java.util.ArrayList;
@@ -40,10 +43,14 @@ public class PersonalLibraryService {
     }
 
     @Transactional
-    public synchronized PersonalLibrary addLibrary(AddLibraryRequest newLibrary) {
+    public synchronized PersonalLibrary addLibrary(AddLibraryRequest newLibrary, Long userId) {
+
+        //check per vedere se l'utente esiste
+        if(userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+        }
 
         String name = newLibrary.getName();
-        Long userId = newLibrary.getUserId();
 
         //check per vedere se esiste già una libreria con lo stesso nome associata allo stesso utente
         if(personalLibraryRepository.existsByNameAndUserId(name, userId)) {
@@ -61,7 +68,12 @@ public class PersonalLibraryService {
 
 
     @Transactional
-    public synchronized void addBookToLibrary(AddBookToLibraryRequest req) {
+    public synchronized void addBookToLibrary(AddBookToLibraryRequest req, Long userId) {
+
+        if(userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);    
+        }
+
         Long plId = req.getPlId();
         Long bookId = req.getBookId();
 
@@ -82,11 +94,17 @@ public class PersonalLibraryService {
 
     
     @Transactional
-    public List<BookDTO> getLibraryBooks(Long libId) {
+    public List<BookDTO> getLibraryBooks(Long libId, Long userId) {
+
+        if(userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+        }
+
         List<BookDTO> books = personalLibraryRepository.findById(libId)
         .orElseThrow(() -> new RuntimeException("Personal library not found"))
         .getBooks().stream().map(b -> new BookDTO(b)).toList();
         return books;
+        
     }
 
 }

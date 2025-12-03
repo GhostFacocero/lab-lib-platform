@@ -26,7 +26,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/public/register")
+    @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest req) {
         UUID token = userService.registerUser(req);
         //usa un DTO come response per pulizia di codice e per inviare il dato come JSON
@@ -34,7 +34,7 @@ public class UserController {
         return ResponseEntity.status(201).body(new AuthResponse(token));
     }
 
-    @PostMapping("/public/login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
         UUID token = userService.loginUser(req);
         return ResponseEntity.ok().body(new AuthResponse(token));

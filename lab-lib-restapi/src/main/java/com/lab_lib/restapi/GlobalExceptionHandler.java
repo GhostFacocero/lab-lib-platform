@@ -4,6 +4,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.validation.ConstraintViolationException;
 
@@ -41,7 +42,25 @@ public class GlobalExceptionHandler {
         ex.getConstraintViolations().forEach(v ->
             errors.put(v.getPropertyPath().toString(), v.getMessage())
         );
-        return buildResponse(HttpStatus.BAD_REQUEST, "Constraint Violation", errors, request);
+        return buildResponse(
+            HttpStatus.BAD_REQUEST,
+            "Constraint Violation",
+            errors,
+            request);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex, WebRequest request) {
+        HttpStatusCode status = ex.getStatusCode();
+        if(status == HttpStatus.UNAUTHORIZED) {
+            return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                "User is not authenticated",
+                null,
+                request
+            );
+        }
+        return handleAllExceptions(ex, request);
     }
 
     // Gestione delle eccezioni generiche (catch universale)

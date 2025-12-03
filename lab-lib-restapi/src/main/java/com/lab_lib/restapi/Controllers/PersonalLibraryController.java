@@ -7,6 +7,7 @@ import com.lab_lib.restapi.Models.PersonalLibrary;
 import com.lab_lib.restapi.Services.PersonalLibraryService;
 import com.lab_lib.restapi.Repositories.UserRepository;
 import com.lab_lib.restapi.Services.UserService;
+import com.lab_lib.restapi.Utils.UserContext;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/PersonalLibraries")
+@RequestMapping("/personallibraries")
 public class PersonalLibraryController {
 
     private final PersonalLibraryService personalLibraryService;
@@ -34,29 +35,28 @@ public class PersonalLibraryController {
     }
     
     @GetMapping
-    public List<PersonalLibrary> getPersonalLibraries(@RequestParam Long userId) {
-        if(!userService.existsById(userId)) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "User id does not exist"
-            );
-        }
+    public List<PersonalLibrary> getPersonalLibraries() {
+        Long userId = UserContext.getCurrentUserId();
         return personalLibraryService.findAllByUserId(userId);
     }
 
     @PostMapping("/add_library")
     public ResponseEntity<String> addLibrary(@RequestBody AddLibraryRequest req) {
-        personalLibraryService.addLibrary(req);
+        Long userId = UserContext.getCurrentUserId();
+        personalLibraryService.addLibrary(req, userId);
         return ResponseEntity.status(201).body("Success");            
     }
 
     @GetMapping("/get_library_books")
     public List<BookDTO> getLibraryBooks(@RequestParam Long libId) {
-        return personalLibraryService.getLibraryBooks(libId);
+        Long userId = UserContext.getCurrentUserId();
+        return personalLibraryService.getLibraryBooks(libId, userId);
     }
 
     @PostMapping("/add_book_to_library")
     public ResponseEntity<String> addBookToLibrary(@RequestBody AddBookToLibraryRequest req) {
-        personalLibraryService.addBookToLibrary(req);
+        Long userId = UserContext.getCurrentUserId();
+        personalLibraryService.addBookToLibrary(req, userId);
         return ResponseEntity.status(201).body("Success");
     }
 
