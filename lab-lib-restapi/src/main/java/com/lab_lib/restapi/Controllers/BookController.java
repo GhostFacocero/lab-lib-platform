@@ -24,4 +24,24 @@ public class BookController {
     public Page<Book> getBooks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
         return bookService.getBooks(page, size);
     }
+
+    @PostMapping("/search")
+    public Page<Book> search(
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String author,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "50") int size)
+    {
+        if(title != null && author == null) {
+            return bookService.searchByTitle(title, page, size);
+        }
+        if(title == null && author != null) {
+            return bookService.searchByAuthor(author, page, size);
+        }
+        if(title != null && author != null) {
+            return bookService.searchByTitleAndAuthor(title, author, page, size);
+        }
+       return null;
+    }
+
 }

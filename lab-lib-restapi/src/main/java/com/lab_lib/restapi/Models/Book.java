@@ -46,7 +46,7 @@ public class Book {
         inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     @BatchSize(size = 50)
-    private Set<Author> authors;
+    private Set<Author> authors = new HashSet<Author>();
 
     @ManyToMany
     @JoinTable(
@@ -73,6 +73,10 @@ public class Book {
 
     public boolean hasPersonalLibrary(PersonalLibrary personalLibrary) {
         return personalLibraries.contains(personalLibrary);
+    }
+
+    public boolean hasAuthor(Author author) {
+        return authors.contains(author);
     }
 
 }

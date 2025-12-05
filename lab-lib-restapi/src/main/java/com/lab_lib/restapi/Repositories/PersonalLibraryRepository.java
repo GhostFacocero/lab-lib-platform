@@ -20,7 +20,6 @@ public interface PersonalLibraryRepository extends JpaRepository<PersonalLibrary
     boolean existsByUserId(Long userId);
     boolean existsByNameAndUserId(String name, Long userId);
     List<PersonalLibrary> findAllByUserId(Long userId);
-    
     boolean existsByIdAndBooksId(Long plId, Long bookId);
 
 }

@@ -7,7 +7,6 @@ import com.lab_lib.restapi.Repositories.PersonalLibraryRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 
 import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.PersonalLibrary;
@@ -16,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
@@ -39,6 +39,9 @@ public class PersonalLibraryService {
 
     @Transactional
     public List<PersonalLibrary> findAllByUserId(Long userId) {
+        if(userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         return personalLibraryRepository.findAllByUserId(userId);
     }
 
