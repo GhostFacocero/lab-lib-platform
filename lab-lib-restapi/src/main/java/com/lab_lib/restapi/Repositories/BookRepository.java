@@ -13,9 +13,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Override
     @EntityGraph(attributePaths = {"publisher"})
+
     Page<Book> findAll(Pageable pageable);
     Page<Book> findByTitleContaining(String title, Pageable pageable);
     Page<Book> findByAuthorsNameContaining(String author, Pageable pageable);
     Page<Book> findByTitleAndAuthorsNameContaining(String title, String author, Pageable pageable);
-
+    
 }

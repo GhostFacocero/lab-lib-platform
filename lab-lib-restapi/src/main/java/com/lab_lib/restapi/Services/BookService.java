@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.lab_lib.restapi.DTO.Book.BookDTO;
 import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Repositories.BookRepository;
 
@@ -26,7 +27,7 @@ public class BookService {
     }
  
     @Transactional
-    public Page<Book> getBooks(int page, int size) {
+    public Page<BookDTO> getBooks(int page, int size) {
 
         int maxSize = 100;
 
@@ -36,23 +37,57 @@ public class BookService {
             );
         }
         
-        return bookRepository.findAll(PageRequest.of(page, size));
+        return bookRepository.findAll(PageRequest.of(page, size))
+        .map(BookDTO::new);
 
     }
 
     @Transactional
-    public Page<Book> searchByTitle(String title, int page, int size) {
-        return bookRepository.findByTitleContaining(title, PageRequest.of(page, size));
+    public Page<BookDTO> searchByTitle(String title, int page, int size) {
+
+        int maxSize = 100;
+
+        if (size > maxSize) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Page size must not exceed " + maxSize
+            );
+        }
+
+        return bookRepository.findByTitleContaining(title, PageRequest.of(page, size))
+        .map(BookDTO::new);
+
     }
 
     @Transactional
-    public Page<Book> searchByAuthor(String author, int page, int size) {
-        return bookRepository.findByAuthorsNameContaining(author, PageRequest.of(page, size));
+    public Page<BookDTO> searchByAuthor(String author, int page, int size) {
+
+        int maxSize = 100;
+
+        if (size > maxSize) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Page size must not exceed " + maxSize
+            );
+        }
+
+        return bookRepository.findByAuthorsNameContaining(author, PageRequest.of(page, size))
+        .map(BookDTO::new);
+
     }
 
     @Transactional
-    public Page<Book> searchByTitleAndAuthor(String title, String author, int page, int size) {
-        return bookRepository.findByTitleAndAuthorsNameContaining(title, author, PageRequest.of(page, size));
+    public Page<BookDTO> searchByTitleAndAuthor(String title, String author, int page, int size) {
+
+        int maxSize = 100;
+
+        if (size > maxSize) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Page size must not exceed " + maxSize
+            );
+        }
+
+        return bookRepository.findByTitleAndAuthorsNameContaining(title, author, PageRequest.of(page, size))
+        .map(BookDTO::new);
+        
     }
 
 }

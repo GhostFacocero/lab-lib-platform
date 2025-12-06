@@ -47,10 +47,17 @@ public class PersonalLibraryController {
         return ResponseEntity.status(201).body("Success");            
     }
 
-    @GetMapping("/get_library_books")
-    public List<BookDTO> getLibraryBooks(@RequestParam Long libId) {
+    @GetMapping("/search_library_books")
+    public List<BookDTO> searchLibraryBooks(
+        @RequestParam Long libId, 
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String author)
+    {
         Long userId = UserContext.getCurrentUserId();
-        return personalLibraryService.getLibraryBooks(libId, userId);
+        if(title != null && author == null) {
+            return personalLibraryService.searchBookByTitle(libId, userId, title);
+        }
+        return null;
     }
 
     @PostMapping("/add_book_to_library")
