@@ -1,12 +1,8 @@
 package com.lab_lib.restapi.Models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,19 +16,24 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private Integer id_book;
+    @ManyToOne
+    @JoinColumn(name = "id_book")
+    private Book book;
 
-    @Column(unique = true)
-    private Long id_rn;
+    @ManyToOne
+    @JoinColumn(name = "id_rn")
+    private RatingName rn;
 
-    @Column(unique = true)
-    private Long id_user;
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private AppUser user;
 
     @Column
     private String review;
 
+    @Min(1)
+    @Max(2)
     @Column
-    private Long evaliuation;
+    private Integer evaluation;
     
 }

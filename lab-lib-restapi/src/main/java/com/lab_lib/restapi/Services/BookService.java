@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.lab_lib.restapi.DTO.Book.BookDTO;
 import com.lab_lib.restapi.Models.Book;
+import com.lab_lib.restapi.Models.Rating;
 import com.lab_lib.restapi.Repositories.BookRepository;
 
 import jakarta.persistence.EntityManager;
@@ -71,6 +72,7 @@ public class BookService {
 
         return bookRepository.findByAuthorsNameContaining(author, PageRequest.of(page, size))
         .map(BookDTO::new);
+ 
 
     }
 
