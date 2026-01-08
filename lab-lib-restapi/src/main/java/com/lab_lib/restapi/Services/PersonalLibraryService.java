@@ -53,14 +53,18 @@ public class PersonalLibraryService {
 
         //check per vedere se l'utente esiste
         if(userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "User is not authenticated"
+            );
         }
 
         String name = newLibrary.getName();
 
         //check per vedere se esiste già una libreria con lo stesso nome associata allo stesso utente
         if(personalLibraryRepository.existsByNameAndUserId(name, userId)) {
-            throw new IllegalArgumentException("Personal library with the same name already exists");
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT, "Personal library with the same name already exists"
+            );
         }
 
         PersonalLibrary library = new PersonalLibrary();
@@ -77,21 +81,31 @@ public class PersonalLibraryService {
     public synchronized void addBookToLibrary(AddBookToLibraryRequest req, Long userId) {
 
         if(userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);    
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "User not authenticated"
+            );    
         }
 
         Long plId = req.getPlId();
         Long bookId = req.getBookId();
 
         if(personalLibraryRepository.existsByIdAndBooksId(plId, bookId)) {
-            throw new IllegalArgumentException("Selected book is already in this library");
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Selected book is already in this library"
+            );
         }
 
         PersonalLibrary library = personalLibraryRepository.findById(plId)
-        .orElseThrow(() -> new RuntimeException("Personal library not found"));
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Personal library not found"
+        ));
 
         Book book = bookRepository.findById(bookId)
-        .orElseThrow(() -> new RuntimeException("Book not found"));
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Book not found"
+        ));
 
         library.addBook(book);
         personalLibraryRepository.save(library);

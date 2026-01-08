@@ -3,13 +3,14 @@ package com.lab_lib.restapi.Models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "rating", uniqueConstraints = @UniqueConstraint(columnNames = {"id_book", "id_rn", "id_user"}))
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Rating {
 
     @Id
@@ -22,7 +23,7 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "id_rn")
-    private RatingName rn;
+    private RatingName ratingName;
 
     @ManyToOne
     @JoinColumn(name = "id_user")

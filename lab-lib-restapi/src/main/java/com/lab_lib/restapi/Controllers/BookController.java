@@ -30,6 +30,8 @@ public class BookController {
     public Page<BookDTO> search(
         @RequestParam(required = false) String title,
         @RequestParam(required = false) String author,
+        @RequestParam(required = false) String ratingName,
+        @RequestParam(required = false) Integer evaluation,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "50") int size)
     {
@@ -41,6 +43,9 @@ public class BookController {
         }
         if(title != null && author != null) {
             return bookService.searchByTitleAndAuthor(title, author, page, size);
+        }
+        if(ratingName != null && evaluation != null) {
+            return bookService.searchByRatingNameAndEvaluation(ratingName, evaluation, page, size);
         }
        return null;
     }
