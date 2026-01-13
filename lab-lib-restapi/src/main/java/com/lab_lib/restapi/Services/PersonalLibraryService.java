@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Set;
 import java.util.List;
 
 @Service
@@ -140,93 +139,6 @@ public class PersonalLibraryService {
         .getBooks().stream().map(b -> new BookDTO(b)).toList();
         return books;
         
-    }
-
-
-    @Transactional
-    public List<BookDTO> searchBookByTitle(Long libId, Long userId, String title) {
-
-        if(userId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Authentication required"
-            );
-        }
-
-        Set<Book> books = personalLibraryRepository.findById(libId)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "Personal library not found"
-        ))
-        .getBooks();
-
-        if(title == null || title.isBlank()) {
-            return books.stream().map(b -> new BookDTO(b)).toList();
-        }
-
-        String titleLow = title.toLowerCase();
-        return books.stream().filter(b -> b.getTitle().toLowerCase().contains(titleLow))
-        .map(b -> new BookDTO(b)).toList();
-    
-    }
-
-    @Transactional
-    public List<BookDTO> searchBookByAuthors(Long libId, Long userId, String authors) {
-
-        if(userId == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-
-        Set<Book> books = personalLibraryRepository.findById(libId)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "Personal library not found"
-        ))
-        .getBooks();
-
-        if(authors == null || authors.isBlank()) {
-            return books.stream().map(b -> new BookDTO(b)).toList();
-        }
-
-        String authorsLow = authors.toLowerCase();
-        return books.stream().filter(b -> b.getAuthors()
-        .stream().anyMatch(a -> a.getName().toLowerCase().contains(authorsLow)))
-        .map(b -> new BookDTO(b)).toList();
-
-    }
-
-    @Transactional
-    public List<BookDTO> searchBookBytitleAndAuthors(Long libId, Long userId, String title, String authors) {
-
-        if(userId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Authentication required"
-            );
-        }
-
-        Set<Book> books = personalLibraryRepository.findById(libId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "Personal library not found"
-        ))
-        .getBooks();
-
-        if((title == null || title.isBlank()) && (authors == null || authors.isBlank())) {
-            return books.stream().map(b -> new BookDTO(b)).toList();
-        } else if((title == null || title.isBlank()) && (!authors.isBlank() || authors != null)) {
-            return searchBookByAuthors(libId, userId, authors);
-        } else if((!title.isBlank() || title != null) && (authors == null || authors.isBlank())) {
-            return searchBookByTitle(libId, userId, title);
-        }
-
-        String titleLow = title.toLowerCase();
-        String authorsLow = authors.toLowerCase();
-        List<Book> firstFilter = books.stream().filter(b -> b.getTitle().toLowerCase().contains(titleLow))
-        .toList();
-        return firstFilter.stream().filter(b -> b.getAuthors()
-        .stream().anyMatch(a -> a.getName().toLowerCase().contains(authorsLow)))
-        .map(b -> new BookDTO(b)).toList();
-
     }
 
 }

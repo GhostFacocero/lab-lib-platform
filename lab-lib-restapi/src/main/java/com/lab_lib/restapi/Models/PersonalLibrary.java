@@ -44,12 +44,12 @@ public class PersonalLibrary {
 
     public void addBook(Book book) {
         books.add(book);
-        book.getPersonalLibraries().add(this);
+        book.getLibraries().add(this);
     }
 
     public void removeBook(Book book) {
         books.remove(book);
-        book.getPersonalLibraries().remove(this);
+        book.getLibraries().remove(this);
     }
 
     public boolean hasBook(Book book) {

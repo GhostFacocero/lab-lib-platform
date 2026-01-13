@@ -59,23 +59,23 @@ public class Book {
 
     @ManyToMany(mappedBy = "books")
     @JsonIgnore
-    private Set<PersonalLibrary> personalLibraries = new HashSet<>();
+    private Set<PersonalLibrary> libraries = new HashSet<>();
 
     @OneToMany(mappedBy = "book")
     private Set<Rating> ratings = new HashSet<>();  
 
     public void addPersonalLibrary(PersonalLibrary personalLibrary) {
-        personalLibraries.add(personalLibrary);
+        libraries.add(personalLibrary);
         personalLibrary.getBooks().add(this);
     }
 
     public void removePersonalLibrary(PersonalLibrary personalLibrary) {
-        personalLibraries.remove(personalLibrary);
+        libraries.remove(personalLibrary);
         personalLibrary.getBooks().remove(this);
     }
 
     public boolean hasPersonalLibrary(PersonalLibrary personalLibrary) {
-        return personalLibraries.contains(personalLibrary);
+        return libraries.contains(personalLibrary);
     }
 
     public boolean hasAuthor(Author author) {
