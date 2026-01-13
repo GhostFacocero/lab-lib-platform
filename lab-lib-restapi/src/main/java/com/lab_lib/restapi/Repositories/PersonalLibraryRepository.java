@@ -5,11 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.lab_lib.restapi.Models.PersonalLibrary;
-import com.lab_lib.restapi.Models.Book;
 
 public interface PersonalLibraryRepository extends JpaRepository<PersonalLibrary, Long> {
 

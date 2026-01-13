@@ -1,6 +1,7 @@
 package com.lab_lib.restapi.Repositories;
 
 import com.lab_lib.restapi.Models.Book;
+import com.lab_lib.restapi.Models.RatingName;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -18,5 +19,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Page<Book> findByTitleContaining(String title, Pageable pageable);
     Page<Book> findByAuthorsNameContaining(String author, Pageable pageable);
     Page<Book> findByTitleAndAuthorsNameContaining(String title, String author, Pageable pageable);
-    
+    Page<Book> findByRatingsNameAndRatingsEvaluation(RatingName name, Integer evaluation, Pageable pageable);
+
 }

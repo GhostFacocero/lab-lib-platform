@@ -2,7 +2,6 @@ package com.lab_lib.restapi.Models;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,8 +24,9 @@ public class PersonalLibrary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
     @Column(name = "name", nullable = false)
     private String name;

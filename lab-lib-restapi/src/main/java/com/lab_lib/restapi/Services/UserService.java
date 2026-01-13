@@ -3,7 +3,6 @@ package com.lab_lib.restapi.Services;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.lab_lib.restapi.DTO.AppUser.*;
@@ -79,7 +78,8 @@ public class UserService {
     public Long getUserIdByToken(UUID token) {
         if(!userRepository.existsByToken(token))
             throw new IllegalArgumentException("Authentication failed: token does not exist");
-        return userRepository.findByToken(token);
+        AppUser user = userRepository.findByToken(token);
+        return user.getId();
     }
 
     public boolean existsByToken(UUID token) {

@@ -9,7 +9,7 @@ import lombok.Data;
 
 public class AddRatingToBookRequest {
     @NotNull
-    String ratingName;
+    String name;
     @NotNull
     String review;
     @NotNull

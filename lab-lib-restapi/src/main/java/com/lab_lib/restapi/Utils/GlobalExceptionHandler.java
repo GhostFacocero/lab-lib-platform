@@ -1,4 +1,4 @@
-package com.lab_lib.restapi;
+package com.lab_lib.restapi.Utils;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;

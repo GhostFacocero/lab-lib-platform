@@ -8,19 +8,18 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import com.lab_lib.restapi.DTO.Rating.AddRatingToBookRequest;
-import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.Rating;
 import com.lab_lib.restapi.Models.RatingName;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 
+@Service
 public class RatingService {
 
     @PersistenceContext
@@ -29,12 +28,14 @@ public class RatingService {
     private final RatingRepository ratingRepository;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    
 
     public RatingService(RatingRepository ratingRepository, BookRepository bookRepository, UserRepository userRepository) {
         this.ratingRepository = ratingRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
     }
+
 
     @Transactional
     public List<Rating> findAllByBookId(Long bookId) {
@@ -57,6 +58,7 @@ public class RatingService {
 
     }
 
+
     @Transactional
     public Rating addRatingToBook(AddRatingToBookRequest req, Long bookId, Long userId) {
 
@@ -66,31 +68,36 @@ public class RatingService {
             );
         }
 
-        String ratingName = req.getRatingName();
+        String name = req.getName();
         String review = req.getReview();
         Integer evaluation = req.getEvaluation();
 
-        if(ratingRepository.existsByBookIdAndRatingNameAndUserId(bookId, ratingName, userId)) {
+        RatingName ratingName = new RatingName();
+        ratingName.setName(name);
+
+        if(ratingRepository.existsByBookIdAndNameAndUserId(bookId, ratingName, userId)) {
             throw new ResponseStatusException(
-                HttpStatus.CONFLICT, "Cannot add multiple ratings for the same rating cathegory"
+                HttpStatus.CONFLICT,
+                "Cannot add multiple ratings for the same rating category"
             );
         }
-
-        RatingName rn = new RatingName();
-        rn.setName(ratingName);
         
         Rating rating = new Rating();
+
         rating.setBook(bookRepository.findById(userId)
         .orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND, 
             "Book not found"
         )));
-        rating.setRatingName(rn);
+
+        rating.setName(ratingName);
+
         rating.setUser(userRepository.findById(userId)
         .orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "User not found"
         )));
+
         rating.setReview(review);
         rating.setEvaluation(evaluation);
 

@@ -15,7 +15,7 @@ import lombok.Data;
 public class BookDTO {
 
     @NotNull
-    private Integer id;
+    private Long id;
 
     @NotBlank
     private String title;

@@ -23,7 +23,7 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "id_rn")
-    private RatingName ratingName;
+    private RatingName name;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
@@ -33,7 +33,7 @@ public class Rating {
     private String review;
 
     @Min(1)
-    @Max(2)
+    @Max(5)
     @Column
     private Integer evaluation;
     

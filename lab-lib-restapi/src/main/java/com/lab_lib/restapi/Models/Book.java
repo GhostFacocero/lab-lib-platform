@@ -21,7 +21,7 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String title;
 
@@ -60,6 +60,9 @@ public class Book {
     @ManyToMany(mappedBy = "books")
     @JsonIgnore
     private Set<PersonalLibrary> personalLibraries = new HashSet<>();
+
+    @OneToMany(mappedBy = "book")
+    private Set<Rating> ratings = new HashSet<>();  
 
     public void addPersonalLibrary(PersonalLibrary personalLibrary) {
         personalLibraries.add(personalLibrary);

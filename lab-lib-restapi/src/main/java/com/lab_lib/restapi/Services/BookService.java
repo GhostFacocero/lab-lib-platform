@@ -8,11 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.lab_lib.restapi.DTO.Book.BookDTO;
-import com.lab_lib.restapi.Models.Book;
-import com.lab_lib.restapi.Models.Rating;
+import com.lab_lib.restapi.Models.RatingName;
 import com.lab_lib.restapi.Repositories.BookRepository;
-import com.lab_lib.restapi.Repositories.RatingRepository;
-import com.lab_lib.restapi.Services.RatingService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -24,11 +21,9 @@ public class BookService {
     private EntityManager entityManager;
 
     private final BookRepository bookRepository;
-    private final RatingRepository ratingRepository;
 
-    public BookService(BookRepository bookRepository, RatingRepository ratingRepository) {
+    public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.ratingRepository = ratingRepository;
     }
  
     @Transactional
@@ -98,7 +93,7 @@ public class BookService {
 
 
     @Transactional
-    public Page<BookDTO> searchByRatingNameAndEvaluation(String ratingName, int evaluation, int page, int size) {
+    public Page<BookDTO> searchByRatingNameAndEvaluation(String name, int evaluation, int page, int size) {
 
         int maxSize = 100;
         
@@ -108,9 +103,10 @@ public class BookService {
             );
         }
 
-        Page<Rating> ratings = ratingRepository.findAllByRatingNameAndEvaluation(ratingName, evaluation, PageRequest.of(page, size));
-        Page<Book> books = ratings.map(Rating::getBook);
-        return books.map(BookDTO::new);
+        RatingName ratingName = new RatingName();
+        ratingName.setName(name);
+        return bookRepository.findByRatingsNameAndRatingsEvaluation(ratingName, evaluation, PageRequest.of(page, size))
+        .map(BookDTO::new);
         
     }
 
