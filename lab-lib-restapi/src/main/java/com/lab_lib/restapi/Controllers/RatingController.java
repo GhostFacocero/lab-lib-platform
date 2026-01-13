@@ -15,21 +15,27 @@ import com.lab_lib.restapi.Models.Rating;
 import com.lab_lib.restapi.Services.RatingService;
 import com.lab_lib.restapi.Utils.UserContext;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/ratings")
 public class RatingController {
 
     private final RatingService ratingService;
+    
 
     public RatingController(RatingService ratingService) {
         this.ratingService = ratingService;
     }
+
 
     @GetMapping("/:bookId")
     public List<Rating> getRatingsByBookId(@PathVariable Long bookId) {
         return ratingService.findAllByBookId(bookId);
     }
 
+
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/add_rating/:bookId")
     public ResponseEntity<String> addRatingToBook(@RequestBody AddRatingToBookRequest req, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();

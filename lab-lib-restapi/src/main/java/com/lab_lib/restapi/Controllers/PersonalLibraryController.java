@@ -6,12 +6,15 @@ import com.lab_lib.restapi.Models.PersonalLibrary;
 import com.lab_lib.restapi.Services.PersonalLibraryService;
 import com.lab_lib.restapi.Utils.UserContext;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.http.ResponseEntity;
 
+
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/personallibraries")
 public class PersonalLibraryController {
