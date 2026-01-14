@@ -16,6 +16,10 @@ public class BookController {
         this.bookService = bookService;
     }
 
+
+    /*Per semplificare l'invio di authors e categories al front
+    che sono multipli e non presenti direttamente nella tabella
+    book, si usano Page<BookDTO> per semplicità di costruzione e pulizia*/
     @GetMapping
     public Page<BookDTO> getBooks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
         return bookService.getBooks(page, size);

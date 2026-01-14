@@ -26,7 +26,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    @Transactional // abbellitore che rollbacka automaticamente in caso di eccezioni
+    @Transactional //abbellitore che rollbacka automaticamente in caso di eccezioni
     public UUID registerUser(RegisterRequest newUser) {
         // Email format check
         if (!EMAIL_REGEX.matcher(newUser.getEmail()).matches()) {

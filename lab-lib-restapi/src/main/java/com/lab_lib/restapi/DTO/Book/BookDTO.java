@@ -7,6 +7,7 @@ import com.lab_lib.restapi.Models.Book;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -26,7 +27,11 @@ public class BookDTO {
     private Integer publishMonth;
     private Integer publishYear;
     private String publisher;
+
+    @NotEmpty
     private List<String> authors;
+
+    @NotEmpty
     private List<String> categories;
 
     public BookDTO(Book book) {

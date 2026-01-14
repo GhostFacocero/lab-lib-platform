@@ -1,12 +1,13 @@
 package com.lab_lib.restapi.DTO.PersonalLibrary;
 
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 
 public class GetLibraryBooksRequest {
 
-    @NonNull
+    @NotNull
     Long libId;
 
 }
