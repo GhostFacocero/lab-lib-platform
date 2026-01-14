@@ -3,6 +3,7 @@ package com.lab_lib.restapi.Middleware;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.lab_lib.restapi.Services.UserService;
@@ -21,33 +22,43 @@ public class UserAuthentication extends OncePerRequestFilter{
         this.userService = userService;
     }
 
+    @Bean
+    public UserAuthentication userAuthentication() {
+        return new UserAuthentication(userService);
+    }
+
     // TODO Auto-generated method stub
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+            
+        try {
+            UUID token = extractToken(request);
 
-        UUID token = extractToken(request);
-
-        //controllo se il token non esiste o non è valido
-        if(token == null || !userService.existsByToken(token)) {
-            //in caso non faccio nulla e vado avanti col flusso
-            filterChain.doFilter(request, response);
+            //controllo se il token non esiste o non è valido
+            if(token == null || !userService.existsByToken(token)) {
+                //in caso non faccio nulla e vado avanti col flusso
+                filterChain.doFilter(request, response);
+                return;
+            } else if(token != null && userService.existsByToken(token)) {
+                //se il token esiste ed è valido aggiorno il context per questa richiesta
+                Long userId = userService.getUserIdByToken(token);
+                UserContext.setCurrentUserId(userId);
+                filterChain.doFilter(request, response);
+            }
+        } finally {
             UserContext.clear();
-            return;
-        } else if(token != null && userService.existsByToken(token)) {
-            //se il token esiste ed è valido aggiorno il context per questa richiesta
-            Long userId = userService.getUserIdByToken(token);
-            UserContext.setCurrentUserId(userId);
         }
         
     }
 
     private UUID extractToken(HttpServletRequest req) {
         String authHeader = req.getHeader("Authorization");
+        System.out.println(authHeader);
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             return UUID.fromString(authHeader.substring(7));
         }
-        return UUID.fromString(req.getParameter("token")); // fallback: token in query param
+        return null; // fallback: token in query param
     }
     
 }
