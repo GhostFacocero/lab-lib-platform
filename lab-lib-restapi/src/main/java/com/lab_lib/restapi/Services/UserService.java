@@ -47,7 +47,7 @@ public class UserService {
         user.setSurname(newUser.getSurname());
         user.setCf(newUser.getCf());
         user.setEmail(newUser.getEmail());
-        user.setPassword(newUser.getPassword()); // hash later
+        user.setPassword(cypher(newUser.getPassword()));
 
 
         AppUser saved = userRepository.save(user);
@@ -63,7 +63,7 @@ public class UserService {
             throw new IllegalArgumentException("Password must be at least 8 characters.");
         }  
         AppUser existingUser = userRepository.findByNickname(User.getNickname());
-        if(existingUser == null || !existingUser.getPassword().equals(User.getPassword())) {
+        if(existingUser == null || !decypher(existingUser.getPassword()).equals(User.getPassword())) {
             throw new IllegalArgumentException("Invalid nickname or password.");
         } else {
             return existingUser.getToken();
@@ -83,6 +83,34 @@ public class UserService {
 
     public boolean existsById(Long id) {
         return userRepository.existsById(id);
+    }
+
+    private String cypher(String s) {
+        String cypher = "";
+        for(int i = 0; i < s.length(); i++) {
+            int code = s.codePointAt(i);
+            int codeCypher = code + 3;
+            if(codeCypher > 127) {
+                int diff = codeCypher - 127;
+                codeCypher = 32 + diff;
+            }
+            cypher += (char)codeCypher;
+        }
+        return cypher;
+    }
+
+    private String decypher(String s) {
+        String decypher = "";
+        for(int i = 0; i < s.length(); i++) {
+            int code = s.codePointAt(i);
+            int codeDecypher = code - 3;
+            if(codeDecypher < 32) {
+                int diff = 32 - codeDecypher;
+                codeDecypher = 127 - diff;
+            }
+            decypher += (char)codeDecypher;
+        }
+        return decypher;
     }
 
 }
