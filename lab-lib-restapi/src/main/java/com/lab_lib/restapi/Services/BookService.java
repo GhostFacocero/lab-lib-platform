@@ -96,6 +96,20 @@ public class BookService {
 
 
     @Transactional
+    public Page<BookDTO> getBooksByLibId(Long userId, Long libId, int page, int size) {
+        if(userId == null) {
+            throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
+        }
+        int maxSize = 100;
+        if(size > maxSize) {
+            throw new IllegalArgumentException("Page size must not exceed " + maxSize);
+        }
+        return bookRepository.findByLibrariesId(libId, PageRequest.of(page, size))
+        .map(BookDTO::new);
+    }
+
+
+    @Transactional
     public Page<BookDTO> searchByLibIdAndTitle(Long userId, Long libId, String title, int page, int size) {
 
         if(userId == null) {

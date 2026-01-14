@@ -8,8 +8,14 @@ import lombok.Data;
 public class AddBookToLibraryRequest {
 
     @NotNull
-    private Long PlId;
+    private Long plId;
 
     @NotNull
-    private Long BookId;
+    private Long bookId;
+
+    public AddBookToLibraryRequest(Long plId, Long bookId) {
+        this.plId = plId;
+        this.bookId = bookId;
+    }
+
 }

@@ -57,6 +57,9 @@ public class PersonalLibraryController {
         @RequestParam(defaultValue = "50") int size)
     {
         Long userId = UserContext.getCurrentUserId();
+        if(title == null && author == null) {
+            return bookService.getBooksByLibId(userId, libId, page, size);
+        }
         if(title != null && author == null) {
             return bookService.searchByLibIdAndTitle(userId, libId, title, page, size);
         }
@@ -70,9 +73,10 @@ public class PersonalLibraryController {
     }
 
 
-    @PostMapping("/add_book_to_library")
-    public ResponseEntity<String> addBookToLibrary(@RequestBody AddBookToLibraryRequest req) {
+    @PostMapping("/add_book_to_library/:plId/:bookId")
+    public ResponseEntity<String> addBookToLibrary(@PathVariable Long plId, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();
+        AddBookToLibraryRequest req = new AddBookToLibraryRequest(plId, bookId);
         personalLibraryService.addBookToLibrary(req, userId);
         return ResponseEntity.status(201).body("Success");
     }
