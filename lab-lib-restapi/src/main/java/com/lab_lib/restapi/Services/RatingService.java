@@ -8,15 +8,15 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import com.lab_lib.restapi.DTO.Rating.AddRatingToBookRequest;
+import com.lab_lib.restapi.Exceptions.AuthenticationException;
 import com.lab_lib.restapi.Models.Rating;
 import com.lab_lib.restapi.Models.RatingName;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
@@ -41,19 +41,12 @@ public class RatingService {
     public List<Rating> findAllByBookId(Long bookId) {
 
         if(bookId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Missing book"
-            );
+            throw new NoSuchElementException("Missing book");
         } 
-
         List<Rating> ratings = ratingRepository.findAllByBookId(bookId);
         if(ratings.size() == 0 || ratings == null) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "No rating for this book"
-            );
+            throw new NoSuchElementException( "No ratings for this book");
         }
-
         return ratings;
 
     }
@@ -63,44 +56,24 @@ public class RatingService {
     public Rating addRatingToBook(AddRatingToBookRequest req, Long bookId, Long userId) {
 
         if(userId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED, "User is not authenticated"
-            );
+            throw new AuthenticationException("Authentication required", "RatingService.addRatingToBook");
         }
-
         String name = req.getName();
         String review = req.getReview();
         Integer evaluation = req.getEvaluation();
-
         RatingName ratingName = new RatingName();
         ratingName.setName(name);
-
         if(ratingRepository.existsByBookIdAndNameAndUserId(bookId, ratingName, userId)) {
-            throw new ResponseStatusException(
-                HttpStatus.CONFLICT,
-                "Cannot add multiple ratings for the same rating category"
-            );
+            throw new IllegalStateException("Selected book is already in this library");
         }
-        
         Rating rating = new Rating();
-
-        rating.setBook(bookRepository.findById(userId)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND, 
-            "Book not found"
-        )));
-
+        rating.setBook(bookRepository.findById(bookId)
+        .orElseThrow(() -> new NoSuchElementException("Book not found")));
         rating.setName(ratingName);
-
         rating.setUser(userRepository.findById(userId)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "User not found"
-        )));
-
+        .orElseThrow(() -> new NoSuchElementException("User not found")));
         rating.setReview(review);
         rating.setEvaluation(evaluation);
-
         Rating saved = ratingRepository.save(rating);
         return saved;
 

@@ -1,7 +1,7 @@
 package com.lab_lib.restapi.Services;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,6 @@ public class UserService {
     private EntityManager entityManager;
 
     private final UserRepository userRepository;
-    private static final Pattern EMAIL_REGEX = Pattern.compile("^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -28,10 +27,6 @@ public class UserService {
 
     @Transactional //abbellitore che rollbacka automaticamente in caso di eccezioni
     public UUID registerUser(RegisterRequest newUser) {
-        // Email format check
-        if (!EMAIL_REGEX.matcher(newUser.getEmail()).matches()) {
-            throw new IllegalArgumentException("Invalid email format.");
-        }
 
         // Basic password length check
         if (newUser.getPassword() == null || newUser.getPassword().length() < 8) {
@@ -39,7 +34,7 @@ public class UserService {
         }
 
         if (userRepository.existsByEmail(newUser.getEmail())) {
-            throw new IllegalArgumentException("Email already in use.");
+            throw new IllegalStateException("Email already in use.");
         }
 
         if (userRepository.existsByNickname(newUser.getNickname())) {
@@ -77,7 +72,7 @@ public class UserService {
 
     public Long getUserIdByToken(UUID token) {
         if(!userRepository.existsByToken(token))
-            throw new IllegalArgumentException("Authentication failed: token does not exist");
+            throw new NoSuchElementException("Authentication failed: token does not exist");
         AppUser user = userRepository.findByToken(token);
         return user.getId();
     }

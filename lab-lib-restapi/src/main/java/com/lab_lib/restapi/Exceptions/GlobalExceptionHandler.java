@@ -1,10 +1,9 @@
-package com.lab_lib.restapi.Utils;
+package com.lab_lib.restapi.Exceptions;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.validation.ConstraintViolationException;
 
@@ -14,8 +13,7 @@ import java.util.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Gestione degli errori di validazione sui DTO (@Valid)
-
+    //Gestione degli errori di validazione sui DTO (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex, WebRequest request) {
         Map<String, String> fieldErrors = new HashMap<>();
@@ -23,19 +21,27 @@ public class GlobalExceptionHandler {
             fieldErrors.put(err.getField(), err.getDefaultMessage())
         );
 
-        return buildResponse(HttpStatus.BAD_REQUEST, "Validation Error", fieldErrors, request);
+        return buildResponse(
+            HttpStatus.BAD_REQUEST,
+            "Validation Error",
+            fieldErrors,
+            request
+        );
     }
 
-    // Gestione dei parametri errati in URL o query string
-
+    //Gestione dei parametri errati in URL o query string
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
         String message = "Parameter '" + ex.getName() + "' not valid: expected type " + ex.getRequiredType().getSimpleName();
-        return buildResponse(HttpStatus.BAD_REQUEST, message, null, request);
+        return buildResponse(
+            HttpStatus.BAD_REQUEST,
+            message,
+            null,
+            request
+        );
     }
 
-    // Gestione errori di constraint (es. @Min, @Max)
-
+    //Gestione errori di constraint (es. @Min, @Max)
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
@@ -46,33 +52,64 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST,
             "Constraint Violation",
             errors,
-            request);
+            request
+        );
     }
 
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex, WebRequest request) {
-        HttpStatusCode status = ex.getStatusCode();
-        if(status == HttpStatus.UNAUTHORIZED) {
-            return buildResponse(
-                HttpStatus.UNAUTHORIZED,
-                "User is not authenticated",
-                null,
-                request
-            );
-        }
-        return handleAllExceptions(ex, request);
+    //Gestione errori di parametri invalidi o conflittuali
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        return buildResponse(
+            HttpStatus.BAD_REQUEST,
+            ex.getMessage(),
+            null,
+            request
+        );
     }
 
-    // Gestione delle eccezioni generiche (catch universale)
+    //Gestione errori per oggetti non trovati
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<Map<String, Object>> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
+        return buildResponse(
+            HttpStatus.NOT_FOUND,
+            ex.getMessage(),
+            null,
+            request
+        );
+    }
 
+    //Gestione errori per duplicati e conflitti nel database
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalStateException(NoSuchElementException ex, WebRequest request) {
+        return buildResponse(
+            HttpStatus.CONFLICT,
+            ex.getMessage(),
+            null,
+            request
+        );
+    }
+
+    //Gestione errore di autenticazione
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleSecurityException(AuthenticationException ex, WebRequest request) {
+        return buildResponse(
+            HttpStatus.UNAUTHORIZED,
+            ex.getMessage(),
+            ex.getMethod() + "requires authentication",
+            request
+        );
+    }
+
+    //Gestione delle eccezioni generiche (catch universale)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAllExceptions(Exception ex, WebRequest request) {
         ex.printStackTrace();
-
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "An internal error occured. Try again later.",
-                null,
-                request);
+        return buildResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "An internal error occured. Try again later.",
+            "No further details",
+            request
+        );
     }
 
     // Metodo comune per formattare la risposta

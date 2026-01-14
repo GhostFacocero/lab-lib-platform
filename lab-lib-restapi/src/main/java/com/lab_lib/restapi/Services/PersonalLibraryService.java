@@ -1,6 +1,7 @@
 package com.lab_lib.restapi.Services;
 
 import com.lab_lib.restapi.DTO.PersonalLibrary.*;
+import com.lab_lib.restapi.Exceptions.AuthenticationException;
 import com.lab_lib.restapi.DTO.Book.*;
 import com.lab_lib.restapi.Repositories.BookRepository;
 import com.lab_lib.restapi.Repositories.PersonalLibraryRepository;
@@ -12,12 +13,11 @@ import com.lab_lib.restapi.Models.AppUser;
 import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.PersonalLibrary;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PersonalLibraryService {
@@ -42,12 +42,8 @@ public class PersonalLibraryService {
     public List<PersonalLibrary> findAllByUserId(Long userId) {
 
         if(userId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Authentication required"
-            );
+            throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
         }
-
         return personalLibraryRepository.findAllByUserId(userId);
         
     }
@@ -58,28 +54,19 @@ public class PersonalLibraryService {
 
         //check per vedere se l'utente esiste
         if(userId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Authentication required"
-            );
+            throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
         }
-
         String name = newLibrary.getName();
 
         //check per vedere se esiste già una libreria con lo stesso nome associata allo stesso utente
         if(personalLibraryRepository.existsByNameAndUserId(name, userId)) {
-            throw new ResponseStatusException(
-                HttpStatus.CONFLICT,
-                "Personal library with the same name already exists"
-            );
+            throw new IllegalStateException("Personal library with the same name already exists");
         }
-
         PersonalLibrary library = new PersonalLibrary();
         AppUser appUser = new AppUser();
         appUser.setId(userId);
         library.setUser(appUser);
         library.setName(name);
-
         PersonalLibrary saved = personalLibraryRepository.save(library);
         return saved;
 
@@ -90,34 +77,17 @@ public class PersonalLibraryService {
     public synchronized void addBookToLibrary(AddBookToLibraryRequest req, Long userId) {
 
         if(userId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "User not authenticated"
-            );    
+            throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
         }
-
         Long plId = req.getPlId();
         Long bookId = req.getBookId();
-
         if(personalLibraryRepository.existsByIdAndBooksId(plId, bookId)) {
-            throw new ResponseStatusException(
-                HttpStatus.CONFLICT,
-                "Selected book is already in this library"
-            );
+            throw new IllegalStateException("Selected book is already in this library");
         }
-
         PersonalLibrary library = personalLibraryRepository.findById(plId)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "Personal library not found"
-        ));
-
+        .orElseThrow(() -> new NoSuchElementException("Personal library not found"));
         Book book = bookRepository.findById(bookId)
-        .orElseThrow(() -> new ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "Book not found"
-        ));
-
+        .orElseThrow(() -> new NoSuchElementException("Book not found"));
         library.addBook(book);
         personalLibraryRepository.save(library);
 
@@ -128,14 +98,10 @@ public class PersonalLibraryService {
     public List<BookDTO> getLibraryBooks(Long libId, Long userId) {
 
         if(userId == null) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "User is not authenticated"
-            );
+            throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
         }
-
         List<BookDTO> books = personalLibraryRepository.findById(libId)
-        .orElseThrow(() -> new RuntimeException("Personal library not found"))
+        .orElseThrow(() -> new NoSuchElementException("Personal library not found"))
         .getBooks().stream().map(b -> new BookDTO(b)).toList();
         return books;
         
