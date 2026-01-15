@@ -10,6 +10,7 @@ import java.util.Set;
 import org.hibernate.annotations.BatchSize;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "book")
@@ -62,6 +63,7 @@ public class Book {
     private Set<PersonalLibrary> libraries = new HashSet<>();
 
     @OneToMany(mappedBy = "book")
+    @JsonManagedReference
     private Set<Rating> ratings = new HashSet<>();  
 
     public void addPersonalLibrary(PersonalLibrary personalLibrary) {

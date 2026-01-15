@@ -1,5 +1,7 @@
 package com.lab_lib.restapi.Services;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lab_lib.restapi.DTO.Book.BookDTO;
 import com.lab_lib.restapi.Exceptions.AuthenticationException;
 import com.lab_lib.restapi.Models.RatingName;
+import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Repositories.BookRepository;
 
 import jakarta.persistence.EntityManager;
@@ -154,6 +157,13 @@ public class BookService {
         return bookRepository.findByLibrariesIdAndTitleContainingIgnoreCaseAndAuthorsNameContainingIgnoreCase(libId, title, author, PageRequest.of(page, size))
         .map(BookDTO::new);
 
+    }
+
+
+    @Transactional
+    public Book findBookById(Long id) {
+        return bookRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("Book not found"));
     }
 
 }

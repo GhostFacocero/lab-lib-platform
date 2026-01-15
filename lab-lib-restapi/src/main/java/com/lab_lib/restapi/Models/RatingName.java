@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "category", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
+@Table(name = "rating_name")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class RatingName {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "rating", unique = true)
     private String name;
 
 }

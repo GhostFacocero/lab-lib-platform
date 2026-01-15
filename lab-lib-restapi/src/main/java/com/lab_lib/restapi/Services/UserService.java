@@ -85,6 +85,11 @@ public class UserService {
         return userRepository.existsById(id);
     }
 
+    public AppUser findUserById(Long id) {
+        return userRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("User not found"));
+    }
+
     private String cypher(String s) {
         String cypher = "";
         for(int i = 0; i < s.length(); i++) {

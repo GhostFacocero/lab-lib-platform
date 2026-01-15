@@ -29,14 +29,14 @@ public class RatingController {
     }
 
 
-    @GetMapping("/:bookId")
+    @GetMapping("/{bookId}")
     public List<Rating> getRatingsByBookId(@PathVariable Long bookId) {
         return ratingService.findAllByBookId(bookId);
     }
 
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping("/add_rating/:bookId")
+    @PostMapping("/add_rating/{bookId}")
     public ResponseEntity<String> addRatingToBook(@RequestBody AddRatingToBookRequest req, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();
         ratingService.addRatingToBook(req, bookId, userId);

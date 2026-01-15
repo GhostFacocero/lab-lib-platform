@@ -54,7 +54,6 @@ public class UserAuthentication extends OncePerRequestFilter{
 
     private UUID extractToken(HttpServletRequest req) {
         String authHeader = req.getHeader("Authorization");
-        System.out.println(authHeader);
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             return UUID.fromString(authHeader.substring(7));
         }

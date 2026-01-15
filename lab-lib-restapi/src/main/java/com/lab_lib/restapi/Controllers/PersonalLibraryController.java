@@ -46,7 +46,7 @@ public class PersonalLibraryController {
     }
 
 
-    @GetMapping("/search_library_books/:libId")
+    @GetMapping("/search_library_books/{libId}")
     public Page<BookDTO> search(
         @PathVariable Long libId,
         @RequestParam(required = false) String title,
@@ -73,7 +73,7 @@ public class PersonalLibraryController {
     }
 
 
-    @PostMapping("/add_book_to_library/:plId/:bookId")
+    @PostMapping("/add_book_to_library/{plId}/{bookId}")
     public ResponseEntity<String> addBookToLibrary(@PathVariable Long plId, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();
         AddBookToLibraryRequest req = new AddBookToLibraryRequest(plId, bookId);

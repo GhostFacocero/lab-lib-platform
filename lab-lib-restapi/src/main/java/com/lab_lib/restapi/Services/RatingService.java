@@ -1,8 +1,6 @@
 package com.lab_lib.restapi.Services;
 
-import com.lab_lib.restapi.Repositories.BookRepository;
 import com.lab_lib.restapi.Repositories.RatingRepository;
-import com.lab_lib.restapi.Repositories.UserRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -26,14 +24,16 @@ public class RatingService {
     private EntityManager entityManager;
 
     private final RatingRepository ratingRepository;
-    private final BookRepository bookRepository;
-    private final UserRepository userRepository;
+    private final BookService bookService;
+    private final UserService userService;
+    private final RatingNameService ratingNameService;
     
 
-    public RatingService(RatingRepository ratingRepository, BookRepository bookRepository, UserRepository userRepository) {
+    public RatingService(RatingRepository ratingRepository, BookService bookService, UserService userService, RatingNameService ratingNameService) {
         this.ratingRepository = ratingRepository;
-        this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
+        this.bookService = bookService;
+        this.userService = userService;
+        this.ratingNameService = ratingNameService;
     }
 
 
@@ -59,19 +59,22 @@ public class RatingService {
             throw new AuthenticationException("Authentication required", "RatingService.addRatingToBook");
         }
         String name = req.getName();
+        if(!ratingNameService.existsByName(name)) {
+            throw new IllegalArgumentException("Selected rating category does not exist");
+        }
+        Long ratingNameId = ratingNameService.findIdByName(name);
         String review = req.getReview();
         Integer evaluation = req.getEvaluation();
         RatingName ratingName = new RatingName();
+        ratingName.setId(ratingNameId);
         ratingName.setName(name);
         if(ratingRepository.existsByBookIdAndNameAndUserId(bookId, ratingName, userId)) {
             throw new IllegalStateException("Selected book is already in this library");
         }
         Rating rating = new Rating();
-        rating.setBook(bookRepository.findById(bookId)
-        .orElseThrow(() -> new NoSuchElementException("Book not found")));
+        rating.setBook(bookService.findBookById(bookId));
         rating.setName(ratingName);
-        rating.setUser(userRepository.findById(userId)
-        .orElseThrow(() -> new NoSuchElementException("User not found")));
+        rating.setUser(userService.findUserById(userId));
         rating.setReview(review);
         rating.setEvaluation(evaluation);
         Rating saved = ratingRepository.save(rating);

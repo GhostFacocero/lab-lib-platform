@@ -3,7 +3,6 @@ package com.lab_lib.restapi.Services;
 import com.lab_lib.restapi.DTO.PersonalLibrary.*;
 import com.lab_lib.restapi.Exceptions.AuthenticationException;
 import com.lab_lib.restapi.DTO.Book.*;
-import com.lab_lib.restapi.Repositories.BookRepository;
 import com.lab_lib.restapi.Repositories.PersonalLibraryRepository;
 
 import jakarta.persistence.EntityManager;
@@ -26,15 +25,12 @@ public class PersonalLibraryService {
     private EntityManager entityManager;
 
     private final PersonalLibraryRepository personalLibraryRepository;
-    private final BookRepository bookRepository;
+    private final BookService bookService;
 
 
-    public PersonalLibraryService(
-        PersonalLibraryRepository personalLibraryRepository, 
-        BookRepository bookRepository
-    ) {
+    public PersonalLibraryService(PersonalLibraryRepository personalLibraryRepository, BookService bookService) {
         this.personalLibraryRepository = personalLibraryRepository;
-        this.bookRepository = bookRepository;
+        this.bookService = bookService;
     }
 
 
@@ -86,8 +82,7 @@ public class PersonalLibraryService {
         }
         PersonalLibrary library = personalLibraryRepository.findById(plId)
         .orElseThrow(() -> new NoSuchElementException("Personal library not found"));
-        Book book = bookRepository.findById(bookId)
-        .orElseThrow(() -> new NoSuchElementException("Book not found"));
+        Book book = bookService.findBookById(bookId);
         library.addBook(book);
         personalLibraryRepository.save(library);
 
