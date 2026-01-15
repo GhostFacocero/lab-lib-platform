@@ -2,7 +2,6 @@ package com.lab_lib.restapi.Controllers;
 
 import com.lab_lib.restapi.DTO.Book.BookDTO;
 import com.lab_lib.restapi.DTO.PersonalLibrary.*;
-import com.lab_lib.restapi.Models.PersonalLibrary;
 import com.lab_lib.restapi.Services.PersonalLibraryService;
 import com.lab_lib.restapi.Services.BookService;
 import com.lab_lib.restapi.Utils.UserContext;
@@ -32,7 +31,7 @@ public class PersonalLibraryController {
 
     
     @GetMapping
-    public List<PersonalLibrary> getPersonalLibraries() {
+    public List<PersonalLibraryDTO> getPersonalLibraries() {
         Long userId = UserContext.getCurrentUserId();
         return personalLibraryService.findAllByUserId(userId);
     }

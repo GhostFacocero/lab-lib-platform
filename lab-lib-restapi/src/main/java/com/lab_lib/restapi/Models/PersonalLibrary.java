@@ -3,6 +3,9 @@ package com.lab_lib.restapi.Models;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.lab_lib.restapi.DTO.Book.LibraryBookDTO;
+import com.lab_lib.restapi.DTO.PersonalLibrary.PersonalLibraryDTO;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,6 +44,15 @@ public class PersonalLibrary {
     @Builder.Default
 
     private Set<Book> books = new HashSet<>();
+
+    public PersonalLibraryDTO toDTO() {
+        PersonalLibraryDTO personalLibrary = new PersonalLibraryDTO();
+        personalLibrary.setId(this.id);
+        personalLibrary.setName(this.name);
+        personalLibrary.setUserNickname(this.user.getNickname());
+        personalLibrary.setBooks(this.books.stream().map(b -> new LibraryBookDTO(b.getId(), b.getTitle())).toList());
+        return null;
+    }
 
     public void addBook(Book book) {
         books.add(book);

@@ -11,6 +11,7 @@ import org.hibernate.annotations.BatchSize;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.lab_lib.restapi.DTO.Book.LibraryBookDTO;
 
 @Entity
 @Table(name = "book")
@@ -65,6 +66,10 @@ public class Book {
     @OneToMany(mappedBy = "book")
     @JsonManagedReference
     private Set<Rating> ratings = new HashSet<>();  
+
+    public LibraryBookDTO toLibraryDTO() {
+        return new LibraryBookDTO(this.id, this.title);
+    }
 
     public void addPersonalLibrary(PersonalLibrary personalLibrary) {
         libraries.add(personalLibrary);

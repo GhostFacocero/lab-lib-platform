@@ -35,18 +35,19 @@ public class PersonalLibraryService {
 
 
     @Transactional
-    public List<PersonalLibrary> findAllByUserId(Long userId) {
+    public List<PersonalLibraryDTO> findAllByUserId(Long userId) {
 
         if(userId == null) {
             throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
         }
-        return personalLibraryRepository.findAllByUserId(userId);
+        List<PersonalLibrary> personalLibraries = personalLibraryRepository.findAllByUserId(userId);
+        return personalLibraries.stream().map(p -> p.toDTO()).toList();
         
     }
 
 
     @Transactional
-    public synchronized PersonalLibrary addLibrary(AddLibraryRequest newLibrary, Long userId) {
+    public synchronized PersonalLibraryDTO addLibrary(AddLibraryRequest newLibrary, Long userId) {
 
         //check per vedere se l'utente esiste
         if(userId == null) {
@@ -64,7 +65,7 @@ public class PersonalLibraryService {
         library.setUser(appUser);
         library.setName(name);
         PersonalLibrary saved = personalLibraryRepository.save(library);
-        return saved;
+        return saved.toDTO();
 
     }
 
