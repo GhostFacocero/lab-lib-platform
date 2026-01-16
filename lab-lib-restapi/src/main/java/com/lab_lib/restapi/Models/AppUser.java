@@ -3,8 +3,11 @@ package com.lab_lib.restapi.Models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lab_lib.restapi.DTO.AppUser.AppUserDTO;
 
 @Entity
@@ -49,8 +52,31 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
+    @ManyToMany(mappedBy = "users")
+    @Builder.Default
+    @JsonBackReference
+    private Set<RecommendedBook> recommendedBooks = new HashSet<>();
+
     public AppUserDTO toDTO() {
         return new AppUserDTO(this);
+    }
+
+    public void addRecommendedBook(RecommendedBook book) {
+        recommendedBooks.add(book);
+        book.getUsers().add(this);
+    }
+
+    public boolean hasRecommendedBook(RecommendedBook book) {
+        return recommendedBooks.contains(book);
+    }
+
+    public boolean removeRecommendedBook(RecommendedBook book) {
+        if(!hasRecommendedBook(book)) {
+            return false;
+        }
+        recommendedBooks.remove(book);
+        book.getUsers().remove(this);
+        return true;
     }
 
 }
