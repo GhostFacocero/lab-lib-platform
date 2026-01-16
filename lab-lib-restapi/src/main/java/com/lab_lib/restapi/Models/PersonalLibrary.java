@@ -3,7 +3,6 @@ package com.lab_lib.restapi.Models;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.lab_lib.restapi.DTO.Book.LibraryBookDTO;
 import com.lab_lib.restapi.DTO.PersonalLibrary.PersonalLibraryDTO;
 
 import jakarta.persistence.*;
@@ -50,8 +49,7 @@ public class PersonalLibrary {
         personalLibrary.setId(this.id);
         personalLibrary.setName(this.name);
         personalLibrary.setUserNickname(this.user.getNickname());
-        personalLibrary.setBooks(this.books.stream().map(b -> new LibraryBookDTO(b.getId(), b.getTitle())).toList());
-        return null;
+        return personalLibrary;
     }
 
     public void addBook(Book book) {

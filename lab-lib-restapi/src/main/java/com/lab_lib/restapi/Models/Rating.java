@@ -1,6 +1,7 @@
 package com.lab_lib.restapi.Models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.lab_lib.restapi.DTO.Rating.RatingDTO;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -39,5 +40,9 @@ public class Rating {
     @Max(5)
     @Column
     private Integer evaluation;
+
+    public RatingDTO toDTO() {
+        return new RatingDTO(this);
+    }
     
 }

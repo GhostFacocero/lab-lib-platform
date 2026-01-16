@@ -1,5 +1,7 @@
 package com.lab_lib.restapi.DTO.Rating;
 
+import com.lab_lib.restapi.Models.Rating;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -28,6 +30,15 @@ public class RatingDTO {
     
     @NotNull
     private Integer evaluation;
+
+    public RatingDTO(Rating rating) {
+        this.id = rating.getId();
+        this.bookTitle = rating.getBook().getTitle();
+        this.userNickname = rating.getUser().getNickname();
+        this.ratingName = rating.getName().getName();
+        this.comment = rating.getReview();
+        this.evaluation = rating.getEvaluation();        
+    }
 
     public RatingDTO(Long id, String bookTitle, String userNickname, String ratingName, String comment, Integer evaluation) {
         this.id = id;

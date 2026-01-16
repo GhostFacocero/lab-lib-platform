@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lab_lib.restapi.DTO.Rating.AddRatingToBookRequest;
-import com.lab_lib.restapi.Models.Rating;
+import com.lab_lib.restapi.DTO.Rating.RatingDTO;
 import com.lab_lib.restapi.Services.RatingService;
 import com.lab_lib.restapi.Utils.UserContext;
 
@@ -30,7 +30,7 @@ public class RatingController {
 
 
     @GetMapping("/{bookId}")
-    public List<Rating> getRatingsByBookId(@PathVariable Long bookId) {
+    public List<RatingDTO> getRatingsByBookId(@PathVariable Long bookId) {
         return ratingService.findAllByBookId(bookId);
     }
 

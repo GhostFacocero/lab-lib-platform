@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import com.lab_lib.restapi.DTO.Rating.AddRatingToBookRequest;
+import com.lab_lib.restapi.DTO.Rating.RatingDTO;
 import com.lab_lib.restapi.Exceptions.AuthenticationException;
 import com.lab_lib.restapi.Models.Rating;
 import com.lab_lib.restapi.Models.RatingName;
@@ -38,7 +39,7 @@ public class RatingService {
 
 
     @Transactional
-    public List<Rating> findAllByBookId(Long bookId) {
+    public List<RatingDTO> findAllByBookId(Long bookId) {
 
         if(bookId == null) {
             throw new NoSuchElementException("Missing book");
@@ -47,13 +48,14 @@ public class RatingService {
         if(ratings.size() == 0 || ratings == null) {
             throw new NoSuchElementException( "No ratings for this book");
         }
-        return ratings;
+        List<RatingDTO> ratingDTOs = ratings.stream().map(r -> r.toDTO()).toList();
+        return ratingDTOs;
 
     }
 
 
     @Transactional
-    public Rating addRatingToBook(AddRatingToBookRequest req, Long bookId, Long userId) {
+    public RatingDTO addRatingToBook(AddRatingToBookRequest req, Long bookId, Long userId) {
 
         if(userId == null) {
             throw new AuthenticationException("Authentication required", "RatingService.addRatingToBook");
@@ -78,7 +80,7 @@ public class RatingService {
         rating.setReview(review);
         rating.setEvaluation(evaluation);
         Rating saved = ratingRepository.save(rating);
-        return saved;
+        return saved.toDTO();
 
     }
     

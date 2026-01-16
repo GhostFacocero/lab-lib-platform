@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.UUID;
 
+import com.lab_lib.restapi.DTO.AppUser.AppUserDTO;
+
 @Entity
 @Table(
     name = "app_user",
@@ -46,4 +48,9 @@ public class AppUser {
 
     @Column(nullable = false)
     private String password;
+
+    public AppUserDTO toDTO() {
+        return new AppUserDTO(this);
+    }
+
 }
