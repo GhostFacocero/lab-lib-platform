@@ -13,7 +13,6 @@ public interface RecommendedBookRepository extends JpaRepository<RecommendedBook
 
     List<RecommendedBook> findAllByBook(Book book);
     RecommendedBook findByRecommendedBook(Book recommendedBook);
-    RecommendedBook deleteByBookAndUserId(Book book);
-    RecommendedBook deleteByRecommendedBookAndUserId(Book recommendedBook);
+    RecommendedBook findByBookAndRecommendedBook(Book book, Book recommendedBook);
     
 }

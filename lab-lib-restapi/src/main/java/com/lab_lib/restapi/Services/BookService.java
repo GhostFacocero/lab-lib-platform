@@ -1,5 +1,6 @@
 package com.lab_lib.restapi.Services;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
@@ -8,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lab_lib.restapi.DTO.Book.BookDTO;
+import com.lab_lib.restapi.DTO.Book.RecommendedBookDTO;
 import com.lab_lib.restapi.Exceptions.AuthenticationException;
 import com.lab_lib.restapi.Models.RatingName;
+import com.lab_lib.restapi.Models.AppUser;
 import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Repositories.BookRepository;
 
@@ -23,10 +26,14 @@ public class BookService {
     private EntityManager entityManager;
 
     private final BookRepository bookRepository;
+    private final RecommendedBookService recommendedBookService;
+    private final UserService userService;
 
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, RecommendedBookService recommendedBookService, UserService userService) {
         this.bookRepository = bookRepository;
+        this.recommendedBookService = recommendedBookService;
+        this.userService = userService;
     }
 
  
@@ -156,6 +163,48 @@ public class BookService {
         }
         return bookRepository.findByLibrariesIdAndTitleContainingIgnoreCaseAndAuthorsNameContainingIgnoreCase(libId, title, author, PageRequest.of(page, size))
         .map(BookDTO::new);
+
+    }
+
+
+    @Transactional
+    public List<RecommendedBookDTO> getRecommendedBooks(Long bookId) {
+
+        Book book = bookRepository.findById(bookId)
+        .orElseThrow(() -> new NoSuchElementException("Book not found"));
+        return recommendedBookService.getRecommendedBooks(book);
+
+    }
+
+
+    @Transactional
+    public RecommendedBookDTO addRecommendedBook(Long bookId, Long recommendedBookId, Long userId) {
+
+        if(userId == null) {
+            throw new AuthenticationException("Authentication required", "BookService.addRecommendedBook");
+        }
+        Book book = bookRepository.findById(bookId)
+        .orElseThrow(() -> new NoSuchElementException("Book not found"));
+        Book recommendedBook = bookRepository.findById(recommendedBookId)
+        .orElseThrow(() -> new NoSuchElementException("Recommended book not found"));
+        AppUser user = userService.findUserById(userId);
+        return recommendedBookService.addRecommendedBook(book, recommendedBook, user);
+
+    }
+
+
+    @Transactional
+    public void removeRecommendedBook(Long bookId, Long recommendedBookId, Long userId) {
+
+        if(userId == null) {
+            throw new AuthenticationException("Authentication required", "BookService.addRecommendedBook");
+        }
+        Book book = bookRepository.findById(bookId)
+        .orElseThrow(() -> new NoSuchElementException("Book not found"));
+        Book recommendedBook = bookRepository.findById(recommendedBookId)
+        .orElseThrow(() -> new NoSuchElementException("Recommended book not found"));
+        AppUser user = userService.findUserById(userId);
+        recommendedBookService.removeRecommendedBook(book, recommendedBook, user);
 
     }
 

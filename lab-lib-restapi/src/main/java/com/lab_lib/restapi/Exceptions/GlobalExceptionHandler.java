@@ -89,9 +89,20 @@ public class GlobalExceptionHandler {
         );
     }
 
+    //Gestione errore di accesso a dati privati di altri utenti
+    @ExceptionHandler(ViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleViolationException(ViolationException ex, WebRequest request) {
+        return buildResponse(
+            HttpStatus.FORBIDDEN,
+            ex.getMessage(),
+            null,
+            request
+        );
+    }
+
     //Gestione errore di autenticazione
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleSecurityException(AuthenticationException ex, WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleAuthenticationException(AuthenticationException ex, WebRequest request) {
         return buildResponse(
             HttpStatus.UNAUTHORIZED,
             ex.getMessage(),
