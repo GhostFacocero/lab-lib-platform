@@ -183,6 +183,9 @@ public class BookService {
         if(userId == null) {
             throw new AuthenticationException("Authentication required", "BookService.addRecommendedBook");
         }
+        if(bookId == recommendedBookId) {
+            throw new IllegalArgumentException("Cannot recommend the same book");
+        }
         Book book = bookRepository.findById(bookId)
         .orElseThrow(() -> new NoSuchElementException("Book not found"));
         Book recommendedBook = bookRepository.findById(recommendedBookId)

@@ -3,6 +3,7 @@ package com.lab_lib.restapi.Controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,18 +30,27 @@ public class RatingController {
     }
 
 
-    @GetMapping("/{bookId}")
+    @GetMapping("/book/{bookId}")
     public List<RatingDTO> getRatingsByBookId(@PathVariable Long bookId) {
         return ratingService.findAllByBookId(bookId);
     }
 
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping("/add_rating/{bookId}")
+    @PostMapping("/book/{bookId}")
     public ResponseEntity<String> addRatingToBook(@RequestBody AddRatingToBookRequest req, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();
         ratingService.addRatingToBook(req, bookId, userId);
         return ResponseEntity.status(201).body("Success");
+    }
+
+    
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping("/{ratingId}")
+    public ResponseEntity<String> deleteRating(@PathVariable Long ratingId) {
+        Long userId = UserContext.getCurrentUserId();
+        ratingService.deleteRating(ratingId, userId);
+        return ResponseEntity.status(200).body("success");
     }
     
 }

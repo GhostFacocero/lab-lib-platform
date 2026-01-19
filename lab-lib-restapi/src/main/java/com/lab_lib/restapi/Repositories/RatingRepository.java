@@ -12,6 +12,7 @@ import com.lab_lib.restapi.Models.RatingName;
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     
     List<Rating> findAllByBookId(Long bookId);
+    
     boolean existsByBookIdAndNameAndUserId(Long bookId, RatingName name, Long userId);
 
 }

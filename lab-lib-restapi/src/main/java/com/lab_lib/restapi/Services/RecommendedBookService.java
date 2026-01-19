@@ -33,17 +33,24 @@ public class RecommendedBookService {
     @Transactional
     public RecommendedBookDTO addRecommendedBook(Book book, Book recommendedBook, AppUser user) {
 
-        List<RecommendedBook> recommendedBooks = recommendedBookRepository.findAllByBook(book);
-        List<RecommendedBook> filteredRecommendations = recommendedBooks
-        .stream()
-        .filter(rb -> rb.getUsers().contains(user)).toList();
-        if(filteredRecommendations.size() == 3) {
-            throw new IllegalArgumentException("Cannot add more than three recommendation per book");
+        long count = recommendedBookRepository.countByBookAndUsersContains(book, user);
+        if(count >= 3) {
+            throw new IllegalArgumentException("Cannot add more than three recommendations per book");
         }
-        RecommendedBook rb = new RecommendedBook();
-        rb.setBook(book);
-        rb.setRecommendedBook(recommendedBook);
+        RecommendedBook rb;
+        System.out.println(recommendedBookRepository.existsByBookAndRecommendedBook(book, recommendedBook));
+        if(!recommendedBookRepository.existsByBookAndRecommendedBook(book, recommendedBook)) {
+            rb = new RecommendedBook();
+            rb.setBook(book);
+            rb.setRecommendedBook(recommendedBook);
+        } else {
+            rb = recommendedBookRepository.findByBookAndRecommendedBook(book, recommendedBook);
+        }
+        if(rb.hasUser(user)) {
+            throw new IllegalArgumentException("Cannot recommend the same book multiple times");
+        }
         rb.addUser(user);
+        System.out.println(rb.hasUser(user));
         RecommendedBook saved = recommendedBookRepository.save(rb);
         return saved.toDTO();
 

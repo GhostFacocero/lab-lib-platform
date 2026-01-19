@@ -83,5 +83,19 @@ public class RatingService {
         return saved.toDTO();
 
     }
+
+
+    @Transactional
+    public void deleteRating(Long ratingId, Long userId) {
+
+        if(userId == null) {
+            throw new AuthenticationException("Authentication required", "RatingService.addRatingToBook");
+        }
+        if(!ratingRepository.existsById(ratingId)) {
+            throw new NoSuchElementException("Rating not found");
+        }
+        ratingRepository.deleteById(ratingId);
+
+    }
     
 }

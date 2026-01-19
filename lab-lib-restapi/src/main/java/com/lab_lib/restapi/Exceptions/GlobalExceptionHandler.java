@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
 
     //Gestione errori per duplicati e conflitti nel database
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalStateException(NoSuchElementException ex, WebRequest request) {
+    public ResponseEntity<Map<String, Object>> handleIllegalStateException(IllegalStateException ex, WebRequest request) {
         return buildResponse(
             HttpStatus.CONFLICT,
             ex.getMessage(),
@@ -106,7 +106,7 @@ public class GlobalExceptionHandler {
         return buildResponse(
             HttpStatus.UNAUTHORIZED,
             ex.getMessage(),
-            ex.getMethod() + "requires authentication",
+            ex.getMethod() + " requires authentication",
             request
         );
     }

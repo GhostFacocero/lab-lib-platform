@@ -103,4 +103,32 @@ public class PersonalLibraryService {
         
     }
 
+
+    @Transactional
+    public void deletePersonalLibrary(Long libId, Long userId) {
+
+        if(userId == null) {
+            throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
+        }
+        personalLibraryRepository.deleteById(libId);
+
+    }
+
+
+    @Transactional
+    public void removeBookFromLibrary(Long libId, Long bookId, Long userId) {
+
+        if(userId == null) {
+            throw new AuthenticationException("Authentication required", "PersonalLibraryService.findAllByUserId");
+        }
+        PersonalLibrary personalLibrary = personalLibraryRepository.findById(libId)
+        .orElseThrow(() -> new NoSuchElementException("Personal library not found"));
+        Book book = bookService.findBookById(bookId);
+        if(!personalLibrary.hasBook(book)) {
+            throw new IllegalArgumentException("Selected book is not in this library");
+        }
+        personalLibrary.removeBook(book);
+
+    }
+
 }

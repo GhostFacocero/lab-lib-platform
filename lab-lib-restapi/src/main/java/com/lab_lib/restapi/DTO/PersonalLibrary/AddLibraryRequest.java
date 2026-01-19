@@ -9,4 +9,5 @@ public class AddLibraryRequest {
 
     @NotBlank
     private String name;
+    
 }

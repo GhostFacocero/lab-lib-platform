@@ -2,8 +2,11 @@ package com.lab_lib.restapi.Models;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lab_lib.restapi.DTO.Book.RecommendedBookDTO;
 
 import jakarta.persistence.*;
@@ -25,19 +28,23 @@ public class RecommendedBook {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "id_book")
     private Book book;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "id_rbook")
     private Book recommendedBook;
 
     @ManyToMany
+    @JsonManagedReference
     @JoinTable(
         name = "user_rb",
-        joinColumns = @JoinColumn(name = "rb_id", referencedColumnName = "id_rbook"),
-        inverseJoinColumns = @JoinColumn(name = "id_user", referencedColumnName = "user_id")
+        joinColumns = @JoinColumn(name = "rb_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     )
+
     @Builder.Default
     private Set<AppUser> users = new HashSet<>();
 
@@ -66,5 +73,19 @@ public class RecommendedBook {
         user.getRecommendedBooks().remove(this);
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RecommendedBook)) return false;
+        RecommendedBook other = (RecommendedBook) o;
+        return Objects.equals(this.id, other.id);
+    }
+
 
 }

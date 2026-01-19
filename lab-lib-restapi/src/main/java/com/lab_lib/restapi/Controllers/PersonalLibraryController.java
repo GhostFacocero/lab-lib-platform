@@ -7,7 +7,6 @@ import com.lab_lib.restapi.Services.BookService;
 import com.lab_lib.restapi.Utils.UserContext;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +36,7 @@ public class PersonalLibraryController {
     }
 
 
-    @PostMapping("/add_library")
+    @PostMapping
     public ResponseEntity<String> addLibrary(@RequestBody AddLibraryRequest req) {
         Long userId = UserContext.getCurrentUserId();
         personalLibraryService.addLibrary(req, userId);
@@ -45,7 +44,15 @@ public class PersonalLibraryController {
     }
 
 
-    @GetMapping("/search_library_books/{libId}")
+    @DeleteMapping("/{libId}")
+    public ResponseEntity<String> deleteLibrary(@PathVariable Long libId) {
+        Long userId = UserContext.getCurrentUserId();
+        personalLibraryService.deletePersonalLibrary(libId, userId);
+        return ResponseEntity.status(200).body("Success");
+    }
+
+
+    @GetMapping("/{libId}/search_books")
     public Page<BookDTO> search(
         @PathVariable Long libId,
         @RequestParam(required = false) String title,
@@ -72,12 +79,20 @@ public class PersonalLibraryController {
     }
 
 
-    @PostMapping("/add_book_to_library/{plId}/{bookId}")
-    public ResponseEntity<String> addBookToLibrary(@PathVariable Long plId, @PathVariable Long bookId) {
+    @PostMapping("/{libId}/book/{bookId}")
+    public ResponseEntity<String> addBookToLibrary(@PathVariable Long libId, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();
-        AddBookToLibraryRequest req = new AddBookToLibraryRequest(plId, bookId);
+        AddBookToLibraryRequest req = new AddBookToLibraryRequest(libId, bookId);
         personalLibraryService.addBookToLibrary(req, userId);
         return ResponseEntity.status(201).body("Success");
+    }
+
+
+    @DeleteMapping("/{libId}/book/{bookId}")
+    public ResponseEntity<String> removeBookFromLibrary(@PathVariable Long libId, @PathVariable Long bookId) {
+        Long userId = UserContext.getCurrentUserId();
+        personalLibraryService.removeBookFromLibrary(libId, bookId, userId);
+        return ResponseEntity.status(200).body("success");
     }
 
 }
