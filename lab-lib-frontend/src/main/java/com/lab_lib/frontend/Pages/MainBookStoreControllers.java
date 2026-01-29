@@ -173,6 +173,7 @@ public class MainBookStoreControllers {
     @FXML private Label BookPriceLabel;
     @FXML private Label BookDescriptionLabel;
     @FXML private Button DataLibroBotoneReviewIt;
+    @FXML private Button btnViewRecommendations;
 
     private final int MAX_STARS = 5;
     private boolean isMenuCollapsed = false;
@@ -692,6 +693,10 @@ public class MainBookStoreControllers {
         if (BookPriceLabel != null) BookPriceLabel.setText(b.getPrice() != null ? b.getPrice().toPlainString() : "-");
         if (BookDescriptionLabel != null) BookDescriptionLabel.setText(nvl(b.getDescription()));
 
+        if (btnViewRecommendations != null) {
+            btnViewRecommendations.setVisible(true);
+        }
+
         // Update average stars per category and overall
         updateAverageStarsForBook(b.getId());
     }
@@ -748,6 +753,45 @@ public class MainBookStoreControllers {
                 System.err.println("[PersonalLibrary][Error] Failed to add book to library: " + msg);
                 ex.printStackTrace();
             }
+        }
+    }
+
+    @FXML
+    private void handleViewRecommendations(ActionEvent event) {
+        if (currentDetailBook == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/RecommendedBooks.fxml"));
+            
+            // USIAMO GUICE per iniettare IRatingService nel nuovo controller
+            if (injector != null) {
+                loader.setControllerFactory(injector::getInstance);
+            }
+
+            Parent root = loader.load();
+            
+            // Passiamo i dati al controller
+            RecommendedBooksController ctrl = loader.getController();
+            ctrl.setContext(currentDetailBook.getId(), nvl(currentDetailBook.getTitle()));
+
+            Stage stage = new Stage();
+            stage.setTitle("Libri Consigliati");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            
+            // Modale: blocca la finestra sotto finché non chiudi questa
+            stage.initModality(Modality.WINDOW_MODAL); 
+            stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert err = new Alert(AlertType.ERROR);
+            err.setTitle("Errore");
+            err.setHeaderText("Impossibile aprire i consigli");
+            err.setContentText(e.getMessage());
+            err.showAndWait();
         }
     }
 

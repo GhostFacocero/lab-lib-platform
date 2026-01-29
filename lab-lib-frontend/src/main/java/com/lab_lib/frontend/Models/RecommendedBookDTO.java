@@ -6,6 +6,9 @@ public class RecommendedBookDTO {
     private String title;
     private List<String> userNicknames;
 
+    public RecommendedBookDTO() {
+    }
+
     public RecommendedBookDTO(String title, List<String> userNicknames) {
         this.title = title;
         this.userNicknames = userNicknames;
