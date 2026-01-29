@@ -50,7 +50,7 @@
                </Button>
                <Separator orientation="VERTICAL" prefHeight="10.0" prefWidth="9.0" visible="false" />
       
-                  <Button fx:id="Btm_libriMain" alignment="CENTER" onMouseEntered="#makeClickable" prefHeight="38.0" prefWidth="142.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Libri">
+                  <Button fx:id="Btm_libriMain" alignment="CENTER" onMouseEntered="#makeClickable" prefHeight="38.0" prefWidth="142.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Libri Preferiti">
                   <font>
                      <Font size="19.0" />
                   </font>
@@ -195,7 +195,7 @@
                      </VBox>
                   </children>
                </AnchorPane>
-             <AnchorPane fx:id="ArchorPaneLibreriaMain" minHeight="0.0" minWidth="0.0" prefHeight="454.0" prefWidth="736.0" styleClass="anchor-pane" stylesheets="@../Css/Buttons.css" visible="false">
+             <AnchorPane fx:id="ArchorPaneLibreriaMain" minHeight="0.0" minWidth="0.0" prefHeight="454.0" prefWidth="736.0" styleClass="anchor-pane" stylesheets="@../Css/Buttons.css">
                   <children>
                      <VBox alignment="TOP_CENTER" prefHeight="466.0" prefWidth="732.0">
                         <children>
@@ -237,7 +237,7 @@
                                  </VBox>
                               </children>
                            </HBox>
-                           <TableView fx:id="tableLibriLibreria" prefHeight="342.0" prefWidth="732.0">
+                           <TableView fx:id="tableLibriLibreria" prefHeight="305.0" prefWidth="732.0">
                               <columns>
                                  <TableColumn fx:id="TitleColumn" prefWidth="520.0" text="Titolo" />
                                  <TableColumn fx:id="AuthorsColumn" prefWidth="200.0" text="Autori" />
@@ -250,28 +250,32 @@
                                  <Button fx:id="BtnNextPage" minHeight="18.0" minWidth="28.0" prefHeight="18.0" prefWidth="48.0" text="&gt;" />
                               </children>
                            </HBox>
+                           <Separator orientation="VERTICAL" prefHeight="10.0" prefWidth="9.0" visible="false" />
+                           <Label text="Clicca su 'Search' per vedere 10 libri generici!" />
                            <!-- Pagination controls removed for simplified initial view -->
                         </children>
                      </VBox>
                   </children>
                </AnchorPane>
-               <VBox fx:id="GruppiPanel" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" visible="false">
+               <VBox fx:id="GruppiPanel" alignment="TOP_CENTER" spacing="10.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
-                     <Label text="Gruppi di libri personali">
+                     <Label fx:id="GruppiTitleLabel" text="Gruppi di libri personali">
                         <font>
                            <Font size="25.0" />
                         </font>
                      </Label>
-                     <HBox spacing="10.0" alignment="CENTER_LEFT">
+                     <HBox fx:id="GroupControlsBox" alignment="CENTER_LEFT" spacing="10.0">
                         <children>
-                           <TextField fx:id="GroupNameField" promptText="Nome del gruppo" prefWidth="300.0" />
+                           <TextField fx:id="GroupNameField" prefWidth="300.0" promptText="Nome del gruppo" />
                            <Button fx:id="GroupCreateButton" text="Crea gruppo" />
                         </children>
                      </HBox>
-                     <ListView fx:id="ListaGruppi" prefHeight="405.0" prefWidth="732.0" stylesheets="@../Css/CSS.css" />
+                               <ListView fx:id="ListaGruppi" prefHeight="405.0" prefWidth="732.0" stylesheets="@../Css/CSS.css" />
+                               <!-- Host inline per i libri del gruppo (pannello, senza nuova finestra) -->
+                               <StackPane fx:id="GroupBooksHost" visible="false" VBox.vgrow="ALWAYS" />
                   </children>
                </VBox>
-               <HBox fx:id="PanelDataLibroGeneralReviews">
+               <HBox fx:id="PanelDataLibroGeneralReviews" visible="false">
                   <children>
                      <Separator prefHeight="13.0" prefWidth="0.0" visible="false" />
                      <VBox prefHeight="492.0" prefWidth="396.0">
@@ -284,13 +288,13 @@
                            </Label>
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Label text="Autore :" />
-                           <Label fx:id="BookAuthorsLabel" wrapText="true" prefWidth="360.0" text="-" />
+                           <Label fx:id="BookAuthorsLabel" prefWidth="360.0" text="-" wrapText="true" />
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Label text="Anno :" />
                            <Label fx:id="BookYearLabel" text="-" />
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Label text="Genere :" />
-                           <Label fx:id="BookCategoriesLabel" wrapText="true" prefWidth="360.0" text="-" />
+                           <Label fx:id="BookCategoriesLabel" prefWidth="360.0" text="-" wrapText="true" />
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Label text="Publisher :" />
                            <Label fx:id="BookPublisherLabel" text="-" />
@@ -299,7 +303,7 @@
                            <Label fx:id="BookPriceLabel" text="-" />
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Label text="Description :" />
-                           <Label fx:id="BookDescriptionLabel" wrapText="true" prefWidth="360.0" text="-" />
+                           <Label fx:id="BookDescriptionLabel" prefWidth="360.0" text="-" wrapText="true" />
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Separator orientation="VERTICAL" prefHeight="31.0" prefWidth="24.0" visible="false" />
                            <HBox prefHeight="100.0" prefWidth="319.0">
@@ -368,6 +372,72 @@
                      </VBox>
                   </children>
                </HBox>
+               <AnchorPane fx:id="ArchorPaneLibreriaMain1groupPanel" minHeight="0.0" minWidth="0.0" prefHeight="454.0" prefWidth="736.0" styleClass="anchor-pane" stylesheets="@../Css/Buttons.css" visible="false">
+                  <children>
+                     <VBox alignment="TOP_CENTER" prefHeight="466.0" prefWidth="732.0">
+                        <children>
+                           <HBox alignment="CENTER_LEFT" spacing="10.0">
+                              <children>
+                                 <Label fx:id="GroupPanelTitleLabel" text="Libri del gruppo">
+                                    <font>
+                                       <Font size="25.0" />
+                                    </font>
+                                 </Label>
+                                 <Separator prefHeight="0.0" prefWidth="400.0" visible="false" />
+                                 <Button fx:id="BtnGroupBack" text="Indietro" />
+                              </children>
+                           </HBox>
+                           <HBox prefHeight="92.0" prefWidth="732.0">
+                              <children>
+                                 <VBox alignment="BOTTOM_LEFT" prefHeight="51.0" prefWidth="633.0" spacing="5.0">
+                                    <children>
+                                       <HBox prefHeight="10.0" prefWidth="632.0">
+                                          <children>
+                                             <Label text="Search book " />
+                                          </children>
+                                       </HBox>
+                                       <HBox prefHeight="55.0" prefWidth="632.0" spacing="20.0">
+                                          <children>
+                                             <TextField fx:id="SearchFieldLibriMain1" prefHeight="34.0" prefWidth="505.0" promptText="Search..." />
+                                             <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSearchAction" prefHeight="21.0" prefWidth="87.0" stylesheets="@../Css/Buttons.css" textAlignment="CENTER">
+                                                <graphic>
+                                                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="19.0" prefWidth="46.0" text="Search">
+                                                      <font>
+                                                         <Font size="13.0" />
+                                                      </font>
+                                                   </Label>
+                                                </graphic>
+                                             </Button>
+                                          </children>
+                                       </HBox>
+                                    </children>
+                                 </VBox>
+                                 <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                                    <children>
+                                       <Label text="Filter" />
+                                       <ChoiceBox fx:id="FilterChoiceLibreria1" prefHeight="0.0" prefWidth="100.0" />
+                                    </children>
+                                 </VBox>
+                              </children>
+                           </HBox>
+                           <TableView fx:id="tableLibriLibreria1" prefHeight="342.0" prefWidth="732.0">
+                              <columns>
+                                 <TableColumn fx:id="TitleColumn1" prefWidth="520.0" text="Titolo" />
+                                 <TableColumn fx:id="AuthorsColumn1" prefWidth="200.0" text="Autori" />
+                              </columns>
+                           </TableView>
+                           <Separator orientation="VERTICAL" prefHeight="10.0" prefWidth="9.0" visible="false" />
+                           <HBox alignment="CENTER" spacing="8.0">
+                              <children>
+                                 <Button fx:id="BtnPrevPage1" minHeight="18.0" minWidth="28.0" prefHeight="26.0" prefWidth="48.0" text="&lt;" />
+                                 <Button fx:id="BtnNextPage1" minHeight="18.0" minWidth="28.0" prefHeight="18.0" prefWidth="48.0" text="&gt;" />
+                              </children>
+                           </HBox>
+                        </children>
+                     </VBox>
+                     <VBox prefHeight="474.0" prefWidth="736.0" />
+                  </children>
+               </AnchorPane>
             </children>
          </StackPane>
      </items>

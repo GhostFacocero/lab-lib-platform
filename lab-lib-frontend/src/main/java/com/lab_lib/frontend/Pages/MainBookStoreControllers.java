@@ -24,6 +24,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.CustomMenuItem;
+import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 // removed duplicate Label import
@@ -216,7 +218,7 @@ public class MainBookStoreControllers {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/GroupBooks.fxml"));
             javafx.scene.Parent root = loader.load();
             GroupBooksController ctrl = (GroupBooksController) loader.getController();
-            ctrl.setContext(personalLibraryService, libId, groupName);
+            ctrl.setContext(personalLibraryService, ratingService, libId, groupName);
             javafx.stage.Stage dlg = new javafx.stage.Stage();
             dlg.setTitle("Libri del gruppo: " + groupName);
             javafx.scene.Scene scene = new javafx.scene.Scene(root);
@@ -228,7 +230,12 @@ public class MainBookStoreControllers {
             var buttons = getClass().getResource("/com/lab_lib/frontend/Css/Buttons.css");
             if (buttons != null) scene.getStylesheets().add(buttons.toExternalForm());
             dlg.setScene(scene);
-            dlg.setResizable(false);
+            // Make window larger and resizable
+            dlg.setWidth(960);
+            dlg.setHeight(640);
+            dlg.setMinWidth(800);
+            dlg.setMinHeight(520);
+            dlg.setResizable(true);
             dlg.initOwner(VboxMenuOptions.getScene().getWindow());
             dlg.initModality(javafx.stage.Modality.NONE);
             dlg.show();
@@ -353,19 +360,19 @@ public class MainBookStoreControllers {
                     }
                 };
                 ContextMenu cm = new ContextMenu();
-                // Apply app CSS to the context menu when it shows
-                cm.getStyleClass().add("dark-menu");
+                // Evita fondo negro del popup: hace transparente la escena del ContextMenu
                 cm.setOnShown(ev -> {
-                    try {
-                        var styles = getClass().getResource("/com/lab_lib/frontend/Css/styles.css");
-                        if (styles != null) cm.getScene().getStylesheets().add(styles.toExternalForm());
-                        var base = getClass().getResource("/com/lab_lib/frontend/Css/CSS.css");
-                        if (base != null) cm.getScene().getStylesheets().add(base.toExternalForm());
-                        var buttons = getClass().getResource("/com/lab_lib/frontend/Css/Buttons.css");
-                        if (buttons != null) cm.getScene().getStylesheets().add(buttons.toExternalForm());
-                    } catch (Exception ignore) {}
+                    if (cm.getScene() != null) {
+                        cm.getScene().setFill(Color.TRANSPARENT);
+                        if (cm.getScene().getRoot() != null) {
+                            cm.getScene().getRoot().setStyle("-fx-background-color: transparent;");
+                        }
+                    }
                 });
+                // Estilo directo (oscuro) sin cargar CSS global que define .root
+                cm.setStyle("-fx-background-color: #2E2E2E; -fx-background-radius: 6; -fx-border-color: #333333; -fx-border-radius: 6; -fx-padding: 4 0;");
                 MenuItem apri = new MenuItem("Apri");
+                apri.setStyle("-fx-text-fill: #FFFFFF;");
                 apri.setOnAction(ev -> {
                     PersonalLibrary lib = cell.getItem();
                     if (lib == null) return;
@@ -373,6 +380,7 @@ public class MainBookStoreControllers {
                     showGroupBooks(lib.getId(), lib.getName());
                 });
                 MenuItem del = new MenuItem("Elimina gruppo");
+                del.setStyle("-fx-text-fill: #FFFFFF;");
                 del.setOnAction(ev -> {
                     PersonalLibrary lib = cell.getItem();
                     if (lib == null) return;
@@ -401,7 +409,23 @@ public class MainBookStoreControllers {
                     }
                 });
                 cm.getItems().addAll(apri, del);
-                cell.setContextMenu(cm);
+                // Mostrar menú solo en click secundario (context-menu)
+                cell.setOnContextMenuRequested(evt -> {
+                    if (cell.getItem() != null) {
+                        cm.show(cell, evt.getScreenX(), evt.getScreenY());
+                    }
+                });
+                // Abrir grupo con click izquierdo, sin disparar el menú
+                cell.setOnMouseClicked(e -> {
+                    if (e.getButton() == MouseButton.PRIMARY && !cell.isEmpty()) {
+                        PersonalLibrary lib = cell.getItem();
+                        if (lib != null) {
+                            currentGroupId = lib.getId();
+                            showGroupBooks(lib.getId(), lib.getName());
+                            e.consume();
+                        }
+                    }
+                });
                 return cell;
             });
         }
