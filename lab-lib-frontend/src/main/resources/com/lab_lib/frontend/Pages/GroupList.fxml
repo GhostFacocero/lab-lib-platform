@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.lab_lib.frontend.Pages.GroupListController" spacing="10" prefWidth="500" prefHeight="400">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    <Label text="Gruppi personali" styleClass="dialog-title" />
+    <TableView fx:id="groupsTable" prefHeight="320">
+        <columns>
+            <TableColumn fx:id="nameColumn" text="Nome" prefWidth="300" />
+            <TableColumn fx:id="ownerColumn" text="Utente" prefWidth="180" />
+        </columns>
+    </TableView>
+    <HBox spacing="10">
+        <Button fx:id="openButton" text="Apri gruppo" />
+        <Button fx:id="closeButton" text="Chiudi" />
+    </HBox>
+</VBox>

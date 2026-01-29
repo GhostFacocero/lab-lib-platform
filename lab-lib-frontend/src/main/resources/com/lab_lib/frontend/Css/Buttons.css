@@ -1,0 +1,8 @@
+/* Basic button styles to avoid missing resource warnings */
+.button {
+  -fx-background-color: #4A90E2;
+  -fx-text-fill: white;
+}
+.button:hover {
+  -fx-background-color: #357ABD;
+}

@@ -17,8 +17,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Page<Book> findAll(Pageable pageable);
     Page<Book> findByTitleContaining(String title, Pageable pageable);
+    Page<Book> findByTitleStartingWithIgnoreCase(String title, Pageable pageable);
     Page<Book> findByAuthorsNameContaining(String author, Pageable pageable);
     Page<Book> findByTitleAndAuthorsNameContaining(String title, String author, Pageable pageable);
+    Page<Book> findByAuthorsNameStartingWithIgnoreCase(String author, Pageable pageable);
+    Page<Book> findDistinctByTitleStartingWithIgnoreCaseOrAuthorsNameStartingWithIgnoreCase(String title, String author, Pageable pageable);
     Page<Book> findByLibrariesId(Long libId, Pageable pageable);
     Page<Book> findByLibrariesIdAndTitleContaining(Long libId, String title, Pageable pageable);
     Page<Book> findByLibrariesIdAndAuthorsNameContaining(Long libId, String author, Pageable pageable);

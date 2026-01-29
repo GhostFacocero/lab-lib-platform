@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane fx:id="SpliPaneMainLogReg" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="634.0" prefWidth="390.0" styleClass="border-pane" xmlns="http://javafx.com/javafx/20.0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab_lib.frontend.Pages.LogRegUserMainPanelControllers">
+  <items>
+      <StackPane fx:id="StackPanelLogReg" prefHeight="632.0" prefWidth="380.0" styleClass="anchor-pane" stylesheets="@../Css/Buttons.css">
+         <children>
+            <VBox fx:id="ArchorPaneLogRegUser" alignment="TOP_CENTER" prefHeight="649.0" prefWidth="404.0" styleClass="hbox" stylesheets="@../Css/Buttons.css" visible="false">
+               <children>
+                  <Separator orientation="VERTICAL" prefHeight="62.0" prefWidth="14.0" visible="false" />
+                  <Label contentDisplay="CENTER" prefHeight="35.0" prefWidth="214.0" text="Phobos BookStore" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="13.0" visible="false" />
+              <ImageView fx:id="LogoMain" fitHeight="253.0" fitWidth="265.0" pickOnBounds="true" preserveRatio="true">
+    <image>
+        <Image url="@/Img/logo-removebg-preview.png" />
+    </image>
+</ImageView>
+
+                  <Separator orientation="VERTICAL" prefHeight="21.0" prefWidth="0.0" visible="false" />
+                  <HBox alignment="CENTER" prefHeight="85.0" prefWidth="404.0">
+                     <children>
+                        <Button fx:id="LoginPrincipalPageBtm" mnemonicParsing="false" prefHeight="38.0" prefWidth="167.0" stylesheets="@../Css/Buttons.css" text="Login" />
+                        <Separator prefHeight="3.0" prefWidth="30.0" visible="false" />
+                        <Button fx:id="RegisterPrincipalPageBtm" mnemonicParsing="false" prefHeight="38.0" prefWidth="167.0" stylesheets="@../Css/Buttons.css" text="Register" />
+                     </children>
+                  </HBox>
+                  <Label text="Do you prefer to enter User mode?" />
+                  <Separator orientation="VERTICAL" prefHeight="4.0" prefWidth="14.0" visible="false" />
+                  <Button fx:id="UserModePrincipalPageBtm" mnemonicParsing="false" prefHeight="38.0" prefWidth="166.0" stylesheets="@../Css/Buttons.css" text="User" />
+               </children>
+            </VBox>
+            <VBox fx:id="RegisterVBox" alignment="TOP_CENTER">
+               <children>
+                  <Separator orientation="VERTICAL" prefHeight="15.0" prefWidth="29.0" visible="false" />
+                  <Label fx:id="BackLoginRegister" prefHeight="17.0" prefWidth="373.0" text="&lt; Back" />
+                  <Separator orientation="VERTICAL" prefHeight="60.0" prefWidth="26.0" visible="false" />
+                  <Label prefHeight="47.0" prefWidth="358.0" text="Registry">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Label>
+                  <HBox prefHeight="281.0" prefWidth="388.0">
+                     <children>
+                        <Separator prefHeight="3.0" prefWidth="67.0" visible="false" />
+                        <VBox prefHeight="165.0" prefWidth="286.0">
+                           <children>
+                              <Label prefHeight="19.0" prefWidth="41.0" text="Name">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Reg_Name" prefHeight="25.0" prefWidth="297.0" />
+                              <Label text="LastName">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Reg_Surname" prefHeight="25.0" prefWidth="297.0" />
+                              <Label text="NickName">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Reg_Nickname" prefHeight="25.0" prefWidth="297.0" />
+                              <Label text="Gmail">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Reg_Email" prefHeight="25.0" prefWidth="297.0" />
+                              <Label text="CF">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Reg_Cf" prefHeight="25.0" prefWidth="297.0" />
+                              <Label text="Password">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Reg_Password" prefHeight="25.0" prefWidth="297.0" />
+                              <Label text="Conferma Passowrd">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Reg_ConfirmPassword" prefHeight="25.0" prefWidth="297.0" />
+                           </children>
+                        </VBox>
+                        <Separator prefHeight="13.0" prefWidth="84.0" visible="false" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="Reg_Error" textFill="RED"/>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="93.0" prefWidth="404.0">
+                     <children>
+                        <Button fx:id="Btm_Register_RegisterPane" mnemonicParsing="false" prefHeight="38.0" prefWidth="160.0" text="Register" />
+                        <Separator prefHeight="4.0" prefWidth="15.0" visible="false" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox fx:id="LoginVBox" alignment="TOP_CENTER" visible="false">
+               <children>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="70.0" visible="false" />
+                  <Label fx:id="BackLoginRegister2" prefHeight="17.0" prefWidth="368.0" text="&lt; Back" />
+                  <Separator orientation="VERTICAL" prefHeight="158.0" prefWidth="8.0" visible="false" />
+                  <Label text="Login">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Separator prefHeight="24.0" prefWidth="138.0" visible="false" />
+                        <VBox alignment="CENTER_LEFT" prefHeight="188.0" prefWidth="388.0">
+                           <children>
+                              <Label text="Nickname:">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Login_Gmail_TextArea1" prefHeight="22.0" prefWidth="291.0" />
+                              <Label text="Password">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Login_Gmail_TextArea11" prefHeight="22.0" prefWidth="291.0" />
+                           </children>
+                        </VBox>
+                        <Separator prefHeight="14.0" prefWidth="152.0" visible="false" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="Login_Error" textFill="RED"/>
+                  <Separator orientation="VERTICAL" prefHeight="10.0" prefWidth="13.0" visible="false" />
+                  <HBox prefHeight="49.0" prefWidth="388.0">
+                     <children>
+                        <Separator prefHeight="2.0" prefWidth="251.0" visible="false" />
+                        <Button fx:id="Btm_LoginContinue1" mnemonicParsing="false" prefHeight="38.0" prefWidth="114.0" stylesheets="@../Css/Buttons.css" text="Continue" />
+                     </children>
+                  </HBox>
+                  <Label prefHeight="17.0" prefWidth="164.0" text="Aren’t you already registered?" />
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+  </items>
+   <stylesheets>
+      <URL value="@../Css/Buttons.css" />
+      <URL value="@../Css/CSS.css" />
+   </stylesheets>
+</SplitPane>

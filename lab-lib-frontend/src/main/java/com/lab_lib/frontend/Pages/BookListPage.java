@@ -1,13 +1,10 @@
 package com.lab_lib.frontend.Pages;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 import com.lab_lib.frontend.Interfaces.IBookService;
-import com.lab_lib.frontend.Models.Author;
 import com.lab_lib.frontend.Models.Book;
-import com.lab_lib.frontend.Models.Category;
 import com.lab_lib.frontend.Pages.Components.PaginatedTableView;
 
 import javafx.fxml.FXML;
@@ -41,25 +38,15 @@ public class BookListPage {
         initializeTable();
         primaryStage.setTitle("Book Library");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
     private void initializeTable() {
         PaginatedTableView<Book> table = new PaginatedTableView<>(page -> bookService.getBooks(page, 20));
-        
+
+        // Show only the book title to match the simplified Book model
         table.addColumn("Title", Book::getTitle);
-        table.addColumn("Description", Book::getDescription).setPrefWidth(400);
-        table.addColumn("Authors", book -> 
-            book.getAuthors().stream()
-                .map(Author::getName)
-                .collect(Collectors.joining(", ")));
-        table.addColumn("Categories", book -> 
-            book.getCategories().stream()
-                .map(Category::getName)
-                .collect(Collectors.joining(", ")));
-        table.addColumn("Price", Book::getPrice);
-        table.addColumn("P. Month", Book::getPublishMonth);
-        table.addColumn("P. Year", Book::getPublishYear);
 
         rootPane.setCenter(table);
     }

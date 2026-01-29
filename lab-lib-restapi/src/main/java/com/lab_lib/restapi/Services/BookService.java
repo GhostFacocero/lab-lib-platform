@@ -62,6 +62,18 @@ public class BookService {
 
     }
 
+    @Transactional
+    public Page<BookDTO> searchByTitleStartsWith(String title, int page, int size) {
+
+        int maxSize = 100;
+        if(size > maxSize) {
+            throw new IllegalArgumentException("Page size must not exceed " + maxSize);
+        }
+        return bookRepository.findByTitleStartingWithIgnoreCase(title, PageRequest.of(page, size))
+        .map(BookDTO::new);
+
+    }
+
 
     @Transactional
     public Page<BookDTO> searchByAuthor(String author, int page, int size) {
@@ -74,6 +86,32 @@ public class BookService {
         .map(BookDTO::new);
  
 
+    }
+
+    @Transactional
+    public Page<BookDTO> searchByAuthorStartsWith(String author, int page, int size) {
+
+        int maxSize = 100;
+        if(size > maxSize) {
+            throw new IllegalArgumentException("Page size must not exceed " + maxSize);
+        }
+        return bookRepository.findByAuthorsNameStartingWithIgnoreCase(author, PageRequest.of(page, size))
+        .map(BookDTO::new);
+ 
+
+    }
+
+
+    @Transactional
+    public Page<BookDTO> searchByTitleOrAuthorStartsWith(String query, int page, int size) {
+
+        int maxSize = 100;
+        if(size > maxSize) {
+            throw new IllegalArgumentException("Page size must not exceed " + maxSize);
+        }
+        return bookRepository
+            .findDistinctByTitleStartingWithIgnoreCaseOrAuthorsNameStartingWithIgnoreCase(query, query, PageRequest.of(page, size))
+            .map(BookDTO::new);
     }
 
 
