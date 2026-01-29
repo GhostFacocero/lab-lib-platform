@@ -57,9 +57,10 @@ public class BookService {
         if(size > maxSize) {
             throw new IllegalArgumentException("Page size must not exceed " + maxSize);
         }
-        return bookRepository.findByTitleContaining(title, PageRequest.of(page, size))
-        .map(BookDTO::new);
 
+        // Chiamiamo il nuovo metodo "SortedByLength"
+        return bookRepository.findByTitleContainingSortedByLength(title, PageRequest.of(page, size))
+                .map(BookDTO::new);
     }
 
     @Transactional
