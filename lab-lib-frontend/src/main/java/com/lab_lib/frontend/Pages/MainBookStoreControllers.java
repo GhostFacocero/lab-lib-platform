@@ -1,9 +1,26 @@
 package com.lab_lib.frontend.Pages;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import com.lab_lib.frontend.Models.Book;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.lab_lib.frontend.Exceptions.ApiException;
 import com.lab_lib.frontend.Interfaces.IBookService;
+import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
+import com.lab_lib.frontend.Interfaces.IRatingService;
+import com.lab_lib.frontend.Models.Book;
+import com.lab_lib.frontend.Models.PaginatedResponse;
+import com.lab_lib.frontend.Models.PersonalLibrary;
+import com.lab_lib.frontend.Utils.UserSession;
+
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,54 +29,35 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
-// removed duplicate Label import
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
-import javafx.beans.property.SimpleStringProperty;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.ArrayList;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import com.google.inject.Inject;
-import com.lab_lib.frontend.Utils.UserSession;
-import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
-import com.lab_lib.frontend.Interfaces.IRatingService;
-import com.lab_lib.frontend.Models.PersonalLibrary;
 import javafx.stage.Stage;
-import javafx.application.Platform;
-import javafx.scene.layout.Region;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import com.lab_lib.frontend.Models.PaginatedResponse;
-import com.lab_lib.frontend.Exceptions.ApiException;
+import javafx.util.Duration;
  
 public class MainBookStoreControllers {
 
@@ -175,6 +173,7 @@ public class MainBookStoreControllers {
     @FXML private Label BookPriceLabel;
     @FXML private Label BookDescriptionLabel;
     @FXML private Button DataLibroBotoneReviewIt;
+    @FXML private Button btnViewRecommendations;
 
     private final int MAX_STARS = 5;
     private boolean isMenuCollapsed = false;
@@ -186,6 +185,8 @@ public class MainBookStoreControllers {
     // Server-side prefix search now handles paging; no extra client fetches needed
     private boolean suppressSelectionDuringPaging = false;
     private String currentQuery = null;
+
+    private final Injector injector;
     
     @FXML
     private Button LogOut;
@@ -194,23 +195,21 @@ public class MainBookStoreControllers {
     private final IBookService bookService;
     private final IPersonalLibraryService personalLibraryService;
     private final IRatingService ratingService;
-    private final boolean viewOnlyMode;
+    private boolean viewOnlyMode;
     private Book currentDetailBook;
 
-    public MainBookStoreControllers(UserSession userSession, IBookService bookService, IPersonalLibraryService personalLibraryService, IRatingService ratingService) {
+    @Inject // Guice userà questo costruttore automaticamente!
+    public MainBookStoreControllers(UserSession userSession, 
+                                    IBookService bookService, 
+                                    IPersonalLibraryService personalLibraryService, 
+                                    IRatingService ratingService, 
+                                    Injector injector) { // TOLTO viewOnlyMode
         this.userSession = userSession;
         this.bookService = bookService;
         this.personalLibraryService = personalLibraryService;
         this.ratingService = ratingService;
-        this.viewOnlyMode = false;
-    }
-
-    public MainBookStoreControllers(UserSession userSession, IBookService bookService, IPersonalLibraryService personalLibraryService, IRatingService ratingService, boolean viewOnlyMode) {
-        this.userSession = userSession;
-        this.bookService = bookService;
-        this.personalLibraryService = personalLibraryService;
-        this.ratingService = ratingService;
-        this.viewOnlyMode = viewOnlyMode;
+        this.injector = injector;
+        this.viewOnlyMode = false; // Default: modalità utente normale
     }
 
     private void showGroupBooks(long libId, String groupName) {
@@ -494,6 +493,32 @@ public class MainBookStoreControllers {
             HBoxEdizioneGeneralReviesStarts.setOnMouseClicked(e -> openCategoryReviewsDialog("Edition"));
             HBoxGradevolezzaGeneralReviesStarts.setOnMouseClicked(e -> openCategoryReviewsDialog("Pleasantness"));
         }
+
+        applyViewMode();
+    }
+
+    public void setViewOnlyMode(boolean viewOnlyMode) {
+        this.viewOnlyMode = viewOnlyMode;
+        applyViewMode(); // Aggiorna la UI in base alla modalità
+    }
+
+    private void applyViewMode() {
+        // Sposta qui la logica che nasconde i bottoni se viewOnlyMode è true
+        if (viewOnlyMode) {
+            if (Btm_userInfo != null) Btm_userInfo.setVisible(false);
+            if (Btm_Gruppi != null) Btm_Gruppi.setVisible(false);
+            if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(false);
+            if (LogOut != null) LogOut.setVisible(true);
+            if (DataLibroBotoneReviewIt != null) DataLibroBotoneReviewIt.setVisible(false);
+            
+            // Forza la vista sul catalogo
+            if (ArchorPaneLibriMain != null) ArchorPaneLibriMain.setVisible(false);
+            if (ArchorPaneLibreriaMain != null) ArchorPaneLibreriaMain.setVisible(true);
+            if (GruppiPanel != null) GruppiPanel.setVisible(false);
+            
+            // Logica di caricamento pagina unificata se serve...
+             loadUnifiedPage(0);
+        }
     }
 
     private void setupRowContextMenu() {
@@ -668,6 +693,10 @@ public class MainBookStoreControllers {
         if (BookPriceLabel != null) BookPriceLabel.setText(b.getPrice() != null ? b.getPrice().toPlainString() : "-");
         if (BookDescriptionLabel != null) BookDescriptionLabel.setText(nvl(b.getDescription()));
 
+        if (btnViewRecommendations != null) {
+            btnViewRecommendations.setVisible(true);
+        }
+
         // Update average stars per category and overall
         updateAverageStarsForBook(b.getId());
     }
@@ -724,6 +753,45 @@ public class MainBookStoreControllers {
                 System.err.println("[PersonalLibrary][Error] Failed to add book to library: " + msg);
                 ex.printStackTrace();
             }
+        }
+    }
+
+    @FXML
+    private void handleViewRecommendations(ActionEvent event) {
+        if (currentDetailBook == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/RecommendedBooks.fxml"));
+            
+            // USIAMO GUICE per iniettare IRatingService nel nuovo controller
+            if (injector != null) {
+                loader.setControllerFactory(injector::getInstance);
+            }
+
+            Parent root = loader.load();
+            
+            // Passiamo i dati al controller
+            RecommendedBooksController ctrl = loader.getController();
+            ctrl.setContext(currentDetailBook.getId(), nvl(currentDetailBook.getTitle()));
+
+            Stage stage = new Stage();
+            stage.setTitle("Libri Consigliati");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            
+            // Modale: blocca la finestra sotto finché non chiudi questa
+            stage.initModality(Modality.WINDOW_MODAL); 
+            stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert err = new Alert(AlertType.ERROR);
+            err.setTitle("Errore");
+            err.setHeaderText("Impossibile aprire i consigli");
+            err.setContentText(e.getMessage());
+            err.showAndWait();
         }
     }
 
@@ -1228,7 +1296,7 @@ public class MainBookStoreControllers {
             Parent root = loader.load();
             var ctrl = (ValutaControllers) loader.getController();
             if (currentDetailBook != null) {
-                ctrl.setContext(ratingService, personalLibraryService, currentDetailBook.getId(), nvl(currentDetailBook.getTitle()), id -> addToPersonalLibraryUI(currentDetailBook));
+                ctrl.setContext(currentDetailBook.getId(), nvl(currentDetailBook.getTitle()), id -> addToPersonalLibraryUI(currentDetailBook));
             }
 
             Stage reviewStage = new Stage();
@@ -1247,17 +1315,28 @@ public class MainBookStoreControllers {
     private void openReviewWindowFor(Book b) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/SchedaDiValutazioneLibro.fxml"));
+            
+            // USA GUICE PER CREARE IL CONTROLLER
+            if (injector != null) {
+                loader.setControllerFactory(injector::getInstance);
+            }
+            
             Parent root = loader.load();
             var ctrl = (ValutaControllers) loader.getController();
-            ctrl.setContext(ratingService, personalLibraryService, b.getId(), nvl(b.getTitle()), id -> addToPersonalLibraryUI(b));
+            
+            // CORREZIONE setContext: NON PASSARE I SERVIZI (Rating, LibraryService)
+            // Passa solo ID, Titolo e Callback.
+            ctrl.setContext(b.getId(), nvl(b.getTitle()), id -> addToPersonalLibraryUI(b));
 
-            Stage reviewStage = new Stage();
-            reviewStage.setTitle("Scheda di Valutazione del Libro");
-            reviewStage.setScene(new Scene(root));
-            reviewStage.setResizable(false);
-            reviewStage.initModality(Modality.WINDOW_MODAL);
-            reviewStage.initOwner(VboxMenuOptions.getScene().getWindow());
-            reviewStage.show();
+            // CORREZIONE ERRORE "cannot find symbol variable stage"
+            // Devi dichiarare lo stage qui dentro
+            Stage stage = new Stage(); // <--- Questa riga mancava o era spostata
+            stage.setTitle("Scheda di Valutazione del Libro");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(VboxMenuOptions.getScene().getWindow());
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }

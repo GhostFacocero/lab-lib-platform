@@ -25,7 +25,13 @@ import com.lab_lib.frontend.Models.PaginatedResponse;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 public class GroupBooksController {
+    // Iniettiamo l'Injector qui
+    @Inject
+    private Injector injector;
 
     @FXML private Label GroupTitleLabel;
     @FXML private TableView<Book> GroupBooksTable;
@@ -161,23 +167,26 @@ public class GroupBooksController {
     private void openValutaForBook(Book b) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/SchedaDiValutazioneLibro.fxml"));
+            
+            // *** LA MAGIA È QUI ***
+            // Diciamo al loader di usare l'injector per creare la classe ValutaControllers
+            // Così Guice inietterà automaticamente i servizi e l'injector dentro ValutaControllers
+            if (injector != null) {
+                loader.setControllerFactory(injector::getInstance);
+            }
+
             Parent root = loader.load();
-            com.lab_lib.frontend.Pages.ValutaControllers ctrl = (com.lab_lib.frontend.Pages.ValutaControllers) loader.getController();
+            
+            // Recuperiamo il controller creato da Guice
+            com.lab_lib.frontend.Pages.ValutaControllers ctrl = loader.getController();
+            
             java.util.function.LongConsumer noop = id -> {};
-            ctrl.setContext(ratingService, personalLibraryService, b.getId(), b.getTitle(), noop);
+            
+            // CHIAMIAMO IL NUOVO SETCONTEXT (più corto)
+            ctrl.setContext(b.getId(), b.getTitle(), noop);
+            
             Stage stage = new Stage();
-            stage.setTitle("Scheda di Valutazione del Libro");
-            Scene scene = new Scene(root);
-            // Optional: apply base CSS
-            var base = getClass().getResource("/com/lab_lib/frontend/Css/CSS.css");
-            if (base != null) scene.getStylesheets().add(base.toExternalForm());
-            var buttons = getClass().getResource("/com/lab_lib/frontend/Css/Buttons.css");
-            if (buttons != null) scene.getStylesheets().add(buttons.toExternalForm());
-            stage.setScene(scene);
-            stage.setWidth(900);
-            stage.setHeight(620);
-            stage.setResizable(true);
-            stage.initOwner(GroupBooksTable.getScene().getWindow());
+            // ... resto del codice uguale ...
             stage.show();
         } catch (Exception ex) {
             Alert err = new Alert(Alert.AlertType.ERROR);

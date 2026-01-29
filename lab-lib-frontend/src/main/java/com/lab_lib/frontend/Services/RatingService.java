@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.lab_lib.frontend.Interfaces.IRatingService;
 import com.lab_lib.frontend.Models.AddRatingToBookRequest;
 import com.lab_lib.frontend.Models.RatingDTO;
+import com.lab_lib.frontend.Models.RecommendedBookDTO;
 import com.lab_lib.frontend.Utils.HttpUtil;
 import java.util.List;
 
@@ -28,5 +29,18 @@ public class RatingService implements IRatingService {
     public List<RatingDTO> getRatingsByBookId(long bookId) {
         String endpoint = "/ratings/book/" + bookId;
         return httpUtil.get(endpoint, new TypeReference<List<RatingDTO>>() {});
+    }
+
+    @Override
+    public void addRatingRecommendation(long bookId, long recommendedBookId) {
+        String endpoint = "/books/" + bookId + "/recommended_book/" + recommendedBookId;
+        // Backend returns a simple text message; ignore payload and avoid JSON parsing
+        httpUtil.postVoid(endpoint, null);
+    }
+
+    @Override
+    public List<RecommendedBookDTO> getRecommendedBooks(long bookId) {
+        String endpoint = "/books/" + bookId + "/recommended_books";
+        return httpUtil.get(endpoint, new TypeReference<List<RecommendedBookDTO>>() {});
     }
 }

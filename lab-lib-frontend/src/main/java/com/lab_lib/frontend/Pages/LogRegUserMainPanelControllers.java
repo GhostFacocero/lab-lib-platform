@@ -1,6 +1,22 @@
 package com.lab_lib.frontend.Pages;
 
+import java.io.IOException;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.lab_lib.frontend.Interfaces.IAuthService;
+import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
+import com.lab_lib.frontend.Models.AuthResponse;
+import com.lab_lib.frontend.Models.LoginRequest;
+import com.lab_lib.frontend.Models.RegisterRequest;
+import com.lab_lib.frontend.Services.PersonalLibraryService;
+import com.lab_lib.frontend.Utils.HttpUtil;
+import com.lab_lib.frontend.Utils.UserSession;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -8,26 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.io.IOException;
-
-import com.google.inject.Inject;
-import com.lab_lib.frontend.Interfaces.IAuthService;
-import com.lab_lib.frontend.Models.AuthResponse;
-import com.lab_lib.frontend.Models.LoginRequest;
-import com.lab_lib.frontend.Models.RegisterRequest;
-import com.lab_lib.frontend.Utils.UserSession;
-import com.lab_lib.frontend.Pages.MainBookStoreControllers;
-import com.lab_lib.frontend.Interfaces.IBookService;
-import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
-import com.lab_lib.frontend.Interfaces.IRatingService;
-import com.lab_lib.frontend.Services.BookService;
-import com.lab_lib.frontend.Services.PersonalLibraryService;
-import com.lab_lib.frontend.Services.RatingService;
-import com.lab_lib.frontend.Utils.HttpUtil;
 
 /**
  * Controller per login e registrazione utente.
@@ -95,6 +92,9 @@ public class LogRegUserMainPanelControllers {
 
     private final IAuthService authService;
     private final UserSession userSession;
+
+    @Inject
+    private Injector injector;
 
     @Inject
     public LogRegUserMainPanelControllers(IAuthService authService, UserSession userSession) {
@@ -254,22 +254,17 @@ public class LogRegUserMainPanelControllers {
     private void openMainBookStore() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/MainBookStore.fxml"));
-            // Usa una factory per iniettare l'UserSession nel controller della pagina successiva
-            loader.setControllerFactory(type -> {
-                if (type == MainBookStoreControllers.class) {
-                    HttpUtil http = new HttpUtil(userSession);
-                    IBookService bs = new BookService(http);
-                    IPersonalLibraryService pls = new PersonalLibraryService(http);
-                    IRatingService rs = new RatingService(http);
-                    return new MainBookStoreControllers(userSession, bs, pls, rs, viewOnlyMode);
-                }
-                try {
-                    return type.getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            
+            // FINALMENTE! ECCO LA MAGIA DI GUICE
+            // Non dobbiamo più fare new BookService, new HttpUtil, ecc.
+            // Guice vede @Inject nel costruttore di MainBookStoreControllers e fa tutto lui.
+            loader.setControllerFactory(injector::getInstance);
+            
             Parent root = loader.load();
+
+            // Ora recuperiamo il controller creato da Guice per passargli il dato "runtime"
+            MainBookStoreControllers controller = loader.getController();
+            controller.setViewOnlyMode(this.viewOnlyMode); // Passiamo il dato qui!
 
             Stage newStage = new Stage();
             newStage.setScene(new Scene(root));

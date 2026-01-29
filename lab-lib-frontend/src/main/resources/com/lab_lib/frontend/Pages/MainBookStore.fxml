@@ -306,12 +306,38 @@
                            <Label fx:id="BookDescriptionLabel" prefWidth="360.0" text="-" wrapText="true" />
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Separator orientation="VERTICAL" prefHeight="31.0" prefWidth="24.0" visible="false" />
-                           <HBox prefHeight="100.0" prefWidth="319.0">
+                           <VBox alignment="CENTER" spacing="15.0">
                               <children>
-                                 <Separator prefHeight="4.0" prefWidth="113.0" visible="false" />
-                                 <Button fx:id="DataLibroBotoneReviewIt" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleOpenReviewWindow" prefHeight="38.0" prefWidth="146.0" text="Review it" />
+                                 <Button fx:id="DataLibroBotoneReviewIt" 
+                                       alignment="CENTER" 
+                                       contentDisplay="CENTER" 
+                                       mnemonicParsing="false" 
+                                       onAction="#handleOpenReviewWindow" 
+                                       prefHeight="40.0" 
+                                       prefWidth="250.0" 
+                                       text="Scrivi una Recensione">
+                                    <font>
+                                       <Font size="14.0" />
+                                    </font>
+                                 </Button>
+
+                                 <Button fx:id="btnViewRecommendations" 
+                                       mnemonicParsing="false" 
+                                       onAction="#handleViewRecommendations" 
+                                       prefHeight="40.0" 
+                                       prefWidth="250.0" 
+                                       style="-fx-background-color: #507ea1; -fx-text-fill: white; -fx-cursor: hand;" 
+                                       text="Vedi Libri Consigliati">
+                                    <font>
+                                       <Font name="System Bold" size="14.0" />
+                                    </font>
+                                 </Button>
                               </children>
-                           </HBox>
+                              
+                              <VBox.margin>
+                                 <Insets top="30.0" />
+                              </VBox.margin>
+                           </VBox>
                         </children>
                      </VBox>
                      <Separator orientation="VERTICAL" prefHeight="200.0" />

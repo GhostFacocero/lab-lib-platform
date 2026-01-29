@@ -11,8 +11,8 @@
 
   <properties>
     <!-- Define Java version -->
-    <java.version>17.0.2</java.version>
-    <javafx.version>20</javafx.version> 
+    <java.version>17</java.version>
+    <javafx.version>17.0.10</javafx.version>
     <jackson.version>2.15.2</jackson.version>
   </properties>
 

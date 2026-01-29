@@ -1,28 +1,45 @@
 package com.lab_lib.frontend.Pages;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.geometry.Pos;
 import javafx.stage.Stage;
-import java.util.HashMap;
-import java.util.Map;
-import io.github.cdimascio.dotenv.Dotenv;
 
 /**
  * Controller per la gestione del pannello di valutazione di un libro.
  * Consente di valutare diverse categorie con stelle e commenti testuali.
  */
 public class ValutaControllers {
+    // 1. INIEZIONE DIRETTA DEI SERVIZI E DELL'INJECTOR
+    @Inject
     private com.lab_lib.frontend.Interfaces.IRatingService ratingService;
+    
+    @Inject
     private com.lab_lib.frontend.Interfaces.IPersonalLibraryService personalLibraryService;
+    
+    @Inject
+    private Injector injector; // Guice si inietta da solo!
+
     private Long bookId;
 
     // Contenitori HBox per le stelle di ogni categoria
@@ -139,13 +156,10 @@ public class ValutaControllers {
 
     private java.util.function.LongConsumer onAddToLibrary;
 
-    public void setContext(com.lab_lib.frontend.Interfaces.IRatingService ratingService,
-                           com.lab_lib.frontend.Interfaces.IPersonalLibraryService personalLibraryService,
-                           Long bookId,
+    public void setContext(Long bookId,
                            String bookTitle,
                            java.util.function.LongConsumer onAddToLibrary) {
-        this.ratingService = ratingService;
-        this.personalLibraryService = personalLibraryService;
+        // NON passiamo più i servizi qui, ce li ha già dati Guice!
         this.bookId = bookId;
         this.onAddToLibrary = onAddToLibrary;
         if (ValutaPanelNameLibro != null && bookTitle != null) {
@@ -199,33 +213,30 @@ public class ValutaControllers {
      */
     private void setupButtons() {
         ValutaNextStileButtom.setOnAction(e -> {
-            // Salva Stile e passa a Contenuto
-            submitIfAny("Stile", ratingStile, safeTxt(ValutaTextStile));
+            // Rimosso submitIfAny
             ValutaPaneStile.setVisible(false);
             ValutaPaneContenuto.setVisible(true);
         });
 
         ValutaNextContenutoButtom1.setOnAction(e -> {
-            // Salva Contenuto e passa a Gradevolezza
-            submitIfAny("Contenuto", ratingContenuto, safeTxt(ValutaTextContenuto));
+            // Rimosso submitIfAny
             ValutaPaneContenuto.setVisible(false);
             ValutaPaneGradevolezza.setVisible(true);
         });
 
         ValutaNextGradevolezzaButtom.setOnAction(e -> {
-            // Salva Gradevolezza e passa a Originalità
-            submitIfAny("Gradevolezza", ratingGradevolezza, safeTxt(ValutaTextGradevolezza));
+            // Rimosso submitIfAny
             ValutaPaneGradevolezza.setVisible(false);
             ValutaPaneOriginalita.setVisible(true);
         });
 
         ValutaNextOriginalitaButtom.setOnAction(e -> {
-            // Salva Originalità e passa a Edizione
-            submitIfAny("Originalita", ratingOriginalita, safeTxt(ValutaTextOriginalita));
+            // Rimosso submitIfAny
             ValutaPaneOriginalita.setVisible(false);
             ValutaPaneEdizione.setVisible(true);
         });
 
+        // L'invio avviene solo qui
         ValutaNextSendButtom1.setOnAction(e -> submitAndClose());
     }
 
@@ -250,20 +261,60 @@ public class ValutaControllers {
         }
     }
 
-    /**
-     * Stampa i dati di valutazione e chiude la finestra.
-     */
+    private static class ReviewData {
+        String category;
+        int rating;
+        TextArea textArea;
+
+        public ReviewData(String category, int rating, TextArea textArea) {
+            this.category = category;
+            this.rating = rating;
+            this.textArea = textArea;
+        }
+    }
+
     private void submitAndClose() {
         try {
             if (ratingService != null && bookId != null) {
-                // Invia solo l'ultima categoria (Edizione); le altre vengono inviate nei rispettivi Next
-                submitIfAny("Edizione", ratingEdizione, safeTxt(ValutaTextEdizione));
+                
+                // 1. Creiamo una lista con tutti i dati raccolti
+                List<ReviewData> reviewsToSend = new ArrayList<>();
+                reviewsToSend.add(new ReviewData("Stile", ratingStile, ValutaTextStile));
+                reviewsToSend.add(new ReviewData("Contenuto", ratingContenuto, ValutaTextContenuto));
+                reviewsToSend.add(new ReviewData("Gradevolezza", ratingGradevolezza, ValutaTextGradevolezza));
+                reviewsToSend.add(new ReviewData("Originalita", ratingOriginalita, ValutaTextOriginalita));
+                reviewsToSend.add(new ReviewData("Edizione", ratingEdizione, ValutaTextEdizione));
+
+                // 2. Ciclo FOR per inviare tutto
+                System.out.println("[ValutaControllers] Inizio invio batch delle recensioni...");
+                for (ReviewData review : reviewsToSend) {
+                    // submitIfAny controlla da solo se c'è un voto o un commento valido
+                    submitIfAny(review.category, review.rating, safeTxt(review.textArea));
+                }
             }
-            closeWindow();
+            
+            // 3. Logica di passaggio alla pagina Recommend (uguale a prima)
+            if (injector != null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/Recommend.fxml"));
+                loader.setControllerFactory(injector::getInstance);
+                Parent root = loader.load();
+                
+                RecommendController recommendPage = loader.getController();
+                recommendPage.setContext(this.bookId, this::closeWindow);
+                
+                Stage currentStage = (Stage) ValutaNextSendButtom1.getScene().getWindow();
+                Scene scene = new Scene(root);
+                currentStage.setScene(scene);
+                currentStage.centerOnScreen();
+            } else {
+                closeWindow();
+            }
+
         } catch (Exception ex) {
+            System.err.println("[ValutaControllers] submitAndClose FAILED -> " + ex.getMessage());
             Alert a = new Alert(AlertType.ERROR);
-            a.setTitle("Review Error");
-            a.setHeaderText("Failed to submit review");
+            a.setTitle("Errore");
+            a.setHeaderText("Impossibile inviare le valutazioni");
             a.setContentText(ex.getMessage());
             a.showAndWait();
         }

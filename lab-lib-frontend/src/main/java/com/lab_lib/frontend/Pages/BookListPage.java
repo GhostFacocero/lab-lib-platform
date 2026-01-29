@@ -15,11 +15,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class BookListPage {
-    private final IBookService bookService;
     
     @FXML
     private BorderPane rootPane;
 
+    private final IBookService bookService;
     @Inject
     public BookListPage(IBookService bookService) {
         this.bookService = bookService;
