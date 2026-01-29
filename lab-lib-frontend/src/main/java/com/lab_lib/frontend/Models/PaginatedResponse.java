@@ -16,6 +16,10 @@ public class PaginatedResponse<T> {
     private boolean first;
     private boolean empty;
 
+    public void setContent(List<T> content) {
+        this.content = content;
+    }
+
     // Getters
     public List<T> getContent() {
         return content;
