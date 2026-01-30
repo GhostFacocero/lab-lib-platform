@@ -38,17 +38,21 @@ public class BookController {
         @RequestParam(required = false) String author,
         @RequestParam(required = false) String ratingName,
         @RequestParam(required = false) Integer evaluation,
+        @RequestParam(defaultValue = "false") boolean startsWith,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "50") int size)
     {
         if(title != null && author == null) {
-            return bookService.searchByTitle(title, page, size);
+            return startsWith ? bookService.searchByTitleStartsWith(title, page, size)
+                              : bookService.searchByTitle(title, page, size);
         }
         if(title == null && author != null) {
-            return bookService.searchByAuthor(author, page, size);
+            return startsWith ? bookService.searchByAuthorStartsWith(author, page, size)
+                              : bookService.searchByAuthor(author, page, size);
         }
         if(title != null && author != null) {
-            return bookService.searchByTitleAndAuthor(title, author, page, size);
+            return startsWith ? bookService.searchByTitleOrAuthorStartsWith(title, page, size)
+                              : bookService.searchByTitleAndAuthor(title, author, page, size);
         }
         if(ratingName != null && evaluation != null) {
             return bookService.searchByRatingNameAndEvaluation(ratingName, evaluation, page, size);

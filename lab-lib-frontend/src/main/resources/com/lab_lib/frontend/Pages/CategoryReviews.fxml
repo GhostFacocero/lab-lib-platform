@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.lab_lib.frontend.Pages.CategoryReviewsController"
+    spacing="10" style="-fx-padding: 16;"
+    stylesheets="@../Css/CSS.css">
+    <children>
+        <Label fx:id="CategoryTitle" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Category Reviews" />
+        <TableView fx:id="ReviewsTable" prefHeight="360" prefWidth="600" styleClass="anchor-pane">
+            <columns>
+                <TableColumn fx:id="UserColumn" text="User" prefWidth="120" />
+                <TableColumn fx:id="StarsColumn" text="Stars" prefWidth="120" />
+                <TableColumn fx:id="CommentColumn" text="Review" prefWidth="360" />
+            </columns>
+        </TableView>
+        <HBox spacing="8" alignment="CENTER_RIGHT">
+            <children>
+                <Button fx:id="CloseButton" text="Close" onAction="#handleClose" />
+            </children>
+            <padding>
+                <Insets top="8.0" right="0.0" bottom="0.0" left="0.0" />
+            </padding>
+        </HBox>
+    </children>
+</VBox>
