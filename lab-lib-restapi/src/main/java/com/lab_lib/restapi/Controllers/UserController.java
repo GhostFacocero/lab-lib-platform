@@ -1,10 +1,16 @@
+// Emanuele Contini, matricola 756441
+// Emanuele Gobessi, matricola 757599
+// Diego Guidi, matricola 758420
+// Nicola Curchi, matricola 757786
+// Mirko Gurzau, matricola 757925
+
 package com.lab_lib.restapi.Controllers;
 
 import com.lab_lib.restapi.DTO.AppUser.RegisterRequest;
-import com.lab_lib.restapi.Models.AppUser;
+import com.lab_lib.restapi.DTO.AppUser.AuthResponse;
+import com.lab_lib.restapi.DTO.AppUser.LoginRequest;
 import com.lab_lib.restapi.Services.UserService;
 
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -21,12 +27,17 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
-        try {
-            UUID token = userService.registerUser(req);
-            return ResponseEntity.status(201).body(Map.of("token", token));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest req) {
+        UUID token = userService.registerUser(req);
+        //usa un DTO come response per pulizia di codice e per inviare il dato come JSON
+        //in forma "token:" + token
+        return ResponseEntity.status(201).body(new AuthResponse(token));
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
+        UUID token = userService.loginUser(req);
+        return ResponseEntity.ok().body(new AuthResponse(token));
+    }
+
 }

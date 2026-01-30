@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<VBox xmlns="http://javafx.com/javafx/20" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab_lib.frontend.Pages.GroupBooksController" spacing="10">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10" />
+    </padding>
+    <Label fx:id="GroupTitleLabel" text="Libri del gruppo" styleClass="title"/>
+    <TableView fx:id="GroupBooksTable" prefHeight="405.0" prefWidth="440.0" minHeight="405.0" minWidth="440.0" maxHeight="Infinity" maxWidth="Infinity">
+        <columns>
+            <TableColumn fx:id="ColTitle" text="Titolo" prefWidth="220"/>
+            <TableColumn fx:id="ColAuthors" text="Autori" prefWidth="220"/>
+        </columns>
+    </TableView>
+</VBox>

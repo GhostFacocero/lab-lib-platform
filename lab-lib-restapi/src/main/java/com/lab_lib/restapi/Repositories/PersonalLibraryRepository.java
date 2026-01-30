@@ -1,0 +1,28 @@
+// Emanuele Contini, matricola 756441
+// Emanuele Gobessi, matricola 757599
+// Diego Guidi, matricola 758420
+// Nicola Curchi, matricola 757786
+// Mirko Gurzau, matricola 757925
+
+package com.lab_lib.restapi.Repositories;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.lab_lib.restapi.Models.PersonalLibrary;
+
+public interface PersonalLibraryRepository extends JpaRepository<PersonalLibrary, Long> {
+
+    @EntityGraph(attributePaths = "books")
+    Optional<PersonalLibrary> findById(Long id);
+    
+    boolean existsByName(String name);
+    boolean existsByUserId(Long userId);
+    boolean existsByNameAndUserId(String name, Long userId);
+    List<PersonalLibrary> findAllByUserId(Long userId);
+    boolean existsByIdAndBooksId(Long plId, Long bookId);
+
+}

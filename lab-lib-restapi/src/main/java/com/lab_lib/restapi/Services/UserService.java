@@ -1,12 +1,17 @@
+// Emanuele Contini, matricola 756441
+// Emanuele Gobessi, matricola 757599
+// Diego Guidi, matricola 758420
+// Nicola Curchi, matricola 757786
+// Mirko Gurzau, matricola 757925
+
 package com.lab_lib.restapi.Services;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.lab_lib.restapi.DTO.AppUser.RegisterRequest;
+import com.lab_lib.restapi.DTO.AppUser.*;
 import com.lab_lib.restapi.Models.AppUser;
 import com.lab_lib.restapi.Repositories.UserRepository;
 
@@ -21,18 +26,13 @@ public class UserService {
     private EntityManager entityManager;
 
     private final UserRepository userRepository;
-    private static final Pattern EMAIL_REGEX = Pattern.compile("^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Transactional // abbellitore che rollbacka automaticamente in caso di eccezioni
+    @Transactional //abbellitore che rollbacka automaticamente in caso di eccezioni
     public UUID registerUser(RegisterRequest newUser) {
-        // Email format check
-        if (!EMAIL_REGEX.matcher(newUser.getEmail()).matches()) {
-            throw new IllegalArgumentException("Invalid email format.");
-        }
 
         // Basic password length check
         if (newUser.getPassword() == null || newUser.getPassword().length() < 8) {
@@ -40,7 +40,7 @@ public class UserService {
         }
 
         if (userRepository.existsByEmail(newUser.getEmail())) {
-            throw new IllegalArgumentException("Email already in use.");
+            throw new IllegalStateException("Email already in use.");
         }
 
         if (userRepository.existsByNickname(newUser.getNickname())) {
@@ -53,24 +53,75 @@ public class UserService {
         user.setSurname(newUser.getSurname());
         user.setCf(newUser.getCf());
         user.setEmail(newUser.getEmail());
-        user.setPassword(newUser.getPassword()); // hash later
+        user.setPassword(cypher(newUser.getPassword()));
 
-        try {
-            AppUser saved = userRepository.save(user);
-            entityManager.refresh(saved); // forza un SELECT sul database per aggiornare i campi
 
-            return saved.getToken();
-        } catch (DataIntegrityViolationException e) {
-            // Es. cf troppo corto, email troppo lunga, vincoli DB violati
-            throw new IllegalArgumentException("Registration failed: " + extractRootCauseMessage(e));
+        AppUser saved = userRepository.save(user);
+        entityManager.refresh(saved); // forza un SELECT sul database per aggiornare i campi
+
+        return saved.getToken();
+    }
+
+    @Transactional
+    public UUID loginUser(LoginRequest User) {
+        // Always check user input
+        if(User.getPassword() == null || User.getPassword().length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters.");
+        }  
+        AppUser existingUser = userRepository.findByNickname(User.getNickname());
+        if(existingUser == null || !decypher(existingUser.getPassword()).equals(User.getPassword())) {
+            throw new IllegalArgumentException("Invalid nickname or password.");
+        } else {
+            return existingUser.getToken();
         }
     }
 
-    private String extractRootCauseMessage(Throwable e) {
-        Throwable cause = e;
-        while (cause.getCause() != null) {
-            cause = cause.getCause();
-        }
-        return cause.getMessage();
+    public Long getUserIdByToken(UUID token) {
+        if(!userRepository.existsByToken(token))
+            throw new NoSuchElementException("Authentication failed: token does not exist");
+        AppUser user = userRepository.findByToken(token);
+        return user.getId();
     }
+
+    public boolean existsByToken(UUID token) {
+        return userRepository.existsByToken(token);
+    }
+
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    public AppUser findUserById(Long id) {
+        return userRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("User not found"));
+    }
+
+    private String cypher(String s) {
+        String cypher = "";
+        for(int i = 0; i < s.length(); i++) {
+            int code = s.codePointAt(i);
+            int codeCypher = code + 3;
+            if(codeCypher > 127) {
+                int diff = codeCypher - 127;
+                codeCypher = 32 + diff;
+            }
+            cypher += (char)codeCypher;
+        }
+        return cypher;
+    }
+
+    private String decypher(String s) {
+        String decypher = "";
+        for(int i = 0; i < s.length(); i++) {
+            int code = s.codePointAt(i);
+            int codeDecypher = code - 3;
+            if(codeDecypher < 32) {
+                int diff = 32 - codeDecypher;
+                codeDecypher = 127 - diff;
+            }
+            decypher += (char)codeDecypher;
+        }
+        return decypher;
+    }
+
 }
