@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Guice;
+import com.google.inject.AbstractModule;
+import com.lab_lib.frontend.DI.AppModule;
 import com.lab_lib.frontend.Interfaces.IAuthService;
 import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
 import com.lab_lib.frontend.Models.AuthResponse;
@@ -253,13 +256,53 @@ public class LogRegUserMainPanelControllers {
 
     private void openMainBookStore() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/MainBookStore.fxml"));
-            
-            // FINALMENTE! ECCO LA MAGIA DI GUICE
-            // Non dobbiamo più fare new BookService, new HttpUtil, ecc.
-            // Guice vede @Inject nel costruttore di MainBookStoreControllers e fa tutto lui.
-            loader.setControllerFactory(injector::getInstance);
-            
+            java.net.URL fxmlUrl = getClass().getResource("/com/lab_lib/frontend/Pages/MainBookStore.fxml");
+            if (fxmlUrl == null) {
+                // fallback: try relative path
+                fxmlUrl = getClass().getResource("MainBookStore.fxml");
+            }
+            if (fxmlUrl == null) {
+                System.err.println("[UI] MainBookStore.fxml resource not found.");
+                javafx.scene.control.Alert a = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                a.setTitle("Errore FXML");
+                a.setHeaderText("Impossibile trovare MainBookStore.fxml");
+                a.setContentText("Verifica che il file FXML esista in /com/lab_lib/frontend/Pages/ e che sia nel classpath.");
+                a.showAndWait();
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            // Prefer Guice se disponibile. Se non è disponibile, verifichiamo
+            // se il controller ha un costruttore senza argomenti prima di usare
+            // il fallback reflexivo; altrimenti mostriamo un errore chiaro.
+            if (injector != null) {
+                loader.setControllerFactory(injector::getInstance);
+            } else {
+                // Se l'injector non è stato iniettato, creiamo un injector Guice di fallback
+                // usando il modulo dell'applicazione, in modo da poter inizializzare
+                // i controller che richiedono dipendenze.
+                try {
+                    Injector fallback = Guice.createInjector(new AppModule(), new AbstractModule() {
+                        @Override
+                        protected void configure() {
+                            // Assicuriamo che tutti i controller e servizi ricevano
+                            // l'istanza di UserSession già popolata da login.
+                            bind(com.lab_lib.frontend.Utils.UserSession.class).toInstance(userSession);
+                        }
+                    });
+                    loader.setControllerFactory(fallback::getInstance);
+                    System.out.println("[UI] Created fallback Guice injector for MainBookStore loading (bound existing UserSession).");
+                } catch (Exception ex) {
+                    System.err.println("[UI] Failed to create fallback injector: " + ex.getMessage());
+                    javafx.scene.control.Alert a = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                    a.setTitle("Errore interno");
+                    a.setHeaderText("Impossibile aprire l'interfaccia principale");
+                    a.setContentText("Il sistema non è in grado di inizializzare il controller dell'interfaccia. Riavvia l'applicazione o avvisa lo sviluppatore.");
+                    a.showAndWait();
+                    return;
+                }
+            }
+
             Parent root = loader.load();
 
             // Ora recuperiamo il controller creato da Guice per passargli il dato "runtime"
@@ -267,14 +310,18 @@ public class LogRegUserMainPanelControllers {
             controller.setViewOnlyMode(this.viewOnlyMode); // Passiamo il dato qui!
 
             Stage newStage = new Stage();
-            newStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            newStage.setScene(scene);
             newStage.setTitle("Main Book Store");
             newStage.setResizable(false);
+            newStage.setHeight(627); // Forza l'altezza desiderata
             newStage.show();
 
-            // Chiude la finestra corrente
-            Stage currentStage = (Stage) ArchorPaneLogRegUser.getScene().getWindow();
-            currentStage.close();
+            // Chiude la finestra corrente (se presente)
+            if (ArchorPaneLogRegUser != null && ArchorPaneLogRegUser.getScene() != null) {
+                Stage currentStage = (Stage) ArchorPaneLogRegUser.getScene().getWindow();
+                if (currentStage != null) currentStage.close();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

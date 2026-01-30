@@ -320,6 +320,9 @@ public class ValutaControllers {
         }
     }
 
+
+     //non so nemmeno come ho fatto a funzionare questo ma lo ho fatto   
+     
     private void handleAddToLibrary() {
         try {
             if (personalLibraryService == null || bookId == null) {

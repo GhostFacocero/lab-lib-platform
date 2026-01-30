@@ -7,13 +7,10 @@
         <Insets top="10" right="10" bottom="10" left="10" />
     </padding>
     <Label fx:id="GroupTitleLabel" text="Libri del gruppo" styleClass="title"/>
-    <TableView fx:id="GroupBooksTable" prefHeight="300.0">
+    <TableView fx:id="GroupBooksTable" prefHeight="405.0" prefWidth="440.0" minHeight="405.0" minWidth="440.0" maxHeight="Infinity" maxWidth="Infinity">
         <columns>
             <TableColumn fx:id="ColTitle" text="Titolo" prefWidth="220"/>
             <TableColumn fx:id="ColAuthors" text="Autori" prefWidth="220"/>
         </columns>
     </TableView>
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="BtnClose" text="Chiudi" />
-    </HBox>
 </VBox>
