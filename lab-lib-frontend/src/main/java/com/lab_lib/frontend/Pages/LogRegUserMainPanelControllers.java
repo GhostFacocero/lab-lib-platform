@@ -181,9 +181,10 @@ public class LogRegUserMainPanelControllers {
             req.setPassword(pass);
             try {
                 AuthResponse resp = authService.register(req);
-                if (resp != null && resp.getToken() != null) {
-                    userSession.startSession(resp.getToken());
-                    userSession.setNickname(req.getNickname());
+                    if (resp != null && resp.getToken() != null) {
+                        userSession.startSession(resp.getToken());
+                        userSession.setNickname(req.getNickname());
+                        userSession.setEmail(req.getEmail());
                     String fullName = (req.getName() != null ? req.getName() : "") +
                             (req.getSurname() != null ? (" " + req.getSurname()) : "");
                     userSession.setDisplayName(fullName.trim());

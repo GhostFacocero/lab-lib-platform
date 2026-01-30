@@ -13,6 +13,8 @@ public class UserSession {
     private Instant startedAt;
     private String nickname;
     private String displayName; // Nome + Cognome (opzionale)
+    private String email; // Email utente (opzionale)
+    private int reviewsCount; // Recensioni inviate in questa sessione
 
     /**
      * Imposta il token e la scadenza a 30 minuti da ora.
@@ -47,6 +49,8 @@ public class UserSession {
         startedAt = null;
         nickname = null;
         displayName = null;
+        email = null;
+        reviewsCount = 0;
     }
 
     // Informazioni non sensibili per UI
@@ -55,6 +59,13 @@ public class UserSession {
 
     public void setDisplayName(String displayName) { this.displayName = displayName; }
     public String getDisplayName() { return displayName; }
+
+    public void setEmail(String email) { this.email = email; }
+    public String getEmail() { return email; }
+
+    public void incrementReviewsCount() { this.reviewsCount++; }
+    public int getReviewsCount() { return reviewsCount; }
+    public void resetReviewsCount() { this.reviewsCount = 0; }
 
     public Instant getStartedAt() { return startedAt; }
     public Instant getExpiresAt() { return expiresAt; }

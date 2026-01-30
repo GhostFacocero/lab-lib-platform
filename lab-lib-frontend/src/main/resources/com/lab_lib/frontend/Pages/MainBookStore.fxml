@@ -191,6 +191,30 @@
                                  <Label fx:id="SessionExpiresLabel" text="-" />
                               </children>
                            </HBox>
+                           <HBox spacing="20.0">
+                              <children>
+                                 <Label text="Email:" />
+                                 <Label fx:id="UserEmailLabel" text="-" />
+                              </children>
+                           </HBox>
+                           <HBox spacing="20.0">
+                              <children>
+                                 <Label text="Gruppi totali:" />
+                                 <Label fx:id="UserGroupsCountLabel" text="-" />
+                              </children>
+                           </HBox>
+                           <HBox spacing="20.0">
+                              <children>
+                                 <Label text="Libri nei gruppi:" />
+                                 <Label fx:id="UserBooksCountLabel" text="-" />
+                              </children>
+                           </HBox>
+                           <HBox spacing="20.0">
+                              <children>
+                                 <Label text="Recensioni inviate (sessione):" />
+                                 <Label fx:id="UserReviewsCountLabel" text="-" />
+                              </children>
+                           </HBox>
                         </children>
                      </VBox>
                   </children>
@@ -270,7 +294,7 @@
                            <Button fx:id="GroupCreateButton" text="Crea gruppo" />
                         </children>
                      </HBox>
-                               <ListView fx:id="ListaGruppi" prefHeight="405.0" prefWidth="732.0" stylesheets="@../Css/CSS.css" />
+                               <ListView fx:id="ListaGruppi" prefHeight="160.0" maxHeight="160.0" prefWidth="732.0" VBox.vgrow="NEVER" stylesheets="@../Css/CSS.css" />
                                <!-- Host inline per i libri del gruppo (pannello, senza nuova finestra) -->
                                <StackPane fx:id="GroupBooksHost" visible="false" VBox.vgrow="ALWAYS" />
                   </children>
@@ -306,38 +330,12 @@
                            <Label fx:id="BookDescriptionLabel" prefWidth="360.0" text="-" wrapText="true" />
                            <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="20.0" visible="false" />
                            <Separator orientation="VERTICAL" prefHeight="31.0" prefWidth="24.0" visible="false" />
-                           <VBox alignment="CENTER" spacing="15.0">
+                           <HBox prefHeight="100.0" prefWidth="319.0">
                               <children>
-                                 <Button fx:id="DataLibroBotoneReviewIt" 
-                                       alignment="CENTER" 
-                                       contentDisplay="CENTER" 
-                                       mnemonicParsing="false" 
-                                       onAction="#handleOpenReviewWindow" 
-                                       prefHeight="40.0" 
-                                       prefWidth="250.0" 
-                                       text="Scrivi una Recensione">
-                                    <font>
-                                       <Font size="14.0" />
-                                    </font>
-                                 </Button>
-
-                                 <Button fx:id="btnViewRecommendations" 
-                                       mnemonicParsing="false" 
-                                       onAction="#handleViewRecommendations" 
-                                       prefHeight="40.0" 
-                                       prefWidth="250.0" 
-                                       style="-fx-background-color: #507ea1; -fx-text-fill: white; -fx-cursor: hand;" 
-                                       text="Vedi Libri Consigliati">
-                                    <font>
-                                       <Font name="System Bold" size="14.0" />
-                                    </font>
-                                 </Button>
+                                 <Separator prefHeight="4.0" prefWidth="113.0" visible="false" />
+                                 <Button fx:id="DataLibroBotoneReviewIt" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleOpenReviewWindow" prefHeight="38.0" prefWidth="146.0" text="Review it" />
                               </children>
-                              
-                              <VBox.margin>
-                                 <Insets top="30.0" />
-                              </VBox.margin>
-                           </VBox>
+                           </HBox>
                         </children>
                      </VBox>
                      <Separator orientation="VERTICAL" prefHeight="200.0" />

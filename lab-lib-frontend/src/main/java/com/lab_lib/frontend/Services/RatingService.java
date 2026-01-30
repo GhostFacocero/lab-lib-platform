@@ -23,6 +23,11 @@ public class RatingService implements IRatingService {
         String endpoint = "/ratings/book/" + bookId;
         // Backend returns a simple text message; ignore payload and avoid JSON parsing
         httpUtil.postVoid(endpoint, body);
+        // Track reviews submitted in current session
+        try {
+            com.lab_lib.frontend.Utils.UserSession us = httpUtil.getUserSession();
+            if (us != null) us.incrementReviewsCount();
+        } catch (Exception ignored) {}
     }
 
     @Override

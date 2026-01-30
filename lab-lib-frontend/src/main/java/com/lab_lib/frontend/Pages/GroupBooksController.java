@@ -1,6 +1,7 @@
 package com.lab_lib.frontend.Pages;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Alert;
@@ -9,29 +10,23 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
-import javafx.scene.input.MouseButton;
-import javafx.fxml.FXMLLoader;
+import javafx.stage.Modality;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
 import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
-import com.lab_lib.frontend.Interfaces.IRatingService;
 import com.lab_lib.frontend.Models.Book;
 import com.lab_lib.frontend.Models.PaginatedResponse;
+import com.lab_lib.frontend.Pages.ValutaControllers;
 
 import java.util.Collections;
 import java.util.Optional;
-
-import com.google.inject.Inject;
-import com.google.inject.Injector;
+import java.util.stream.Collectors;
 
 public class GroupBooksController {
-    // Iniettiamo l'Injector qui
-    @Inject
-    private Injector injector;
 
     @FXML private Label GroupTitleLabel;
     @FXML private TableView<Book> GroupBooksTable;
@@ -40,23 +35,17 @@ public class GroupBooksController {
     @FXML private Button BtnClose;
 
     private IPersonalLibraryService personalLibraryService;
-    private IRatingService ratingService;
     private long libraryId;
     private String groupName;
+    private java.util.function.Consumer<Book> infoHandler;
 
-    public void setContext(IPersonalLibraryService personalLibraryService, IRatingService ratingService, long libraryId, String groupName) {
+    public void setContext(IPersonalLibraryService personalLibraryService, long libraryId, String groupName) {
         this.personalLibraryService = personalLibraryService;
-        this.ratingService = ratingService;
         this.libraryId = libraryId;
         this.groupName = groupName;
         if (GroupTitleLabel != null) GroupTitleLabel.setText("Libri del gruppo: " + groupName);
         setupTable();
         loadBooks();
-    }
-
-    // Backward-compatible overload used by GroupListController
-    public void setContext(IPersonalLibraryService personalLibraryService, long libraryId, String groupName) {
-        setContext(personalLibraryService, null, libraryId, groupName);
     }
 
     @FXML
@@ -70,6 +59,11 @@ public class GroupBooksController {
     }
 
     private void setupTable() {
+        // Ensure only Title and Authors columns are present
+        if (GroupBooksTable != null && ColTitle != null && ColAuthors != null) {
+            GroupBooksTable.getColumns().setAll(ColTitle, ColAuthors);
+            GroupBooksTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }
         if (ColTitle != null) {
             ColTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         }
@@ -82,32 +76,26 @@ public class GroupBooksController {
         GroupBooksTable.setRowFactory(tv -> {
             var row = new javafx.scene.control.TableRow<Book>();
             var menu = new ContextMenu();
-            // Evita fondo negro: hace transparente la escena del ContextMenu y aplica estilo inline
-            menu.setOnShown(ev -> {
-                if (menu.getScene() != null) {
-                    menu.getScene().setFill(Color.TRANSPARENT);
-                    if (menu.getScene().getRoot() != null) {
-                        menu.getScene().getRoot().setStyle("-fx-background-color: transparent;");
-                    }
-                }
-            });
-            menu.setStyle("-fx-background-color: #2E2E2E; -fx-background-radius: 6; -fx-border-color: #333333; -fx-border-radius: 6; -fx-padding: 4 0;");
+
             MenuItem infoItem = new MenuItem("Information");
-            infoItem.setStyle("-fx-text-fill: #FFFFFF;");
             infoItem.setOnAction(e -> {
                 Book b = row.getItem();
-                if (b != null) showBookInformation(b);
+                if (b == null) return;
+                if (infoHandler != null) {
+                    infoHandler.accept(b);
+                } else {
+                    showBookInfo(b);
+                }
             });
 
             MenuItem reviewItem = new MenuItem("Valutare");
-            reviewItem.setStyle("-fx-text-fill: #FFFFFF;");
             reviewItem.setOnAction(e -> {
                 Book b = row.getItem();
-                if (b != null) openValutaForBook(b);
+                if (b == null) return;
+                openReviewWindowFor(b);
             });
 
             MenuItem removeItem = new MenuItem("Elimina dal gruppo");
-            removeItem.setStyle("-fx-text-fill: #FFFFFF;");
             removeItem.setOnAction(e -> {
                 Book b = row.getItem();
                 if (b == null) return;
@@ -123,16 +111,10 @@ public class GroupBooksController {
                     err.showAndWait();
                 }
             });
+
             menu.getItems().addAll(infoItem, reviewItem, removeItem);
+            menu.getStyleClass().add("dark-menu");
             row.setContextMenu(menu);
-            // Left-click default action: show Information
-            row.setOnMouseClicked(ev -> {
-                if (ev.getButton() == MouseButton.PRIMARY && !row.isEmpty()) {
-                    Book b = row.getItem();
-                    if (b != null) showBookInformation(b);
-                    ev.consume();
-                }
-            });
             return row;
         });
     }
@@ -152,52 +134,6 @@ public class GroupBooksController {
         }
     }
 
-    private void showBookInformation(Book b) {
-        Alert info = new Alert(Alert.AlertType.INFORMATION);
-        info.setTitle("Informazioni libro");
-        info.setHeaderText(b.getTitle() != null ? b.getTitle() : "Informazioni");
-        String authors = Optional.ofNullable(b.getAuthors()).orElse(Collections.emptyList()).isEmpty()
-                ? ""
-                : String.join(", ", b.getAuthors());
-        info.setContentText("Autori: " + authors + "\nID: " + b.getId());
-        styleAlert(info);
-        info.showAndWait();
-    }
-
-    private void openValutaForBook(Book b) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/SchedaDiValutazioneLibro.fxml"));
-            
-            // *** LA MAGIA È QUI ***
-            // Diciamo al loader di usare l'injector per creare la classe ValutaControllers
-            // Così Guice inietterà automaticamente i servizi e l'injector dentro ValutaControllers
-            if (injector != null) {
-                loader.setControllerFactory(injector::getInstance);
-            }
-
-            Parent root = loader.load();
-            
-            // Recuperiamo il controller creato da Guice
-            com.lab_lib.frontend.Pages.ValutaControllers ctrl = loader.getController();
-            
-            java.util.function.LongConsumer noop = id -> {};
-            
-            // CHIAMIAMO IL NUOVO SETCONTEXT (più corto)
-            ctrl.setContext(b.getId(), b.getTitle(), noop);
-            
-            Stage stage = new Stage();
-            // ... resto del codice uguale ...
-            stage.show();
-        } catch (Exception ex) {
-            Alert err = new Alert(Alert.AlertType.ERROR);
-            err.setTitle("Errore");
-            err.setHeaderText("Impossibile aprire la valutazione");
-            err.setContentText(ex.getMessage());
-            styleAlert(err);
-            err.showAndWait();
-        }
-    }
-
     private void styleAlert(Alert alert) {
         try {
             var css1 = getClass().getResource("/com/lab_lib/frontend/Css/styles.css");
@@ -205,5 +141,68 @@ public class GroupBooksController {
             var css2 = getClass().getResource("/com/lab_lib/frontend/Css/CSS.css");
             if (css2 != null) alert.getDialogPane().getStylesheets().add(css2.toExternalForm());
         } catch (Exception ignore) {}
+    }
+
+    public void setInfoHandler(java.util.function.Consumer<Book> infoHandler) {
+        this.infoHandler = infoHandler;
+    }
+
+    private void showBookInfo(Book b) {
+        Alert info = new Alert(Alert.AlertType.INFORMATION);
+        info.setTitle("Informazioni libro");
+        info.setHeaderText(b.getTitle() != null ? b.getTitle() : "-");
+        String authors = Optional.ofNullable(b.getAuthors()).orElse(Collections.emptyList()).stream().collect(Collectors.joining(", "));
+        StringBuilder sb = new StringBuilder();
+        sb.append("Autori: ").append(authors.isEmpty() ? "-" : authors).append("\n");
+        if (b.getPublisher() != null) sb.append("Publisher: ").append(b.getPublisher()).append("\n");
+        if (b.getPublishYear() != null) sb.append("Anno: ").append(b.getPublishYear()).append("\n");
+        if (b.getDescription() != null) sb.append("Descrizione: ").append(b.getDescription());
+        info.setContentText(sb.toString());
+        styleAlert(info);
+        info.showAndWait();
+    }
+
+    private void openReviewWindowFor(Book b) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/SchedaDiValutazioneLibro.fxml"));
+            Parent root = loader.load();
+            var ctrl = (ValutaControllers) loader.getController();
+            ctrl.setContext(b.getId(), b.getTitle() != null ? b.getTitle() : "-", id -> {
+                try {
+                    personalLibraryService.addBookToLibrary(libraryId, id);
+                    boolean exists = GroupBooksTable.getItems().stream().anyMatch(x -> x.getId().equals(id));
+                    if (!exists) {
+                        // If not present, add a minimal Book entry with id and title
+                        GroupBooksTable.getItems().add(b);
+                    }
+                } catch (Exception ex) {
+                    Alert err = new Alert(Alert.AlertType.ERROR);
+                    err.setTitle("Errore");
+                    err.setHeaderText("Impossibile aggiungere il libro al gruppo");
+                    err.setContentText(ex.getMessage());
+                    styleAlert(err);
+                    err.showAndWait();
+                }
+            });
+
+            Stage reviewStage = new Stage();
+            reviewStage.setTitle("Scheda di Valutazione del Libro");
+            reviewStage.setScene(new Scene(root));
+            reviewStage.setResizable(false);
+            reviewStage.initModality(Modality.WINDOW_MODAL);
+            // owner: try GroupBooksTable scene window if available
+            if (GroupBooksTable != null && GroupBooksTable.getScene() != null) {
+                reviewStage.initOwner(GroupBooksTable.getScene().getWindow());
+            }
+            reviewStage.show();
+
+        } catch (Exception e) {
+            Alert err = new Alert(Alert.AlertType.ERROR);
+            err.setTitle("Errore");
+            err.setHeaderText("Impossibile aprire la scheda di valutazione");
+            err.setContentText(e.getMessage());
+            styleAlert(err);
+            err.showAndWait();
+        }
     }
 }

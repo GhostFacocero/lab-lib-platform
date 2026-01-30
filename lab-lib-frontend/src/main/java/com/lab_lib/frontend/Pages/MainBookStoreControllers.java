@@ -1,26 +1,9 @@
 package com.lab_lib.frontend.Pages;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.lab_lib.frontend.Exceptions.ApiException;
-import com.lab_lib.frontend.Interfaces.IBookService;
-import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
-import com.lab_lib.frontend.Interfaces.IRatingService;
 import com.lab_lib.frontend.Models.Book;
-import com.lab_lib.frontend.Models.PaginatedResponse;
-import com.lab_lib.frontend.Models.PersonalLibrary;
-import com.lab_lib.frontend.Utils.UserSession;
-
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
+import com.lab_lib.frontend.Interfaces.IBookService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,35 +12,54 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+// removed duplicate Label import
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableRow;
+import javafx.beans.property.SimpleStringProperty;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.ArrayList;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import com.google.inject.Inject;
+import com.lab_lib.frontend.Utils.UserSession;
+import com.lab_lib.frontend.Interfaces.IPersonalLibraryService;
+import com.lab_lib.frontend.Interfaces.IRatingService;
+import com.lab_lib.frontend.Models.PersonalLibrary;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import javafx.application.Platform;
+import javafx.scene.layout.Region;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import com.lab_lib.frontend.Models.PaginatedResponse;
+import com.lab_lib.frontend.Exceptions.ApiException;
  
 public class MainBookStoreControllers {
 
@@ -89,6 +91,10 @@ public class MainBookStoreControllers {
 
     @FXML
     private VBox GruppiPanel;
+    @FXML
+    private StackPane GroupBooksHost;
+    @FXML
+    private HBox GroupControlsBox;
     
     @FXML
     private TableView<Book> tableLibriLibreria;
@@ -165,6 +171,10 @@ public class MainBookStoreControllers {
     private Label SessionStartedLabel;
     @FXML
     private Label SessionExpiresLabel;
+    @FXML private Label UserEmailLabel;
+    @FXML private Label UserGroupsCountLabel;
+    @FXML private Label UserBooksCountLabel;
+    @FXML private Label UserReviewsCountLabel;
     @FXML private Label BookTitleLabel;
     @FXML private Label BookAuthorsLabel;
     @FXML private Label BookYearLabel;
@@ -173,20 +183,18 @@ public class MainBookStoreControllers {
     @FXML private Label BookPriceLabel;
     @FXML private Label BookDescriptionLabel;
     @FXML private Button DataLibroBotoneReviewIt;
-    @FXML private Button btnViewRecommendations;
 
     private final int MAX_STARS = 5;
     private boolean isMenuCollapsed = false;
     private ObservableList<Book> libriData = FXCollections.observableArrayList();
     private ObservableList<Book> personalLibraryData = FXCollections.observableArrayList();
+    private ObservableList<Book> personalLibraryBaseData = FXCollections.observableArrayList();
     private final ObservableList<PersonalLibrary> groupsData = FXCollections.observableArrayList();
     private Long currentGroupId = null;
     private final int pageSize = 10;
     // Server-side prefix search now handles paging; no extra client fetches needed
     private boolean suppressSelectionDuringPaging = false;
     private String currentQuery = null;
-
-    private final Injector injector;
     
     @FXML
     private Button LogOut;
@@ -198,55 +206,121 @@ public class MainBookStoreControllers {
     private boolean viewOnlyMode;
     private Book currentDetailBook;
 
-    @Inject // Guice userà questo costruttore automaticamente!
-    public MainBookStoreControllers(UserSession userSession, 
-                                    IBookService bookService, 
-                                    IPersonalLibraryService personalLibraryService, 
-                                    IRatingService ratingService, 
-                                    Injector injector) { // TOLTO viewOnlyMode
+    @Inject
+    public MainBookStoreControllers(UserSession userSession, IBookService bookService, IPersonalLibraryService personalLibraryService, IRatingService ratingService) {
         this.userSession = userSession;
         this.bookService = bookService;
         this.personalLibraryService = personalLibraryService;
         this.ratingService = ratingService;
-        this.injector = injector;
-        this.viewOnlyMode = false; // Default: modalità utente normale
+        this.viewOnlyMode = false;
+    }
+
+    public MainBookStoreControllers(UserSession userSession, IBookService bookService, IPersonalLibraryService personalLibraryService, IRatingService ratingService, boolean viewOnlyMode) {
+        this.userSession = userSession;
+        this.bookService = bookService;
+        this.personalLibraryService = personalLibraryService;
+        this.ratingService = ratingService;
+        this.viewOnlyMode = viewOnlyMode;
     }
 
     private void showGroupBooks(long libId, String groupName) {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/GroupBooks.fxml"));
-            javafx.scene.Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/GroupBooks.fxml"));
+            Parent root = loader.load();
             GroupBooksController ctrl = (GroupBooksController) loader.getController();
-            ctrl.setContext(personalLibraryService, ratingService, libId, groupName);
-            javafx.stage.Stage dlg = new javafx.stage.Stage();
-            dlg.setTitle("Libri del gruppo: " + groupName);
-            javafx.scene.Scene scene = new javafx.scene.Scene(root);
-            // Add CSS (styles and base app CSS) if available
-            var styles = getClass().getResource("/com/lab_lib/frontend/Css/styles.css");
-            if (styles != null) scene.getStylesheets().add(styles.toExternalForm());
-            var base = getClass().getResource("/com/lab_lib/frontend/Css/CSS.css");
-            if (base != null) scene.getStylesheets().add(base.toExternalForm());
-            var buttons = getClass().getResource("/com/lab_lib/frontend/Css/Buttons.css");
-            if (buttons != null) scene.getStylesheets().add(buttons.toExternalForm());
-            dlg.setScene(scene);
-            // Make window larger and resizable
-            dlg.setWidth(960);
-            dlg.setHeight(640);
-            dlg.setMinWidth(800);
-            dlg.setMinHeight(520);
-            dlg.setResizable(true);
-            dlg.initOwner(VboxMenuOptions.getScene().getWindow());
-            dlg.initModality(javafx.stage.Modality.NONE);
-            dlg.show();
-        } catch (java.io.IOException ex) {
+            ctrl.setContext(personalLibraryService, libId, groupName);
+            ctrl.setInfoHandler(this::showBookInfo);
+
+            if (GruppiPanel != null) {
+                GruppiPanel.setVisible(true);
+            }
+            if (GroupBooksHost != null) {
+                GroupBooksHost.getChildren().setAll(root);
+                GroupBooksHost.setVisible(true);
+                GroupBooksHost.setManaged(true);
+            }
+            // Hide group creation controls while viewing group books inline
+            if (GroupControlsBox != null) {
+                GroupControlsBox.setVisible(false);
+                GroupControlsBox.setManaged(false);
+            }
+            if (GroupCreateButton != null) {
+                GroupCreateButton.setVisible(false);
+                GroupCreateButton.setManaged(false);
+            }
+            if (GroupNameField != null) {
+                GroupNameField.setVisible(false);
+                GroupNameField.setManaged(false);
+            }
+
+            // Override close button to hide inline panel
+            Node closeBtn = root.lookup("#BtnClose");
+            if (closeBtn instanceof Button) {
+                ((Button) closeBtn).setOnAction(e -> {
+                    if (GroupBooksHost != null) {
+                        GroupBooksHost.getChildren().clear();
+                        GroupBooksHost.setVisible(false);
+                        GroupBooksHost.setManaged(false);
+                    }
+                    // Restore group creation controls when closing inline view
+                    if (GroupControlsBox != null) {
+                        GroupControlsBox.setVisible(true);
+                        GroupControlsBox.setManaged(true);
+                    }
+                    if (GroupCreateButton != null) {
+                        GroupCreateButton.setVisible(true);
+                        GroupCreateButton.setManaged(true);
+                    }
+                    if (GroupNameField != null) {
+                        GroupNameField.setVisible(true);
+                        GroupNameField.setManaged(true);
+                    }
+                    // Return to normal Gruppi view
+                    if (GruppiPanel != null) {
+                        GruppiPanel.setVisible(true);
+                    }
+                });
+            }
+        } catch (IOException ex) {
             Alert err = new Alert(Alert.AlertType.ERROR);
             err.setTitle("Errore");
-            err.setHeaderText("Impossibile aprire la finestra dei libri del gruppo");
+            err.setHeaderText("Impossibile aprire il pannello libri del gruppo");
             err.setContentText(ex.getMessage());
             styleAlert(err);
             err.showAndWait();
-            System.err.println("[Groups] Failed to open group books window: " + ex.getMessage());
+            System.err.println("[Groups] Failed to embed group books: " + ex.getMessage());
             ex.printStackTrace();
+        }
+    }
+
+    public void setViewOnlyMode(boolean mode) {
+        this.viewOnlyMode = mode;
+        if (mode) {
+            applyViewOnlyMode();
+        }
+    }
+
+    private void applyViewOnlyMode() {
+        if (Btm_userInfo != null) Btm_userInfo.setVisible(false);
+        if (Btm_Gruppi != null) Btm_Gruppi.setVisible(false);
+        if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(false);
+        if (LogOut != null) LogOut.setVisible(true);
+        if (DataLibroBotoneReviewIt != null) DataLibroBotoneReviewIt.setVisible(false);
+        ArchorPaneLibriMain.setVisible(false);
+        ArchorPaneLibreriaMain.setVisible(true);
+        GruppiPanel.setVisible(false);
+        tableLibriLibreria.getSelectionModel().clearSelection();
+        loadUnifiedPage(0);
+        if (Btm_libriMain != null) {
+            Btm_libriMain.setOnAction(e -> {
+                ArchorPaneLibriMain.setVisible(false);
+                ArchorPaneLibreriaMain.setVisible(true);
+                UserInfoPane.setVisible(false);
+                PanelDataLibroGeneralReviews.setVisible(false);
+                GruppiPanel.setVisible(false);
+                tableLibriLibreria.getSelectionModel().clearSelection();
+                loadUnifiedPage(0);
+            });
         }
     }
     @FXML
@@ -258,30 +332,7 @@ public class MainBookStoreControllers {
         PanelDataLibroGeneralReviews.setVisible(false);
         // View-only mode: hide non-essential buttons and focus on catalog
         if (viewOnlyMode) {
-            if (Btm_userInfo != null) Btm_userInfo.setVisible(false);
-            if (Btm_Gruppi != null) Btm_Gruppi.setVisible(false);
-            if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(false);
-            // Keep LogOut visible to exit user-only mode
-            if (LogOut != null) LogOut.setVisible(true);
-            if (DataLibroBotoneReviewIt != null) DataLibroBotoneReviewIt.setVisible(false);
-            // Show catalog by default
-            ArchorPaneLibriMain.setVisible(false);
-            ArchorPaneLibreriaMain.setVisible(true);
-            GruppiPanel.setVisible(false);
-            tableLibriLibreria.getSelectionModel().clearSelection();
-            loadUnifiedPage(0);
-            // Ensure the visible 'Libri' button switches to catalog
-            if (Btm_libriMain != null) {
-                Btm_libriMain.setOnAction(e -> {
-                    ArchorPaneLibriMain.setVisible(false);
-                    ArchorPaneLibreriaMain.setVisible(true);
-                    UserInfoPane.setVisible(false);
-                    PanelDataLibroGeneralReviews.setVisible(false);
-                    GruppiPanel.setVisible(false);
-                    tableLibriLibreria.getSelectionModel().clearSelection();
-                    loadUnifiedPage(0);
-                });
-            }
+            applyViewOnlyMode();
         }
 
 
@@ -344,6 +395,7 @@ public class MainBookStoreControllers {
             ArchorPaneLibriMain.setVisible(false);
             ArchorPaneLibreriaMain.setVisible(false);
             PanelDataLibroGeneralReviews.setVisible(false);
+            if (UserInfoPane != null) UserInfoPane.setVisible(false);
             GruppiPanel.setVisible(true);
             loadGroups();
         });
@@ -492,32 +544,6 @@ public class MainBookStoreControllers {
             HBoxOriginalitaGeneralReviesStarts.setOnMouseClicked(e -> openCategoryReviewsDialog("Originality"));
             HBoxEdizioneGeneralReviesStarts.setOnMouseClicked(e -> openCategoryReviewsDialog("Edition"));
             HBoxGradevolezzaGeneralReviesStarts.setOnMouseClicked(e -> openCategoryReviewsDialog("Pleasantness"));
-        }
-
-        applyViewMode();
-    }
-
-    public void setViewOnlyMode(boolean viewOnlyMode) {
-        this.viewOnlyMode = viewOnlyMode;
-        applyViewMode(); // Aggiorna la UI in base alla modalità
-    }
-
-    private void applyViewMode() {
-        // Sposta qui la logica che nasconde i bottoni se viewOnlyMode è true
-        if (viewOnlyMode) {
-            if (Btm_userInfo != null) Btm_userInfo.setVisible(false);
-            if (Btm_Gruppi != null) Btm_Gruppi.setVisible(false);
-            if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(false);
-            if (LogOut != null) LogOut.setVisible(true);
-            if (DataLibroBotoneReviewIt != null) DataLibroBotoneReviewIt.setVisible(false);
-            
-            // Forza la vista sul catalogo
-            if (ArchorPaneLibriMain != null) ArchorPaneLibriMain.setVisible(false);
-            if (ArchorPaneLibreriaMain != null) ArchorPaneLibreriaMain.setVisible(true);
-            if (GruppiPanel != null) GruppiPanel.setVisible(false);
-            
-            // Logica di caricamento pagina unificata se serve...
-             loadUnifiedPage(0);
         }
     }
 
@@ -693,10 +719,6 @@ public class MainBookStoreControllers {
         if (BookPriceLabel != null) BookPriceLabel.setText(b.getPrice() != null ? b.getPrice().toPlainString() : "-");
         if (BookDescriptionLabel != null) BookDescriptionLabel.setText(nvl(b.getDescription()));
 
-        if (btnViewRecommendations != null) {
-            btnViewRecommendations.setVisible(true);
-        }
-
         // Update average stars per category and overall
         updateAverageStarsForBook(b.getId());
     }
@@ -756,49 +778,11 @@ public class MainBookStoreControllers {
         }
     }
 
-    @FXML
-    private void handleViewRecommendations(ActionEvent event) {
-        if (currentDetailBook == null) return;
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/RecommendedBooks.fxml"));
-            
-            // USIAMO GUICE per iniettare IRatingService nel nuovo controller
-            if (injector != null) {
-                loader.setControllerFactory(injector::getInstance);
-            }
-
-            Parent root = loader.load();
-            
-            // Passiamo i dati al controller
-            RecommendedBooksController ctrl = loader.getController();
-            ctrl.setContext(currentDetailBook.getId(), nvl(currentDetailBook.getTitle()));
-
-            Stage stage = new Stage();
-            stage.setTitle("Libri Consigliati");
-            stage.setScene(new Scene(root));
-            stage.setResizable(false);
-            
-            // Modale: blocca la finestra sotto finché non chiudi questa
-            stage.initModality(Modality.WINDOW_MODAL); 
-            stage.initOwner(((Node) event.getSource()).getScene().getWindow());
-            
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert err = new Alert(AlertType.ERROR);
-            err.setTitle("Errore");
-            err.setHeaderText("Impossibile aprire i consigli");
-            err.setContentText(e.getMessage());
-            err.showAndWait();
-        }
-    }
-
     private void addToPersonalLibraryUI(Book b) {
         if (b == null) return;
         boolean exists = personalLibraryData.stream().anyMatch(x -> x.getId() != null && x.getId().equals(b.getId()));
         if (!exists) {
+            personalLibraryBaseData.add(b);
             personalLibraryData.add(b);
             System.out.println("[PersonalLibrary] Table updated with book id=" + b.getId() + ", title='" + nvl(b.getTitle()) + "'");
         }
@@ -824,6 +808,7 @@ public class MainBookStoreControllers {
             }
             var page = personalLibraryService.getBooksInLibrary(def.getId(), 0, 50);
             var content = Optional.ofNullable(page).map(PaginatedResponse::getContent).orElse(Collections.emptyList());
+            personalLibraryBaseData.setAll(content);
             personalLibraryData.setAll(content);
             System.out.println("[PersonalLibrary] Loaded " + personalLibraryData.size() + " books from '" + def.getName() + "' (id=" + def.getId() + ")");
         } catch (Exception ex) {
@@ -875,6 +860,7 @@ public class MainBookStoreControllers {
                 }
                 try {
                     personalLibraryService.removeBookFromLibrary(currentGroupId, b.getId());
+                    personalLibraryBaseData.removeIf(x -> x.getId().equals(b.getId()));
                     personalLibraryData.removeIf(x -> x.getId().equals(b.getId()));
                     System.out.println("[Groups] Removed book id=" + b.getId() + " from group id=" + currentGroupId);
                 } catch (Exception ex) {
@@ -981,6 +967,10 @@ public class MainBookStoreControllers {
 
     @FXML
     private void handleSearchAction() {
+        if (ArchorPaneLibriMain != null && ArchorPaneLibriMain.isVisible()) {
+            applyPersonalLibrarySearch();
+            return;
+        }
         applySearchAndLoad();
     }
 
@@ -991,11 +981,28 @@ public class MainBookStoreControllers {
     }
 
     private void applySearchAndLoad() {
-        String q1 = (SearchField != null) ? Optional.ofNullable(SearchField.getText()).orElse("").trim() : "";
-        String q2 = (SearchFieldLibriMain != null) ? Optional.ofNullable(SearchFieldLibriMain.getText()).orElse("").trim() : "";
-        String q = !q1.isEmpty() ? q1 : (!q2.isEmpty() ? q2 : "");
+        // Catalog search should only consider the catalog field to avoid
+        // cross-pane interference from the personal library query.
+        String q = (SearchFieldLibriMain != null) ? Optional.ofNullable(SearchFieldLibriMain.getText()).orElse("").trim() : "";
         currentQuery = q.isEmpty() ? null : q;
         loadUnifiedPage(0);
+    }
+
+    private void applyPersonalLibrarySearch() {
+        String q = (SearchField != null) ? Optional.ofNullable(SearchField.getText()).orElse("").trim().toLowerCase(Locale.ROOT) : "";
+        if (q.isEmpty()) {
+            personalLibraryData.setAll(personalLibraryBaseData);
+            return;
+        }
+        List<Book> filtered = personalLibraryBaseData.stream().filter(b -> {
+            String title = Optional.ofNullable(b.getTitle()).orElse("").toLowerCase(Locale.ROOT);
+            boolean titleMatch = title.contains(q);
+            boolean authorMatch = Optional.ofNullable(b.getAuthors()).orElse(Collections.emptyList())
+                .stream().map(a -> a == null ? "" : a.toLowerCase(Locale.ROOT))
+                .anyMatch(a -> a.contains(q));
+            return titleMatch || authorMatch;
+        }).collect(Collectors.toList());
+        personalLibraryData.setAll(filtered);
     }
 
     private void loadUnifiedPage(int page) {
@@ -1088,13 +1095,45 @@ public class MainBookStoreControllers {
     private void populateUserInfo() {
         String nickname = userSession.getNickname();
         String name = userSession.getDisplayName();
+        String email = userSession.getEmail();
         java.time.Instant started = userSession.getStartedAt();
         java.time.Instant expires = userSession.getExpiresAt();
 
         UserNicknameLabel.setText(nickname != null ? nickname : "-");
         UserNameLabel.setText(name != null && !name.isEmpty() ? name : "-");
+        if (UserEmailLabel != null) {
+            UserEmailLabel.setText(email != null && !email.isBlank() ? email : "-");
+        }
         SessionStartedLabel.setText(started != null ? java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(java.time.LocalDateTime.ofInstant(started, java.time.ZoneId.systemDefault())) : "-");
         SessionExpiresLabel.setText(expires != null ? java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(java.time.LocalDateTime.ofInstant(expires, java.time.ZoneId.systemDefault())) : "-");
+
+        // Populate dynamic stats
+        try {
+            java.util.List<com.lab_lib.frontend.Models.PersonalLibrary> libs = java.util.Optional.ofNullable(personalLibraryService.getPersonalLibraries())
+                .orElse(java.util.Collections.emptyList());
+            if (UserGroupsCountLabel != null) {
+                UserGroupsCountLabel.setText(String.valueOf(libs.size()));
+            }
+            int booksCount = 0;
+            for (var lib : libs) {
+                try {
+                    var page = personalLibraryService.getBooksInLibrary(lib.getId(), 0, 1000);
+                    var content = java.util.Optional.ofNullable(page).map(com.lab_lib.frontend.Models.PaginatedResponse::getContent).orElse(java.util.Collections.emptyList());
+                    booksCount += content.size();
+                } catch (Exception ignore) {}
+            }
+            if (UserBooksCountLabel != null) {
+                UserBooksCountLabel.setText(String.valueOf(booksCount));
+            }
+            if (UserReviewsCountLabel != null) {
+                UserReviewsCountLabel.setText(String.valueOf(userSession.getReviewsCount()));
+            }
+        } catch (Exception ex) {
+            if (UserGroupsCountLabel != null) UserGroupsCountLabel.setText("-");
+            if (UserBooksCountLabel != null) UserBooksCountLabel.setText("-");
+            if (UserReviewsCountLabel != null) UserReviewsCountLabel.setText(String.valueOf(userSession.getReviewsCount()));
+            System.err.println("[Profile] Failed to populate stats: " + ex.getMessage());
+        }
     }
 
     /**
@@ -1315,28 +1354,17 @@ public class MainBookStoreControllers {
     private void openReviewWindowFor(Book b) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/SchedaDiValutazioneLibro.fxml"));
-            
-            // USA GUICE PER CREARE IL CONTROLLER
-            if (injector != null) {
-                loader.setControllerFactory(injector::getInstance);
-            }
-            
             Parent root = loader.load();
             var ctrl = (ValutaControllers) loader.getController();
-            
-            // CORREZIONE setContext: NON PASSARE I SERVIZI (Rating, LibraryService)
-            // Passa solo ID, Titolo e Callback.
             ctrl.setContext(b.getId(), nvl(b.getTitle()), id -> addToPersonalLibraryUI(b));
 
-            // CORREZIONE ERRORE "cannot find symbol variable stage"
-            // Devi dichiarare lo stage qui dentro
-            Stage stage = new Stage(); // <--- Questa riga mancava o era spostata
-            stage.setTitle("Scheda di Valutazione del Libro");
-            stage.setScene(new Scene(root));
-            stage.setResizable(false);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(VboxMenuOptions.getScene().getWindow());
-            stage.show();
+            Stage reviewStage = new Stage();
+            reviewStage.setTitle("Scheda di Valutazione del Libro");
+            reviewStage.setScene(new Scene(root));
+            reviewStage.setResizable(false);
+            reviewStage.initModality(Modality.WINDOW_MODAL);
+            reviewStage.initOwner(VboxMenuOptions.getScene().getWindow());
+            reviewStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
