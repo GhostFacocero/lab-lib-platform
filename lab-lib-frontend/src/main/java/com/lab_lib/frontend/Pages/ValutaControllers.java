@@ -293,20 +293,28 @@ public class ValutaControllers {
                 }
             }
             
-            // 3. Logica di passaggio alla pagina Recommend (uguale a prima)
-            if (injector != null) {
+            // 3. Apri la pagina di consigli in una nuova finestra
+            try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/Recommend.fxml"));
-                loader.setControllerFactory(injector::getInstance);
+                if (injector != null) {
+                    loader.setControllerFactory(injector::getInstance);
+                }
                 Parent root = loader.load();
-                
+
                 RecommendController recommendPage = loader.getController();
                 recommendPage.setContext(this.bookId, this::closeWindow);
-                
+
                 Stage currentStage = (Stage) ValutaNextSendButtom1.getScene().getWindow();
-                Scene scene = new Scene(root);
-                currentStage.setScene(scene);
-                currentStage.centerOnScreen();
-            } else {
+                Stage recommendStage = new Stage();
+                recommendStage.setTitle("Libri Consigliati");
+                recommendStage.setScene(new Scene(root));
+                if (currentStage != null) recommendStage.initOwner(currentStage);
+                recommendStage.show();
+
+                // Chiudi la finestra di valutazione dopo l'apertura dei consigli
+                if (currentStage != null) currentStage.close();
+            } catch (Exception e) {
+                System.err.println("[ValutaControllers] Failed to open Recommend window: " + e.getMessage());
                 closeWindow();
             }
 

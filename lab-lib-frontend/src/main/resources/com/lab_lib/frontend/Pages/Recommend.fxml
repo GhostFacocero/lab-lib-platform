@@ -55,7 +55,7 @@
          </padding>
          <children>
             
-            <Label fx:id="selectionLabel" text="Selezionati: 0/3" textFill="#b2b2b2">
+            <Label fx:id="selectionLabel" text="Selezionati: 0/32" textFill="#b2b2b2">
                <font>
                   <Font size="13.0" />
                </font>

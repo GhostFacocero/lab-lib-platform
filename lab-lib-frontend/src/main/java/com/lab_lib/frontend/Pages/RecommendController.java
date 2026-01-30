@@ -32,7 +32,7 @@ public class RecommendController {
 
     // Stato
     private final List<Book> selectedBooks = new ArrayList<>();
-    private final int MAX_SELECTION = 3;
+    private final int MAX_SELECTION = 32;
 
     // Componenti FXML
     @FXML private Label selectionLabel;
@@ -59,6 +59,8 @@ public class RecommendController {
     @FXML
     public void initialize() {
         setupTable();
+        // Initialize selection label to show correct max
+        updateSelectionView();
     }
 
     private void setupTable() {
