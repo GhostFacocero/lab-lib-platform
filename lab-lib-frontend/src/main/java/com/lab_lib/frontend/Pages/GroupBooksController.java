@@ -1,3 +1,9 @@
+// Emanuele Contini, matricola 756441
+// Emanuele Gobessi, matricola 757599
+// Diego Guidi, matricola 758420
+// Nicola Curchi, matricola 757786
+// Mirko Gurzau, matricola 757925
+
 package com.lab_lib.frontend.Pages;
 
 import javafx.fxml.FXML;
@@ -204,6 +210,8 @@ public class GroupBooksController {
             if (css1 != null) alert.getDialogPane().getStylesheets().add(css1.toExternalForm());
             var css2 = getClass().getResource("/com/lab_lib/frontend/Css/CSS.css");
             if (css2 != null) alert.getDialogPane().getStylesheets().add(css2.toExternalForm());
-        } catch (Exception ignore) {}
-    }
+        } catch (Exception ignore) {} 
+
+    } 
 }
+
