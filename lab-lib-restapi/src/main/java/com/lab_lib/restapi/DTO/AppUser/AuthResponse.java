@@ -12,6 +12,9 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * DTO di risposta per operazioni di autenticazione (ritorna il token).
+ */
 @Data
 
 public class AuthResponse {
@@ -19,8 +22,13 @@ public class AuthResponse {
     @NotNull
     private UUID token;
 
+    /**
+     * Costruisce la risposta con il token.
+     *
+     * @param token token generato per l'utente
+     */
     public AuthResponse(UUID token) {
         this.token = token;
     }
 
-}
+} 

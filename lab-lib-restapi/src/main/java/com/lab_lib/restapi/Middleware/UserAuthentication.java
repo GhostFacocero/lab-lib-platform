@@ -20,6 +20,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Filtro che estrae il token dall'header Authorization e popola il
+ * {@link com.lab_lib.restapi.Utils.UserContext} con l'ID utente corrispondente
+ * quando il token è valido.
+ *
+ * <p>Viene eseguito per ogni richiesta (OncePerRequestFilter). Se non è
+ * presente un token valido la richiesta prosegue senza utente autenticato.
+ */
 public class UserAuthentication extends OncePerRequestFilter{
 
     private final UserService userService;
@@ -33,7 +41,14 @@ public class UserAuthentication extends OncePerRequestFilter{
         return new UserAuthentication(userService);
     }
 
-    // TODO Auto-generated method stub
+    /**
+     * Estrae il token dall'header, verifica la sua esistenza e imposta il
+     * contesto utente per la durata della richiesta.
+     *
+     * @param request richiesta HTTP corrente
+     * @param response risposta HTTP corrente
+     * @param filterChain catena di filtri da proseguire
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -58,6 +73,12 @@ public class UserAuthentication extends OncePerRequestFilter{
         
     }
 
+    /**
+     * Estrae il token Bearer dall'header Authorization se presente.
+     *
+     * @param req richiesta HTTP
+     * @return UUID del token oppure {@code null} se non presente o malformato
+     */
     private UUID extractToken(HttpServletRequest req) {
         String authHeader = req.getHeader("Authorization");
         if(authHeader != null && authHeader.startsWith("Bearer ")) {

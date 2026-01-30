@@ -9,6 +9,9 @@ package com.lab_lib.restapi.DTO.PersonalLibrary;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * DTO per la richiesta di creazione di una libreria personale.
+ */
 @Data
 
 public class AddLibraryRequest {
@@ -16,4 +19,4 @@ public class AddLibraryRequest {
     @NotBlank
     private String name;
     
-}
+} 

@@ -11,9 +11,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+/**
+ * Classe principale dell'applicazione REST API.
+ *
+ * <p>Carica le variabili d'ambiente da file .env tramite Dotenv e avvia
+ * il contesto Spring Boot.
+ */
 @SpringBootApplication
 public class App 
 {
+    /**
+     * Punto d'ingresso dell'applicazione.
+     *
+     * @param args argomenti da linea di comando
+     */
     public static void main( String[] args )
     {
         System.out.println( "Rest api!" );
@@ -30,4 +41,4 @@ public class App
         SpringApplication.run(App.class, args);
 
     }
-}
+} 

@@ -12,6 +12,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entità che rappresenta la categoria (nome) di una valutazione (rating).
+ *
+ * <p>Tipicamente contiene il nome della categoria (es. "Qualità", "Stile").
+ */
 @Entity
 @Table(name = "rating_name")
 @Getter

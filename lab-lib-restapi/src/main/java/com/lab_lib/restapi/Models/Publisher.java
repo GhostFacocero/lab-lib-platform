@@ -9,6 +9,11 @@ package com.lab_lib.restapi.Models;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entità che rappresenta l'editore di un libro.
+ *
+ * <p>Contiene informazioni essenziali come l'ID e il nome univoco.
+ */
 @Entity
 @Table(name = "publisher")
 @Data // include getter/setter/toString/equals/hashCode

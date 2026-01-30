@@ -14,6 +14,12 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+/**
+ * Entità che rappresenta una valutazione lasciata da un utente su un libro.
+ *
+ * <p>Contiene riferimento al libro, alla categoria di valutazione, all'utente,
+ * alla recensione testuale e al valore numerico dell'evaluation (1-5).
+ */
 @Entity
 @Table(name = "rating", uniqueConstraints = @UniqueConstraint(columnNames = {"id_book", "id_rn", "id_user"}))
 @Getter
@@ -47,6 +53,11 @@ public class Rating {
     @Column
     private Integer evaluation;
 
+    /**
+     * Converte questa entità in un DTO (adatto alla serializzazione e invio al client).
+     *
+     * @return {@link com.lab_lib.restapi.DTO.Rating.RatingDTO} rappresentante la valutazione
+     */
     public RatingDTO toDTO() {
         return new RatingDTO(this);
     }

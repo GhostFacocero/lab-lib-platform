@@ -20,6 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 
+/**
+ * Controller REST per la gestione delle librerie personali dell'utente.
+ *
+ * <p>Richiede autenticazione (Bearer token) per gli endpoint esposti.
+ */
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/personallibraries")
@@ -35,6 +40,11 @@ public class PersonalLibraryController {
     }
 
     
+    /**
+     * Recupera tutte le librerie personali dell'utente autenticato.
+     *
+     * @return lista di {@link com.lab_lib.restapi.DTO.PersonalLibrary.PersonalLibraryDTO}
+     */
     @GetMapping
     public List<PersonalLibraryDTO> getPersonalLibraries() {
         Long userId = UserContext.getCurrentUserId();
@@ -42,6 +52,12 @@ public class PersonalLibraryController {
     }
 
 
+    /**
+     * Crea una nuova libreria personale per l'utente autenticato.
+     *
+     * @param req richiesta con i dati della nuova libreria
+     * @return ResponseEntity con codice 201 in caso di successo
+     */
     @PostMapping
     public ResponseEntity<String> addLibrary(@RequestBody AddLibraryRequest req) {
         Long userId = UserContext.getCurrentUserId();
@@ -50,6 +66,12 @@ public class PersonalLibraryController {
     }
 
 
+    /**
+     * Elimina la libreria personale indicata (richiede autenticazione).
+     *
+     * @param libId identificativo della libreria
+     * @return ResponseEntity con codice 200 in caso di successo
+     */
     @DeleteMapping("/{libId}")
     public ResponseEntity<String> deleteLibrary(@PathVariable Long libId) {
         Long userId = UserContext.getCurrentUserId();
@@ -58,6 +80,19 @@ public class PersonalLibraryController {
     }
 
 
+    /**
+     * Endpoint di ricerca all'interno di una libreria personale. Accetta filtri
+     * opzionali per titolo, autore, categoria di valutazione e valutazione numerica.
+     *
+     * @param libId identificativo della libreria
+     * @param title titolo da cercare (opzionale)
+     * @param author autore da cercare (opzionale)
+     * @param ratingName nome della categoria di valutazione (opzionale)
+     * @param evaluation valore numerico della valutazione (opzionale)
+     * @param page pagina di risultati (default 0)
+     * @param size dimensione pagina (default 50)
+     * @return pagina di {@link BookDTO} che soddisfano i criteri
+     */
     @GetMapping("/{libId}/search_books")
     public Page<BookDTO> search(
         @PathVariable Long libId,
@@ -85,6 +120,13 @@ public class PersonalLibraryController {
     }
 
 
+    /**
+     * Aggiunge un libro alla libreria personale specificata dall'utente autenticato.
+     *
+     * @param libId identificativo della libreria
+     * @param bookId identificativo del libro da aggiungere
+     * @return ResponseEntity con codice 201 in caso di successo
+     */
     @PostMapping("/{libId}/book/{bookId}")
     public ResponseEntity<String> addBookToLibrary(@PathVariable Long libId, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();
@@ -94,6 +136,13 @@ public class PersonalLibraryController {
     }
 
 
+    /**
+     * Rimuove un libro dalla libreria personale dell'utente autenticato.
+     *
+     * @param libId identificativo della libreria
+     * @param bookId identificativo del libro da rimuovere
+     * @return ResponseEntity con codice 200 in caso di successo
+     */
     @DeleteMapping("/{libId}/book/{bookId}")
     public ResponseEntity<String> removeBookFromLibrary(@PathVariable Long libId, @PathVariable Long bookId) {
         Long userId = UserContext.getCurrentUserId();

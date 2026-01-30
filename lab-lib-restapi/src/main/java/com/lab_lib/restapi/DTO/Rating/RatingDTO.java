@@ -14,6 +14,12 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO che rappresenta una valutazione (rating) per l'API.
+ *
+ * <p>Contiene i dati da inviare al client: titolo del libro, nickname dell'utente,
+ * categoria, commento e valore numerico.
+ */
 @Data
 @Getter
 @Setter
@@ -37,6 +43,11 @@ public class RatingDTO {
     @NotNull
     private Integer evaluation;
 
+    /**
+     * Costruisce il DTO a partire dall'entità {@link Rating}.
+     *
+     * @param rating entità di dominio
+     */
     public RatingDTO(Rating rating) {
         this.id = rating.getId();
         this.bookTitle = rating.getBook().getTitle();
@@ -46,6 +57,9 @@ public class RatingDTO {
         this.evaluation = rating.getEvaluation();        
     }
 
+    /**
+     * Costruttore completo per uso nei test o deserializzazione.
+     */
     public RatingDTO(Long id, String bookTitle, String userNickname, String ratingName, String comment, Integer evaluation) {
         this.id = id;
         this. bookTitle = bookTitle;
@@ -55,4 +69,4 @@ public class RatingDTO {
         this.evaluation = evaluation;
     }
     
-}
+} 

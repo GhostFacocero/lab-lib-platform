@@ -17,6 +17,11 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lab_lib.restapi.DTO.AppUser.AppUserDTO;
 
+/**
+ * Entità che rappresenta un utente dell'applicazione.
+ *
+ * <p>Include informazioni di profilo e relazioni con raccomandazioni.
+ */
 @Entity
 @Table(
     name = "app_user",
@@ -64,19 +69,41 @@ public class AppUser {
     @JsonBackReference
     private Set<RecommendedBook> recommendedBooks = new HashSet<>();
 
+    /**
+     * Converte l'utente in un DTO pubblico che espone informazioni non sensibili.
+     *
+     * @return {@link com.lab_lib.restapi.DTO.AppUser.AppUserDTO}
+     */
     public AppUserDTO toDTO() {
         return new AppUserDTO(this);
     }
 
+    /**
+     * Aggiunge una raccomandazione dell'utente e aggiorna la relazione inversa.
+     *
+     * @param book raccomandazione da aggiungere
+     */
     public void addRecommendedBook(RecommendedBook book) {
         recommendedBooks.add(book);
         book.getUsers().add(this);
     }
 
+    /**
+     * Verifica se l'utente ha già raccomandato il libro specificato.
+     *
+     * @param book raccomandazione da verificare
+     * @return true se presente, false altrimenti
+     */
     public boolean hasRecommendedBook(RecommendedBook book) {
         return recommendedBooks.contains(book);
     }
 
+    /**
+     * Rimuove la raccomandazione dall'utente e aggiorna la relazione inversa.
+     *
+     * @param book raccomandazione da rimuovere
+     * @return true se rimossa, false se non presente
+     */
     public boolean removeRecommendedBook(RecommendedBook book) {
         if(!hasRecommendedBook(book)) {
             return false;

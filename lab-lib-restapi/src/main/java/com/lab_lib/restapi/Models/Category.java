@@ -8,6 +8,9 @@ package com.lab_lib.restapi.Models;
 
 import jakarta.persistence.*;
 
+/**
+ * Entità che rappresenta la categoria di un libro (es. "Fantascienza").
+ */
 @Entity
 @Table(name = "category", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Category {

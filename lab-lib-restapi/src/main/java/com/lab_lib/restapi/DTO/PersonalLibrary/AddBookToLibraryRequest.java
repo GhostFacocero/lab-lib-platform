@@ -9,6 +9,9 @@ package com.lab_lib.restapi.DTO.PersonalLibrary;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * DTO che rappresenta la richiesta di aggiungere un libro ad una libreria personale.
+ */
 @Data
 
 public class AddBookToLibraryRequest {

@@ -9,6 +9,9 @@ package com.lab_lib.restapi.DTO.AppUser;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * DTO per la richiesta di login contenente nickname e password.
+ */
 @Data
 
 public class LoginRequest {
@@ -18,4 +21,4 @@ public class LoginRequest {
 
     @NotBlank
     private String password;
-}
+} 

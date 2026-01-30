@@ -24,6 +24,13 @@ import com.lab_lib.restapi.Utils.UserContext;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
+/**
+ * Controller REST per le operazioni sui rating (valutazioni).
+ *
+ * <p>Espone endpoint per ottenere le valutazioni di un libro, aggiungere una
+ * valutazione e cancellare una valutazione. Gli endpoint che modificano lo stato
+ * richiedono autenticazione tramite Bearer token (vedi {@link com.lab_lib.restapi.Utils.UserContext}).
+ */
 @RestController
 @RequestMapping("/ratings")
 public class RatingController {
@@ -36,12 +43,25 @@ public class RatingController {
     }
 
 
+    /**
+     * Recupera la lista di valutazioni associate al libro specificato.
+     *
+     * @param bookId identificativo del libro
+     * @return lista di {@link RatingDTO}
+     */
     @GetMapping("/book/{bookId}")
     public List<RatingDTO> getRatingsByBookId(@PathVariable Long bookId) {
         return ratingService.findAllByBookId(bookId);
     }
 
 
+    /**
+     * Aggiunge una valutazione ad un libro. Richiede autenticazione.
+     *
+     * @param req payload con i dettagli della valutazione
+     * @param bookId identificativo del libro
+     * @return ResponseEntity con codice 201 in caso di successo
+     */
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/book/{bookId}")
     public ResponseEntity<String> addRatingToBook(@RequestBody AddRatingToBookRequest req, @PathVariable Long bookId) {
@@ -51,6 +71,12 @@ public class RatingController {
     }
 
     
+    /**
+     * Elimina una valutazione. Richiede autenticazione.
+     *
+     * @param ratingId identificativo della valutazione da eliminare
+     * @return ResponseEntity con codice 200 in caso di successo
+     */
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{ratingId}")
     public ResponseEntity<String> deleteRating(@PathVariable Long ratingId) {

@@ -12,6 +12,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * DTO per la richiesta di aggiungere una valutazione ad un libro.
+ */
 @Data
 
 public class AddRatingToBookRequest {
@@ -26,4 +29,4 @@ public class AddRatingToBookRequest {
     @Max(5)
     Integer evaluation;
     
-}
+} 

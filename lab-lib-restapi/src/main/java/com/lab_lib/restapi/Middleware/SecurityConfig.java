@@ -15,15 +15,36 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.lab_lib.restapi.Services.UserService;
 
+/**
+ * Configurazione di sicurezza di Spring Security.
+ *
+ * <p>Registra il filtro di autenticazione {@link UserAuthentication} e
+ * definisce la catena di filtri usata dall'applicazione.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Bean che espone l'istanza di {@link UserAuthentication} alimentata dal servizio utente.
+     *
+     * @param userService servizio utenti
+     * @return istanza di UserAuthentication
+     */
     @Bean
     public UserAuthentication userAuthentication(UserService userService) {
         return new UserAuthentication(userService);
     }
 
+    /**
+     * Configura la {@link SecurityFilterChain} disabilitando CSRF e registrando
+     * il filtro di autenticazione prima del filtro standard UsernamePassword.
+     *
+     * @param http builder di sicurezza
+     * @param userAuthentication filtro di autenticazione custom
+     * @return la SecurityFilterChain costruita
+     * @throws Exception in caso di errore di configurazione
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, UserAuthentication userAuthentication) throws Exception {
         http

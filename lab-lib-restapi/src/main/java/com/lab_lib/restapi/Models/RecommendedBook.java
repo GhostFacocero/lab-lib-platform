@@ -21,6 +21,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entità che rappresenta una raccomandazione fra due libri.
+ *
+ * <p>Colleziona gli utenti che hanno raccomandato la stessa associazione
+ * libro -> libro raccomandato. Fornisce utilità per convertire l'entità
+ * in DTO e per gestire la lista di utenti associati alla raccomandazione.
+ */
 @Entity
 @Table(name = "recommended_books")
 @Data
@@ -54,6 +61,12 @@ public class RecommendedBook {
     @Builder.Default
     private Set<AppUser> users = new HashSet<>();
 
+    /**
+     * Converte l'entità corrente in un DTO leggibile dal client.
+     *
+     * @return {@link RecommendedBookDTO} popolato con titolo e nickname degli utenti
+     *         che hanno effettuato la raccomandazione
+     */
     public RecommendedBookDTO toDTO() {
         RecommendedBookDTO recommendedBook = new RecommendedBookDTO();
         recommendedBook.setTitle(this.recommendedBook.getTitle());
@@ -62,15 +75,32 @@ public class RecommendedBook {
         return recommendedBook;
     }
 
+    /**
+     * Aggiunge un utente alla lista delle raccomandazioni e aggiorna la relazione inversa.
+     *
+     * @param user utente che effettua la raccomandazione
+     */
     public void addUser(AppUser user) {
         users.add(user);
         user.getRecommendedBooks().add(this);
     }
 
+    /**
+     * Verifica se l'utente specificato ha già raccomandato questa associazione.
+     *
+     * @param user utente da verificare
+     * @return true se presente, false altrimenti
+     */
     public boolean hasUser(AppUser user) {
         return users.contains(user);
     }
 
+    /**
+     * Rimuove un utente dalle raccomandazioni e aggiorna la relazione inversa.
+     *
+     * @param user utente da rimuovere
+     * @return true se l'utente era presente e rimosso, false se non era presente
+     */
     public boolean removeUser(AppUser user) {
         if(!hasUser(user)) {
             return false;

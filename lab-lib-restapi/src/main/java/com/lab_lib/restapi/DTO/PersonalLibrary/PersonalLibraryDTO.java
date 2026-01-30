@@ -12,6 +12,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO per la rappresentazione di una libreria personale.
+ *
+ * <p>Contiene id, nome e nickname dell'utente proprietario.
+ */
 @Data
 @Getter
 @Setter

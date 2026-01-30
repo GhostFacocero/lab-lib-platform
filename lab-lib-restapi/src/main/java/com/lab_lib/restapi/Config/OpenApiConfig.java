@@ -11,6 +11,12 @@ import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 
+/**
+ * Configurazione OpenAPI / Swagger per la documentazione dell'API.
+ *
+ * <p>Definisce lo schema di sicurezza Bearer (JWT) usato dagli endpoint
+ * protetti per poter generare la UI e la documentazione corretta.
+ */
 @Configuration
 @SecurityScheme(
         name = "bearerAuth",
@@ -18,4 +24,4 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
         scheme = "bearer",
         bearerFormat = "JWT"
 )
-public class OpenApiConfig {}
+public class OpenApiConfig {} 

@@ -17,15 +17,34 @@ import com.lab_lib.restapi.Models.Book;
 import com.lab_lib.restapi.Models.RecommendedBook;
 import com.lab_lib.restapi.Repositories.RecommendedBookRepository;
 
+/**
+ * Servizio che gestisce le raccomandazioni tra libri.
+ *
+ * <p>Permette di ottenere le raccomandazioni associate a un libro, aggiungere
+ * nuove raccomandazioni (con limiti per utente) e rimuovere raccomandazioni.
+ * Collabora con {@link RecommendedBookRepository} per le operazioni di persistenza.
+ */
 @Service
 public class RecommendedBookService {
     
+    /** Repository per le entità RecommendedBook. */
     private final RecommendedBookRepository recommendedBookRepository;
 
+    /**
+     * Costruttore del servizio.
+     *
+     * @param recommendedBookRepository repository delle raccomandazioni
+     */
     public RecommendedBookService(RecommendedBookRepository recommendedBookRepository) {
         this.recommendedBookRepository = recommendedBookRepository;
     }
 
+    /**
+     * Recupera tutte le raccomandazioni generate a partire dal libro fornito.
+     *
+     * @param book libro di riferimento
+     * @return lista di {@link RecommendedBookDTO}
+     */
     @Transactional
     public List<RecommendedBookDTO> getRecommendedBooks(Book book) {
 
@@ -36,6 +55,16 @@ public class RecommendedBookService {
     }
 
 
+    /**
+     * Aggiunge una raccomandazione tra due libri per un utente specifico.
+     * Limita a massimo 3 raccomandazioni per libro per singolo utente.
+     *
+     * @param book libro di riferimento
+     * @param recommendedBook libro raccomandato
+     * @param user utente che propone la raccomandazione
+     * @return {@link RecommendedBookDTO} della raccomandazione salvata
+     * @throws IllegalArgumentException se si supera il limite o si tenta di raccomandare due volte lo stesso libro
+     */
     @Transactional
     public RecommendedBookDTO addRecommendedBook(Book book, Book recommendedBook, AppUser user) {
 
@@ -63,6 +92,13 @@ public class RecommendedBookService {
     }
 
 
+    /**
+     * Rimuove la raccomandazione associata ai due libri per l'utente specificato.
+     *
+     * @param book libro di riferimento
+     * @param recommendedBook libro raccomandato
+     * @param user utente che aveva aggiunto la raccomandazione
+     */
     @Transactional
     public void removeRecommendedBook(Book book, Book recommendedBook, AppUser user) {
 

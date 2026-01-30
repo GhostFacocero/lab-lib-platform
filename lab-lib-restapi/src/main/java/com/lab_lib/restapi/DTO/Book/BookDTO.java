@@ -17,6 +17,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * DTO che rappresenta un libro con metadati estesi adatto alla serializzazione
+ * verso il client.
+ */
 @Data
 
 public class BookDTO {
@@ -40,6 +44,11 @@ public class BookDTO {
     @NotEmpty
     private List<String> categories;
 
+    /**
+     * Costruisce il DTO a partire dall'entità {@link Book}.
+     *
+     * @param book entità di dominio
+     */
     public BookDTO(Book book) {
         this.id = book.getId();
         this.title = book.getTitle();
@@ -52,4 +61,4 @@ public class BookDTO {
         this.categories = book.getCategories().stream().map(c -> c.getName()).toList();
     }
     
-}
+} 

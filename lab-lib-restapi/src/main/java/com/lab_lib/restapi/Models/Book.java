@@ -19,6 +19,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lab_lib.restapi.DTO.Book.LibraryBookDTO;
 
+/**
+ * Entità che rappresenta un libro con metadati come titolo, descrizione,
+ * prezzo, autori, categorie e valutazioni.
+ *
+ * <p>Fornisce metodi helper per convertire l'entità in DTO e per gestire le
+ * relazioni verso librerie personali e autori.
+ */
 @Entity
 @Table(name = "book")
 @Getter
@@ -73,24 +80,53 @@ public class Book {
     @JsonManagedReference
     private Set<Rating> ratings = new HashSet<>();  
 
+    /**
+     * Crea un DTO semplificato contenente le informazioni minime utili per
+     * rappresentare il libro all'interno di una libreria (id e titolo).
+     *
+     * @return {@link LibraryBookDTO} con id e titolo
+     */
     public LibraryBookDTO toLibraryDTO() {
         return new LibraryBookDTO(this.id, this.title);
     }
 
+    /**
+     * Aggiunge una libreria personale alla collezione delle librerie che contengono questo libro
+     * e aggiorna la relazione inversa.
+     *
+     * @param personalLibrary libreria da aggiungere
+     */
     public void addPersonalLibrary(PersonalLibrary personalLibrary) {
         libraries.add(personalLibrary);
         personalLibrary.getBooks().add(this);
     }
 
+    /**
+     * Rimuove la libreria personale dalla lista e aggiorna la relazione inversa.
+     *
+     * @param personalLibrary libreria da rimuovere
+     */
     public void removePersonalLibrary(PersonalLibrary personalLibrary) {
         libraries.remove(personalLibrary);
         personalLibrary.getBooks().remove(this);
     }
 
+    /**
+     * Verifica se il libro è presente nella libreria personale indicata.
+     *
+     * @param personalLibrary libreria da verificare
+     * @return true se presente, false altrimenti
+     */
     public boolean hasPersonalLibrary(PersonalLibrary personalLibrary) {
         return libraries.contains(personalLibrary);
     }
 
+    /**
+     * Verifica se il libro è associato all'autore specificato.
+     *
+     * @param author autore da verificare
+     * @return true se presente, false altrimenti
+     */
     public boolean hasAuthor(Author author) {
         return authors.contains(author);
     }

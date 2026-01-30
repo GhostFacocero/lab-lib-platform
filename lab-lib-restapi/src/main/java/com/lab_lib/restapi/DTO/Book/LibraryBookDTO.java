@@ -12,6 +12,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO minimale che rappresenta un libro all'interno di una libreria (id + titolo).
+ */
 @Data
 @Getter
 @Setter

@@ -16,6 +16,11 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller REST per le operazioni di autenticazione e registrazione utente.
+ *
+ * <p>Espone endpoint per registrazione (/register) e login (/login).
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -26,6 +31,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Registra un nuovo utente.
+     *
+     * @param req DTO con i dati di registrazione
+     * @return ResponseEntity contenente {@link AuthResponse} con il token
+     */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest req) {
         UUID token = userService.registerUser(req);
@@ -34,6 +45,12 @@ public class UserController {
         return ResponseEntity.status(201).body(new AuthResponse(token));
     }
 
+    /**
+     * Autentica l'utente e ritorna il token se le credenziali sono corrette.
+     *
+     * @param req DTO con nickname e password
+     * @return ResponseEntity con {@link AuthResponse} contenente il token
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
         UUID token = userService.loginUser(req);

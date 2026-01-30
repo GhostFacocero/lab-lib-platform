@@ -16,6 +16,10 @@ import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * DTO che rappresenta una raccomandazione di un libro, incluso l'elenco
+ * dei nickname degli utenti che l'hanno suggerita.
+ */
 @Data
 @Getter
 @Setter
@@ -29,4 +33,4 @@ public class RecommendedBookDTO {
     @NotBlank
     private List<String> userNicknames;
     
-}
+} 

@@ -15,6 +15,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Entità che rappresenta un autore.
+ *
+ * <p>Contiene nome unico e la lista dei libri associati.
+ */
 @Entity
 @Table(name = "author", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 @Getter
@@ -31,6 +36,12 @@ public class Author {
     @JsonIgnore
     private Set<Book> books = new HashSet<Book>();
 
+    /**
+     * Verifica se l'autore è associato al libro indicato.
+     *
+     * @param book libro da verificare
+     * @return true se associato, false altrimenti
+     */
     public boolean hasBook(Book book) {
         return books.contains(book);
     }

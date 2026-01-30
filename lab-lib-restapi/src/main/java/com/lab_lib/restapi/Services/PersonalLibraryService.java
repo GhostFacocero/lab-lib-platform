@@ -24,22 +24,47 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Servizio per la gestione delle librerie personali degli utenti.
+ *
+ * <p>Espone operazioni per creare librerie personali, aggiungere/rimuovere
+ * libri da una libreria e recuperare gli elementi di una libreria. I metodi
+ * che richiedono autenticazione controllano che l'ID dell'utente sia presente
+ * e lanciano {@link com.lab_lib.restapi.Exceptions.AuthenticationException}
+ * in caso contrario.
+ */
 @Service
 public class PersonalLibraryService {
     
+    /** Entity manager per operazioni JPA. */
     @PersistenceContext
     private EntityManager entityManager;
 
+    /** Repository delle librerie personali. */
     private final PersonalLibraryRepository personalLibraryRepository;
+    /** Servizio per la gestione dei libri. */
     private final BookService bookService;
 
 
+    /**
+     * Costruttore del servizio.
+     *
+     * @param personalLibraryRepository repository delle librerie personali
+     * @param bookService servizio libri
+     */
     public PersonalLibraryService(PersonalLibraryRepository personalLibraryRepository, BookService bookService) {
         this.personalLibraryRepository = personalLibraryRepository;
         this.bookService = bookService;
     }
 
 
+    /**
+     * Recupera tutte le librerie personali dell'utente specificato.
+     *
+     * @param userId identificatore dell'utente autenticato
+     * @return lista di {@link PersonalLibraryDTO}
+     * @throws AuthenticationException se {@code userId} è nullo
+     */
     @Transactional
     public List<PersonalLibraryDTO> findAllByUserId(Long userId) {
 
@@ -52,6 +77,15 @@ public class PersonalLibraryService {
     }
 
 
+    /**
+     * Crea una nuova libreria personale per l'utente autenticato.
+     *
+     * @param newLibrary dati della libreria da creare
+     * @param userId id dell'utente autenticato
+     * @return {@link PersonalLibraryDTO} della libreria creata
+     * @throws AuthenticationException se {@code userId} è nullo
+     * @throws IllegalStateException se l'utente ha già una libreria con lo stesso nome
+     */
     @Transactional
     public synchronized PersonalLibraryDTO addLibrary(AddLibraryRequest newLibrary, Long userId) {
 
@@ -76,6 +110,16 @@ public class PersonalLibraryService {
     }
 
 
+    /**
+     * Aggiunge un libro a una libreria personale specificata.
+     * Verifica autenticazione e presenza del libro nella libreria.
+     *
+     * @param req richiesta contenente gli id della libreria e del libro
+     * @param userId id dell'utente autenticato
+     * @throws AuthenticationException se {@code userId} è nullo
+     * @throws IllegalStateException se il libro è già presente nella libreria
+     * @throws NoSuchElementException se la libreria non esiste
+     */
     @Transactional
     public synchronized void addBookToLibrary(AddBookToLibraryRequest req, Long userId) {
 
@@ -96,6 +140,15 @@ public class PersonalLibraryService {
     }
 
     
+    /**
+     * Recupera i libri presenti in una libreria personale.
+     *
+     * @param libId id della libreria
+     * @param userId id dell'utente autenticato
+     * @return lista di {@link BookDTO}
+     * @throws AuthenticationException se {@code userId} è nullo
+     * @throws NoSuchElementException se la libreria non esiste
+     */
     @Transactional
     public List<BookDTO> getLibraryBooks(Long libId, Long userId) {
 
@@ -110,6 +163,13 @@ public class PersonalLibraryService {
     }
 
 
+    /**
+     * Elimina una libreria personale identificata da {@code libId}.
+     *
+     * @param libId id della libreria da eliminare
+     * @param userId id dell'utente autenticato
+     * @throws AuthenticationException se {@code userId} è nullo
+     */
     @Transactional
     public void deletePersonalLibrary(Long libId, Long userId) {
 
@@ -121,6 +181,16 @@ public class PersonalLibraryService {
     }
 
 
+    /**
+     * Rimuove un libro dalla libreria personale specificata.
+     *
+     * @param libId id della libreria
+     * @param bookId id del libro da rimuovere
+     * @param userId id dell'utente autenticato
+     * @throws AuthenticationException se {@code userId} è nullo
+     * @throws NoSuchElementException se la libreria non esiste
+     * @throws IllegalArgumentException se il libro non è presente nella libreria
+     */
     @Transactional
     public void removeBookFromLibrary(Long libId, Long bookId, Long userId) {
 
