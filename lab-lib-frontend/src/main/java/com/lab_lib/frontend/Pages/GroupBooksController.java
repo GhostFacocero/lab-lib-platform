@@ -180,10 +180,19 @@ public class GroupBooksController {
             // Recuperiamo il controller creato da Guice
             com.lab_lib.frontend.Pages.ValutaControllers ctrl = loader.getController();
             
-            java.util.function.LongConsumer noop = id -> {};
-            
+            java.util.function.LongConsumer addToUI = id -> {
+                // Ottimistic UI: se il libro non è già presente nella tabella, aggiungilo
+                javafx.application.Platform.runLater(() -> {
+                    boolean exists = GroupBooksTable.getItems().stream().anyMatch(x -> x.getId() != null && x.getId().equals(b.getId()));
+                    if (!exists) {
+                        GroupBooksTable.getItems().add(b);
+                        System.out.println("[GroupBooks] UI updated with book id=" + b.getId());
+                    }
+                });
+            };
+
             // CHIAMIAMO IL NUOVO SETCONTEXT (più corto)
-            ctrl.setContext(b.getId(), b.getTitle(), noop);
+            ctrl.setContext(b.getId(), b.getTitle(), addToUI);
             
             Stage stage = new Stage();
             // ... resto del codice uguale ...
