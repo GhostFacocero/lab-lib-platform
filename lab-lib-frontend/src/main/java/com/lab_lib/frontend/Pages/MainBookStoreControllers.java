@@ -231,6 +231,10 @@ public class MainBookStoreControllers {
         try {
             // Load the GroupBooks.fxml as a node
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/lab_lib/frontend/Pages/GroupBooks.fxml"));
+            // Use Guice injector so GroupBooksController gets its dependencies injected
+            if (injector != null) {
+                loader.setControllerFactory(injector::getInstance);
+            }
             javafx.scene.Parent root = loader.load();
             GroupBooksController ctrl = (GroupBooksController) loader.getController();
             ctrl.setContext(personalLibraryService, ratingService, libId, groupName);
