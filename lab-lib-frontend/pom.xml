@@ -8,7 +8,6 @@
   <name>lab-lib-frontend</name>
   <url>http://maven.apache.org</url>
  
-
   <properties>
     <!-- Define Java version -->
     <java.version>17</java.version>
@@ -59,16 +58,20 @@
   </dependencies>
 
   <build>
+    <finalName>Client</finalName>
+
     <plugins>
+      <!-- Compiler -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.10.1</version>
         <configuration>
-          <!-- Use Java 17 for compilation so java.net.http is available -->
           <release>17</release>
         </configuration>
       </plugin>
+
+      <!-- JavaFX -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
@@ -77,7 +80,74 @@
           <mainClass>com.lab_lib.frontend.App</mainClass> 
         </configuration>
       </plugin>
+
+      <!-- Javadoc -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.12.0</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <outputDirectory>${project.basedir}/../doc/frontend</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <!-- Fat-jar -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.lab_lib.frontend.App</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <finalName>Client</finalName>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-fat-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Copia fat-jar in bin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>copy-jar-to-bin</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/../bin</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}</directory>
+                  <includes>
+                    <include>Client-jar-with-dependencies.jar</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
+
     <resources>
       <resource>
           <directory>src/main/resources</directory>

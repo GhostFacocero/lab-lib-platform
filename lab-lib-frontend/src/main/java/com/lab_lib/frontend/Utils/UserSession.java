@@ -37,7 +37,7 @@ public class UserSession {
     }
 
     /**
-     * Restituisce il valore da mettere in Authorization: "Bearer <token>".
+     * Restituisce il valore da mettere in Authorization: "Bearer &lt;token&gt;".
      * Ritorna null se non autenticato.
      */
     public String getAuthHeader() {

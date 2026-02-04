@@ -1,0 +1,9 @@
+com.lab_lib.frontend
+com.lab_lib.frontend.DI
+com.lab_lib.frontend.Exceptions
+com.lab_lib.frontend.Interfaces
+com.lab_lib.frontend.Models
+com.lab_lib.frontend.Pages
+com.lab_lib.frontend.Pages.Components
+com.lab_lib.frontend.Services
+com.lab_lib.frontend.Utils

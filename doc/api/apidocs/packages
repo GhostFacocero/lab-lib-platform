@@ -1,0 +1,13 @@
+com.lab_lib.restapi
+com.lab_lib.restapi.Config
+com.lab_lib.restapi.Controllers
+com.lab_lib.restapi.DTO.AppUser
+com.lab_lib.restapi.DTO.Book
+com.lab_lib.restapi.DTO.PersonalLibrary
+com.lab_lib.restapi.DTO.Rating
+com.lab_lib.restapi.Exceptions
+com.lab_lib.restapi.Middleware
+com.lab_lib.restapi.Models
+com.lab_lib.restapi.Repositories
+com.lab_lib.restapi.Services
+com.lab_lib.restapi.Utils
