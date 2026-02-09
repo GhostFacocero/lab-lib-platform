@@ -267,7 +267,8 @@ public class MainBookStoreControllers {
         if (viewOnlyMode) {
             if (Btm_userInfo != null) Btm_userInfo.setVisible(false);
             if (Btm_Gruppi != null) Btm_Gruppi.setVisible(false);
-            if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(false);
+            if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(true);
+            if (Btm_libriMain != null) Btm_libriMain.setVisible(false);
             // Keep LogOut visible to exit user-only mode
             if (LogOut != null) LogOut.setVisible(true);
             if (DataLibroBotoneReviewIt != null) DataLibroBotoneReviewIt.setVisible(false);
@@ -467,7 +468,7 @@ public class MainBookStoreControllers {
             tableLibriLibreria.getSelectionModel().clearSelection();
             // Carica libri dalla libreria personale dell'utente
             if (SearchFieldPersonal != null) SearchFieldPersonal.clear();
-            refreshPersonalLibrary();
+            //refreshPersonalLibrary();
         });
 
         Btm_userInfo.setOnAction(e -> {
@@ -524,8 +525,9 @@ public class MainBookStoreControllers {
         if (viewOnlyMode) {
             if (Btm_userInfo != null) Btm_userInfo.setVisible(false);
             if (Btm_Gruppi != null) Btm_Gruppi.setVisible(false);
-            if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(false);
+            if (Btm_libreriaMain != null) Btm_libreriaMain.setVisible(true);
             if (LogOut != null) LogOut.setVisible(true);
+            if (Btm_libriMain != null) Btm_libriMain.setVisible(false);
             if (DataLibroBotoneReviewIt != null) DataLibroBotoneReviewIt.setVisible(false);
             
             // Forza la vista sul catalogo

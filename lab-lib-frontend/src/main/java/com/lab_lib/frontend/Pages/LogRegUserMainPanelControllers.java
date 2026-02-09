@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Scopes;
 import com.google.inject.Guice;
 import com.google.inject.AbstractModule;
 import com.lab_lib.frontend.DI.AppModule;
@@ -288,14 +289,7 @@ public class LogRegUserMainPanelControllers {
                 // usando il modulo dell'applicazione, in modo da poter inizializzare
                 // i controller che richiedono dipendenze.
                 try {
-                    Injector fallback = Guice.createInjector(new AppModule(), new AbstractModule() {
-                        @Override
-                        protected void configure() {
-                            // Assicuriamo che tutti i controller e servizi ricevano
-                            // l'istanza di UserSession già popolata da login.
-                            bind(com.lab_lib.frontend.Utils.UserSession.class).toInstance(userSession);
-                        }
-                    });
+                    Injector fallback = Guice.createInjector(new AppModule());
                     loader.setControllerFactory(fallback::getInstance);
                     System.out.println("[UI] Created fallback Guice injector for MainBookStore loading (bound existing UserSession).");
                 } catch (Exception ex) {

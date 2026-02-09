@@ -32,7 +32,7 @@ public class BookService implements IBookService {
     @Override
     public PaginatedResponse<Book> searchBooksByTitle(String title, int page, int size) {
         String q = title == null ? "" : URLEncoder.encode(title, StandardCharsets.UTF_8);
-        String endpoint = "/books/search?title=" + q + "&startsWith=true&page=" + page + "&size=" + size;
+        String endpoint = "/books/search?title=" + q + "&startsWith=false&page=" + page + "&size=" + size;
         return httpUtil.get(endpoint, new TypeReference<PaginatedResponse<Book>>() {});
     }
 
